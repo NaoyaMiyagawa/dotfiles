@@ -4,8 +4,7 @@
 
 ```bash
 cd ~
-git clone git@github.com:NaoyaMiyagawa/dotfiles.git
-
+git clone https://github.com/NaoyaMiyagawa/dotfiles.git
 make install
 ```
 
