@@ -69,7 +69,7 @@ export EXA_COLORS="uu=37:gu=37"
 ##############################################################################
 
 if [[ ! -f /usr/local/bin/starship ]]; then
-    curl -fsSL https://starship.rs/install.sh | bash
+    command curl -fsSL https://starship.rs/install.sh | bash -s -- -y
 fi
 
 eval "$(starship init zsh)"
