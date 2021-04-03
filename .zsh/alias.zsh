@@ -6,6 +6,7 @@
 # General (Global -gオプション付きで定義するとコマンドの途中でも展開される)
 # ----------------------------------------------------------------------------
 alias -g C='| pbcopy' # copy
+alias -g G='| grep'   # grep
 
 # ----------------------------------------------------------------------------
 # General
@@ -48,6 +49,27 @@ alias ela='exa-common --time-style=long-iso -alg'
 alias et='exa-common -T -L 1'
 alias eta='exa-common -aT -L 1'
 
+if builtin command -v exa >/dev/null; then
+    alias ls="exa"
+fi
+
+# ----------------------------------------------------------------------------
+# bat ( https://github.com/sharkdp/bat )
+# ----------------------------------------------------------------------------
+alias b='bat --style="numbers,changes,header"'
+alias bat='bat --style="numbers,changes,header"'
+
+if builtin command -v bat >/dev/null; then
+    alias cat="bat"
+fi
+
+# ----------------------------------------------------------------------------
+# ripgrep ( https://github.com/BurntSushi/ripgrep )
+# ----------------------------------------------------------------------------
+if builtin command -v rg >/dev/null; then
+    alias grep="rg"
+fi
+
 # ----------------------------------------------------------------------------
 # docker
 # ----------------------------------------------------------------------------
@@ -58,10 +80,6 @@ alias fig='docker-compose'
 # ----------------------------------------------------------------------------
 # Others
 # ----------------------------------------------------------------------------
-
-# bat
-alias b='bat --theme="TwoDark" --style="numbers,changes,header"'
-alias bat='bat --theme="TwoDark" --style="numbers,changes,header"'
 
 # terraform
 alias tf='terraform'
