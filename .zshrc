@@ -56,6 +56,8 @@ export PATH="$HOME/.anyenv/envs/tfenv/bin:$PATH"
 export PATH="/usr/local/opt/bison/bin:$PATH"
 export PATH="/usr/local/opt/libxml2/bin:$PATH"
 
+# パスの重複を削除
+typeset -U PATH
 
 # rbenv (ruby)
 # export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
