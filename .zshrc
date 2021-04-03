@@ -94,13 +94,19 @@ autoload -Uz _zinit
 
 DOTFILES_PATH=$HOME/dotfiles
 
+source ~/.zprofile
 source $DOTFILES_PATH/.zsh/alias.zsh
 source $DOTFILES_PATH/.zsh/function.zsh
 source $DOTFILES_PATH/.zsh/plugin.zsh
 
 # for "There are insecure files:" Error when executing "compaudit"
 # https://stackoverflow.com/questions/13762280/zsh-compinit-insecure-directories
-[[ -e compaudit ]] && compaudit | xargs chmod g-w
+# [[ ! -e compaudit ]] && compaudit | xargs chmod g-w
+# compaudit && compaudit | xargs chmod g-w
+if [[ ! -e compaudit ]]; then
+    compaudit | xargs chown -R "$(whoami)"
+    compaudit | xargs chmod go-w
+fi
 
 # ----------------------------------------------------------------------------
 # PROMPT テーマ
