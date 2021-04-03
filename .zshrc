@@ -41,6 +41,9 @@ eval "$(anyenv init -)"
 # tfenv
 export PATH="$HOME/.anyenv/envs/tfenv/bin:$PATH"
 
+export PATH="/usr/local/opt/bison/bin:$PATH"
+export PATH="/usr/local/opt/libxml2/bin:$PATH"
+
 
 # rbenv (ruby)
 # export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
@@ -63,16 +66,6 @@ export EDITOR=vim
 # exa
 #export LS_COLORS="uu=37"
 export EXA_COLORS="uu=37:gu=37"
-
-##############################################################################
-# PROMPT テーマ
-##############################################################################
-
-if [[ ! -f /usr/local/bin/starship ]]; then
-    command curl -fsSL https://starship.rs/install.sh | bash -s -- -y
-fi
-
-eval "$(starship init zsh)"
 
 ##############################################################################
 # zinit 本体読み込み
@@ -101,5 +94,17 @@ DOTFILES_PATH=$HOME/dotfiles
 source $DOTFILES_PATH/.zsh/alias.zsh
 source $DOTFILES_PATH/.zsh/function.zsh
 source $DOTFILES_PATH/.zsh/plugin.zsh
-export PATH="/usr/local/opt/bison/bin:$PATH"
-export PATH="/usr/local/opt/libxml2/bin:$PATH"
+
+##############################################################################
+# PROMPT テーマ
+##############################################################################
+
+if [[ ! -f /usr/local/bin/starship ]]; then
+    command curl -fsSL https://starship.rs/install.sh | bash -s -- -y
+fi
+
+eval "$(starship init zsh)"
+
+##############################################################################
+# -
+##############################################################################
