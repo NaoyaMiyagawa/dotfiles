@@ -9,8 +9,10 @@ scan_timeout = 10
 # プロンプトの先頭での改行を有効にする
 add_newline = true
 
-[character]
-success_symbol = "[❯](bold blue)"
+[hostname]
+ssh_only = false
+format = "[$hostname:](bold blue) "
+disabled = false
 
 # パス名 ｜ 省略表示にされないようにする
 [directory]
@@ -36,6 +38,9 @@ deleted = "[✘${count}](red)"
 ahead = "⇡${count}"
 diverged = "⇕⇡${ahead_count}⇣${behind_count}"
 behind = "⇣${count}"
+
+[character]
+success_symbol = "[❯](bold blue)"
 
 # ----------------------------------------------------------------------------
 # バージョン周り
