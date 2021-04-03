@@ -103,7 +103,8 @@ source $DOTFILES_PATH/.zsh/plugin.zsh
 # https://stackoverflow.com/questions/13762280/zsh-compinit-insecure-directories
 # [[ ! -e compaudit ]] && compaudit | xargs chmod g-w
 # compaudit && compaudit | xargs chmod g-w
-if [[ ! -e compaudit ]]; then
+if [[ -e compaudit ]]; then
+    echo a
     compaudit | xargs chown root
     compaudit | xargs chmod go-w
 fi
