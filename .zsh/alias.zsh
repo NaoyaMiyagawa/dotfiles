@@ -16,9 +16,10 @@ alias cp='cp -i'
 alias mv='mv -i'
 # alias rm='rm -i'
 
-alias ls='ls -G'
-alias ll='ls -lG'
-alias lla='ls -alG'
+alias ls='ls -G --group-directories-first --color="auto"'
+alias l='ls'
+alias ll='ls -l'
+alias lla='ls -la'
 alias cd-='fd'
 alias v-='vim `fzf`'
 alias ..='cd ..'
@@ -41,13 +42,13 @@ alias gcz='git cz'
 # ----------------------------------------------------------------------------
 # exa ( https://github.com/ogham/exa )
 # ----------------------------------------------------------------------------
-alias exa-common='exa --group-directories-first --git'
-alias e='exa-common'
-alias el='exa-common -l'
-alias ee='exa-common --time-style=long-iso -alg'
-alias ela='exa-common --time-style=long-iso -alg'
-alias et='exa-common -T -L 1'
-alias eta='exa-common -aT -L 1'
+alias exa='exa --group-directories-first --git'
+alias e='exa'
+alias el='exa -l'
+alias ee='exa --time-style=long-iso -alg'
+alias ela='exa --time-style=long-iso -alg'
+alias et='exa -T -L 1'
+alias eta='exa -aT -L 1'
 
 if builtin command -v exa >/dev/null; then
     alias ls="exa"
