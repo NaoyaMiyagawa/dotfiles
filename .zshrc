@@ -32,8 +32,20 @@ export CFLAGS=-DU_DEFINE_FALSE_AND_TRUE=1
 [[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
 
 # anyenv
-export PATH="$HOME/.anyenv/bin:$PATH"
-eval "$(anyenv init -)"
+if [ -e "$HOME/.anyenv" ]
+then
+    export ANYENV_ROOT="$HOME/.anyenv"
+    export PATH="$ANYENV_ROOT/bin:$PATH"
+    if command -v anyenv 1>/dev/null 2>&1
+    then
+        eval "$(anyenv init -)"
+    fi
+fi
+
+# direnv
+if type direnv >/dev/null 2>&1; then
+    eval "$(direnv hook zsh)"
+fi
 
 # pyenv
 # export PATH="$(pyenv root)/libexec:$PATH"
@@ -59,8 +71,6 @@ export LC_ALL=ja_JP.UTF-8
 export HOMEBREW_PREFIX="/usr/local"
 export HISTTIMEFORMAT='%Y%m%d %T%z | '
 
-# direnv
-eval "$(direnv hook zsh)"
 export EDITOR=vim
 
 # exa
@@ -106,5 +116,5 @@ fi
 eval "$(starship init zsh)"
 
 ##############################################################################
-# -
+# New
 ##############################################################################
