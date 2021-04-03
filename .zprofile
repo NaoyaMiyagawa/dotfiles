@@ -1,7 +1,6 @@
 # .zprofile
 
-autoload -U promptinit
-promptinit
+autoload -U promptinit && promptinit
 
 # ----------------------------------------------------------------------------
 # 全般
@@ -23,8 +22,7 @@ REPORTTIME=3
 # 補完
 
 # 補完を有効にする
-autoload -U compinit
-compinit -u
+autoload -Uz compinit && compinit
 
 # 補完 ｜ 候補に色付け
 autoload -Uz add-zsh-hook
