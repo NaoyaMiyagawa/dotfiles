@@ -89,11 +89,15 @@ zinit wait'3' lucid light-mode for pick"h.sh" 'paoloantinori/hhighlighter'
 # fzf で絵文字を検索＆入力する
 zinit wait'3' lucid light-mode for 'b4b4r07/emoji-cli'
 
+# enhancd | cd上位互換
+zinit wait lucid pick'init.sh' nocompile'!' for 'b4b4r07/enhancd'
+export ENHANCD_FILTER=fzf:peco:fzy
+
 # ripgrep ｜ grep上位互換
 zinit wait'3' lucid light-mode from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg/rg" for 'BurntSushi/ripgrep'
 
 # exa ｜ ls上位互換
-zinit wait lucid light-mode from"gh-r" as"program" mv"exa* -> exa" pick"rg/rg" for 'ogham/exa'
+zinit wait lucid light-mode from"gh-r" as"program" mv"exa* -> exa" pick"exa/exa" for 'ogham/exa'
 
 # bat ｜ less上位互換
 zinit wait lucid light-mode from"gh-r" as"program" mv"bat* -> bat" pick"bat/bat" for '@sharkdp/bat'
