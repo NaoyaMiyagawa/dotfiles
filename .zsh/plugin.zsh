@@ -66,6 +66,7 @@ zinit wait lucid light-mode from"gh-r" as"program" mv"delta* -> delta" pick"delt
 # ----------------------------------------------------------------------------
 # Utilities
 # ----------------------------------------------------------------------------
+
 # history-search plugin
 zinit load zdharma/history-search-multi-word
 
@@ -93,6 +94,9 @@ zinit wait'3' lucid light-mode for 'b4b4r07/emoji-cli'
 zinit wait lucid pick'init.sh' nocompile'!' for 'b4b4r07/enhancd'
 export ENHANCD_FILTER=fzf:peco:fzy
 
+# peco ｜ fuzzy-search
+zinit wait lucid light-mode from"gh-r" as"command" mv"peco* -> peco" pick"peco/peco" for 'peco/peco'
+
 # ripgrep ｜ grep上位互換
 zinit wait'3' lucid light-mode from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg/rg" for 'BurntSushi/ripgrep'
 
@@ -105,17 +109,8 @@ zinit wait lucid light-mode from"gh-r" as"program" mv"bat* -> bat" pick"bat/bat"
 # fd ｜ find上位互換
 zinit wait'3' lucid light-mode from"gh-r" as"program" mv"fd* -> fd" pick"fd/fd" for '@sharkdp/fd'
 
-# peco ｜ fuzzy-search
-zinit wait lucid light-mode from"gh-r" as"program" mv"peco* -> peco" pick"peco/peco" for 'peco/peco'
-
 # ----------------------------------------------------------------------------
-# zinit: 未使用
+# zinit: End
 # ----------------------------------------------------------------------------
-
-## Go で書かれたツール群を並列ダウンロード&ビルド&インストールしてくれます。
-# zinit wait lucid from'gh-r' as'command' mv'gotcha_* -> gotcha' for 'b4b4r07/gotcha'
-
-# # tabtab source for packages (uninstall by removing these lines)
-# [[ -f ~/.config/tabtab/__tabtab.zsh ]] && . ~/.config/tabtab/__tabtab.zsh || true
 
 zinit cdreplay -q
