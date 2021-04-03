@@ -1,0 +1,77 @@
+##############################################################################
+# Starship 設定
+#
+# https://starship.rs/config/
+##############################################################################
+
+# starshipが現在のディレクトリ下のファイルをチェックするまで10ミリ秒待ちます
+scan_timeout = 10
+# プロンプトの先頭での改行を有効にする
+add_newline = true
+
+[character]
+success_symbol = "[❯](bold blue)"
+
+# パス名 ｜ 省略表示にされないようにする
+[directory]
+truncation_length = 100
+truncate_to_repo = false
+truncation_symbol = ".../"
+
+[git_branch]
+format = "[$symbol$branch]($style) "
+# truncation_length = 4
+# truncation_symbol = ""
+
+[git_status]
+format = '([\[$all_status $ahead_behind\]]($style) )'
+style = "blue"
+
+# status系
+staged = '[+${count}](green)'
+modified = '[!${count}](yellow)'
+deleted = "[✘${count}](red)"
+
+# ahead_behind系
+ahead = "⇡${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+behind = "⇣${count}"
+
+# ----------------------------------------------------------------------------
+# バージョン周り
+# ----------------------------------------------------------------------------
+
+[package]
+disabled = true
+
+[nodejs]
+disabled = true
+format = "[$symbol($version )]($style)"
+symbol = "⬢:"
+
+[php]
+format = "[$symbol($version )]($style)"
+symbol = "🐘:"
+
+[aws]
+# disabled = true
+format = '[$profile]($style) '
+symbol = "☁️:"
+style = "blue"
+
+[terraform]
+symbol = "💠:"
+
+[python]
+# format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\))]($style)'
+format = '[${symbol}(${version} )(\($virtualenv\))]($style)'
+style = "yellow"
+symbol = "🐍:"
+pyenv_version_name = true
+
+[vagrant]
+format = "[$symbol($version )]($style)"
+symbol = "⍱:"
+
+[cmd_duration]
+format = "[took $duration](yellow)"

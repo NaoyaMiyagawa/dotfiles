@@ -1,0 +1,54 @@
+##############################################################################
+# gitignore
+##############################################################################
+
+# ----------------------------------------------------------------------------
+# All ignore
+# ----------------------------------------------------------------------------
+/*
+/.**
+
+# ----------------------------------------------------------------------------
+# WhiteList: 管理下に加えるものを追記
+#
+# !/.zfunc/
+# /.zfunc/** # ディレクトリは管理したいけど中身はいらない場合の例
+# ----------------------------------------------------------------------------
+
+# dotfile installer
+!/install.sh
+!/Makefile
+
+# github
+!/README.md
+!/LICENSE
+!.gitignore
+!.gitkeep
+
+# zsh
+!/.zshrc
+!/.zprofile
+!/.zsh/
+!/.zsh/*.zsh
+
+# .config
+!/.config
+!/.config/starship.toml
+# - karabiner
+!/.config/karabiner
+!/.config/karabiner/*.json
+!/.config/karabiner/assets
+!/.config/karabiner/assets/**
+# - iterm2
+!/.config/iterm2/
+!/.config/iterm2/**
+
+# vim
+!/.vimrc
+!/.vim
+/.vim/**
+!/.vim/colors
+!/.vim/colors/*
+
+# tmux
+!/.tmux.conf

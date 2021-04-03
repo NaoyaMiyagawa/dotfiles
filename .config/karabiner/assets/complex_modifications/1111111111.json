@@ -1,0 +1,190 @@
+{
+    "title": "一般",
+    "rules": [
+        {
+            "description": "カスタム設定 ｜ Change caps_lock to control if pressed with other keys, to escape if pressed alone.",
+            "manipulators": [
+                {
+                    "from": {
+                        "key_code": "caps_lock",
+                        "modifiers": {
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "left_control"
+                        }
+                    ],
+                    "type": "basic"
+                }
+            ]
+        },
+        {
+            "description": "カスタム設定 ｜ コマンドキーを単体で押したときに、英数・かなキーを送信する。（左コマンドキーは英数、右コマンドキーはかな） (rev miyagawa)",
+            "_comment": "日本語IMバグ（修飾キー+JapaneseEisuuの同時発火の際に0x10の制御文字が入ってしまう）の対策としてmodifiers設定を消したものを利用する",
+            "manipulators": [
+                {
+                    "from": {
+                        "key_code": "left_command"
+                    },
+                    "parameters": {
+                        "basic.to_if_held_down_threshold_milliseconds": 100
+                    },
+                    "to": [
+                        {
+                            "key_code": "left_command",
+                            "lazy": true
+                        }
+                    ],
+                    "to_if_alone": [
+                        {
+                            "key_code": "japanese_eisuu"
+                        }
+                    ],
+                    "to_if_held_down": [
+                        {
+                            "key_code": "left_command"
+                        }
+                    ],
+                    "type": "basic"
+                },
+                {
+                    "from": {
+                        "key_code": "right_command",
+                        "modifiers": {
+                            "optional": ["any"]
+                        }
+                    },
+                    "parameters": {
+                        "basic.to_if_held_down_threshold_milliseconds": 100
+                    },
+                    "to": [
+                        {
+                            "key_code": "right_command",
+                            "lazy": true
+                        }
+                    ],
+                    "to_if_alone": [
+                        {
+                            "key_code": "japanese_kana"
+                        }
+                    ],
+                    "to_if_held_down": [
+                        {
+                            "key_code": "right_command"
+                        }
+                    ],
+                    "type": "basic"
+                }
+            ]
+        },
+        {
+            "description": "カスタム設定 ｜ [Ctr + n/p/f/b] を [arrow keys] に変換",
+            "manipulators": [
+                {
+                    "from": {
+                        "key_code": "b",
+                        "modifiers": {
+                            "mandatory": ["left_control"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "left_arrow"
+                        }
+                    ],
+                    "type": "basic"
+                },
+                {
+                    "from": {
+                        "key_code": "n",
+                        "modifiers": {
+                            "mandatory": ["left_control"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "down_arrow"
+                        }
+                    ],
+                    "type": "basic"
+                },
+                {
+                    "from": {
+                        "key_code": "p",
+                        "modifiers": {
+                            "mandatory": ["left_control"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "up_arrow"
+                        }
+                    ],
+                    "type": "basic"
+                },
+                {
+                    "description": "カスタム設定 ｜ shift + control + A で 行頭まで戻って選択",
+                    "manipulators": [
+                        {
+                            "type": "basic",
+                            "from": {
+                                "key_code": "a",
+                                "modifiers": {
+                                    "mandatory": ["control", "shift"],
+                                    "optional": ["any"]
+                                }
+                            },
+                            "to": [
+                                {
+                                    "key_code": "left_arrow",
+                                    "modifiers": ["command", "shift"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "from": {
+                        "key_code": "f",
+                        "modifiers": {
+                            "mandatory": ["left_control"],
+                            "optional": ["any"]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "right_arrow"
+                        }
+                    ],
+                    "type": "basic"
+                }
+            ]
+        },
+        {
+            "description": "カスタム設定 ｜ option + control + V を無効化（不可視文字）",
+            "_comment": "日本語IMのバグ対策 ｜ 謎制御文字が挿入されてしまう現象",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "v",
+                        "modifiers": {
+                            "mandatory": ["option", "control"]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "v",
+                            "modifiers": ["option"]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
