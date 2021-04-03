@@ -104,7 +104,6 @@ source $DOTFILES_PATH/.zsh/plugin.zsh
 # [[ ! -e compaudit ]] && compaudit | xargs chmod g-w
 # compaudit && compaudit | xargs chmod g-w
 if [[ -e compaudit ]]; then
-    echo a
     compaudit | xargs chown root
     compaudit | xargs chmod go-w
 fi

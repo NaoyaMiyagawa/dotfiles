@@ -29,6 +29,9 @@ yum install -y git unzip tar make python3 zsh file
 # (optional) apply Japanese Launguage Pack
 yum install -y glibc-langpack-ja
 
+# change shell to zsh
+zsh
+
 # deploy dotfiles
 cd ~
 git clone https://github.com/NaoyaMiyagawa/dotfiles.git
