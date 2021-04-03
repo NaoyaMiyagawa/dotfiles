@@ -2,6 +2,9 @@
 # Plugins
 ##############################################################################
 
+# 補完をリセット
+autoload -Uz compinit && compinit
+
 # ----------------------------------------------------------------------------
 # oh-my-zsh: snippet
 # ----------------------------------------------------------------------------
@@ -93,10 +96,10 @@ zinit wait'3' lucid light-mode from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg
 zinit wait lucid light-mode from"gh-r" as"program" mv"exa* -> exa" pick"rg/rg" for 'ogham/exa'
 
 # bat ｜ less上位互換
-zinit wait lucid light-mode from"gh-r" as"program" mv"bat* -> bat" pick"bat/bat" for 'sharkdp/bat'
+zinit wait lucid light-mode from"gh-r" as"program" mv"bat* -> bat" pick"bat/bat" for '@sharkdp/bat'
 
 # fd ｜ find上位互換
-zinit wait'3' lucid light-mode from"gh-r" as"program" mv"fd* -> fd" pick"fd/fd" for 'sharkdp/fd'
+zinit wait'3' lucid light-mode from"gh-r" as"program" mv"fd* -> fd" pick"fd/fd" for '@sharkdp/fd'
 
 # ----------------------------------------------------------------------------
 # zinit: 未使用
