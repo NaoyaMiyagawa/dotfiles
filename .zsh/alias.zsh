@@ -43,6 +43,7 @@ alias gcz='git cz'
 alias exa-common='exa --group-directories-first --git'
 alias e='exa-common'
 alias el='exa-common -l'
+alias ee='exa-common --time-style=long-iso -alg'
 alias ela='exa-common --time-style=long-iso -alg'
 alias et='exa-common -T -L 1'
 alias eta='exa-common -aT -L 1'
@@ -59,6 +60,7 @@ alias fig='docker-compose'
 # ----------------------------------------------------------------------------
 
 # bat
+alias b='bat --theme="TwoDark" --style="numbers,changes,header"'
 alias bat='bat --theme="TwoDark" --style="numbers,changes,header"'
 
 # terraform
