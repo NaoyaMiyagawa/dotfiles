@@ -105,6 +105,9 @@ zinit wait lucid light-mode from"gh-r" as"program" mv"bat* -> bat" pick"bat/bat"
 # fd ｜ find上位互換
 zinit wait'3' lucid light-mode from"gh-r" as"program" mv"fd* -> fd" pick"fd/fd" for '@sharkdp/fd'
 
+# peco ｜ fuzzy-search
+zinit wait lucid light-mode from"gh-r" as"program" mv"peco* -> peco" pick"peco/peco" for 'peco/peco'
+
 # ----------------------------------------------------------------------------
 # zinit: 未使用
 # ----------------------------------------------------------------------------
