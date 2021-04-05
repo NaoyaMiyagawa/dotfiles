@@ -22,10 +22,10 @@ truncation_symbol = ".../"
 
 [git_branch]
 format = "[$symbol$branch]($style) "
-# truncation_length = 4
-# truncation_symbol = ""
 
 [git_status]
+# docker開発環境で応答が遅すぎるときに true にすると速くなる
+# disabled = true
 format = '([\[$all_status $ahead_behind\]]($style) )'
 style = "blue"
 
@@ -59,7 +59,6 @@ format = "[$symbol($version )]($style)"
 symbol = "🐘:"
 
 [aws]
-# disabled = true
 format = '[$profile]($style) '
 symbol = "☁️:"
 style = "blue"
