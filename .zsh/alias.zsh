@@ -42,25 +42,25 @@ alias gcz='git cz'
 # ----------------------------------------------------------------------------
 # exa ( https://github.com/ogham/exa )
 # ----------------------------------------------------------------------------
-alias exa='exa --group-directories-first --git'
-alias e='exa'
-alias el='exa -l'
-alias ee='exa --time-style=long-iso -alg'
-alias ela='exa --time-style=long-iso -alg'
-alias et='exa -T -L 1'
-alias eta='exa -aT -L 1'
-
 if builtin command -v exa >/dev/null; then
+    alias exa='exa --group-directories-first --git'
+    alias e='exa'
+    alias el='exa -l'
+    alias ee='exa --time-style=long-iso -alg'
+    alias ela='exa --time-style=long-iso -alg'
+    alias et='exa -T -L 1'
+    alias eta='exa -aT -L 1'
+
     alias ls="exa"
 fi
 
 # ----------------------------------------------------------------------------
 # bat ( https://github.com/sharkdp/bat )
 # ----------------------------------------------------------------------------
-alias b='bat --style="numbers,changes,header"'
-alias bat='bat --style="numbers,changes,header"'
-
 if builtin command -v bat >/dev/null; then
+    alias bat='bat --style="numbers,changes,header"'
+    alias b='bat --style="numbers,changes,header"'
+
     alias cat="bat"
 fi
 
