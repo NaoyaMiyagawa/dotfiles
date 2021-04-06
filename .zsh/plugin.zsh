@@ -79,6 +79,9 @@ zinit wait lucid from"gh-r" as"program" for 'junegunn/fzf-bin'
 # fzf を使ったウィジェットが複数バンドルされたもの
 zinit wait'3' lucid light-mode for 'mollifier/anyframe'
 
+# vim ｜ https://zdharma.github.io/zinit/wiki/Compiling-programs/
+zinit wait'1' lucid light-mode as"program" atclone"rm -f src/auto/config.cache; ./configure" atpull"%atclone" make pick"src/vim" for 'vim/vim'
+
 # 作業中のGitのルートディレクトリまでジャンプするコマンドを定義する
 zinit wait'1' lucid light-mode for 'mollifier/cd-gitroot'
 # ディレクトリをブックマークする
@@ -103,6 +106,12 @@ zinit wait'3' lucid light-mode from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg
 # exa ｜ ls上位互換
 zinit wait lucid light-mode from"gh-r" as"program" mv"exa* -> exa" pick"exa/exa" for 'ogham/exa'
 
+# LS_COLORS ｜ https://zdharma.github.io/zinit/wiki/LS_COLORS-explanation/
+zinit ice atclone"dircolors -b LS_COLORS > clrs.zsh" \
+    atpull'%atclone' pick"clrs.zsh" nocompile'!' \
+    atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”'
+zinit light trapd00r/LS_COLORS
+
 # bat ｜ less上位互換
 zinit wait lucid light-mode from"gh-r" as"program" mv"bat* -> bat" pick"bat/bat" for '@sharkdp/bat'
 
@@ -110,7 +119,7 @@ zinit wait lucid light-mode from"gh-r" as"program" mv"bat* -> bat" pick"bat/bat"
 zinit wait'3' lucid light-mode from"gh-r" as"program" mv"fd* -> fd" pick"fd/fd" for '@sharkdp/fd'
 
 # ----------------------------------------------------------------------------
-# zinit: End
+# Plugins: End
 # ----------------------------------------------------------------------------
 
 zinit cdreplay -q
