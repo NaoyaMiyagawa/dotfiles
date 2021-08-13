@@ -18,18 +18,52 @@ os_detect() {
         *'bsd'*)    PLATFORM='bsd'     ;;
         *)          PLATFORM='unknown' ;;
     esac
+
+    # 参考 ： [ディストリビューションによって処理を替える - Qiita](https://qiita.com/taishin/items/a7e0c3e25616325a02a6)
+    if [ "$PLATFORM" = "linux" ]; then
+        RELEASE_FILE=/etc/os-release
+        if grep -e '^NAME="CentOS' $RELEASE_FILE >/dev/null; then
+            PLATFORM='centos'
+        elif grep -e '^NAME="Amazon' $RELEASE_FILE >/dev/null; then
+            PLATFORM='amazonlinux'
+        elif grep -e '^NAME="Ubuntu' $RELEASE_FILE >/dev/null; then
+            PLATFORM='ubuntu'
+        else
+
+        fi
+    fi
+
     export PLATFORM
 }
 
 # is_osx returns true if running OS is Macintosh
 is_osx() {
-    os_detect
-    if [ "$PLATFORM" = "osx" ]; then
-        return 0
-    else
-        return 1
-    fi
+    if [ -z $PLATFORM ]; then os_detect; fi
+    TARGET='osx'
+    if [ "$PLATFORM" = $TARGET ]; then return 0; else return 1; fi
 }
+
+# is_amazonlinux returns true if running OS is AmazonLinux
+is_amazonlinux() {
+    if [ -z $PLATFORM ]; then os_detect; fi
+    TARGET='amazonlinux'
+    if [ "$PLATFORM" = $TARGET ]; then return 0; else return 1; fi
+}
+
+# is_centos returns true if running OS is CentOS
+is_centos() {
+    if [ -z $PLATFORM ]; then os_detect; fi
+    TARGET='centos'
+    if [ "$PLATFORM" = $TARGET ]; then return 0; else return 1; fi
+}
+
+# is_ubuntu returns true if running OS is Ubuntu
+is_ubuntu() {
+    if [ -z $PLATFORM ]; then os_detect; fi
+    TARGET='ubuntu'
+    if [ "$PLATFORM" = $TARGET ]; then return 0; else return 1; fi
+}
+
 
 # ----------------------------------------------------------------------------
 # fd ： 曖昧検索を使ったディレクトリ移動
