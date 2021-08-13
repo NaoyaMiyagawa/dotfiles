@@ -52,3 +52,6 @@
 
 # tmux
 !/.tmux.conf
+
+# linter
+!/.stylelintrc.js

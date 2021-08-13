@@ -12,57 +12,76 @@ export PATH="/usr/local/bin:$PATH"
 # composer
 export PATH="$PATH:$HOME/.composer/vendor/bin:$PATH"
 
-# fluter
-export PATH="$PATH:$HOME/Documents/flutter/bin:$PATH"
-
 # yarn
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
-# online-judge-tool 用 ｜ `time` を gtimeではなくtimeとして動かす
-export PATH="/usr/local/opt/gnu-time/libexec/gnubin:$PATH"
+DOTFILES_PATH=$HOME/dotfiles
 
-# php 7.4
-export PATH="/usr/local/opt/icu4c/bin:$PATH"
-export PATH="/usr/local/opt/icu4c/sbin:$PATH"
-export LDFLAGS="-L/usr/local/opt/icu4c/lib"
-export CPPFLAGS="-I/usr/local/opt/icu4c/include"
-export PATH="/usr/local/opt/libiconv/bin:$PATH"
-export PATH="/usr/local/opt/bzip2/bin:$PATH"
-export LDFLAGS="-L/usr/local/opt/bzip2/lib"
-export CPPFLAGS="-I/usr/local/opt/bzip2/include"
-export CFLAGS=-DU_DEFINE_FALSE_AND_TRUE=1
-[[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
+# ----------------------------------------------------------------------------
+# zsh / zinit 設定ファイル読み込み
+# ----------------------------------------------------------------------------
 
-# anyenv
-if [[ -e "$HOME/.anyenv" ]]; then
-    export PATH="$HOME/.anyenv/bin:$PATH"
+source ~/.zprofile
+source $DOTFILES_PATH/.zsh/function.zsh
 
-    if command -v anyenv 1>/dev/null 2>&1; then
-        eval "$(anyenv init -)"
+# ----------------------------------------------------------------------------
+# mac用
+# ----------------------------------------------------------------------------
+
+if is_osx; then
+    # fluter
+    export PATH="$PATH:$HOME/Documents/flutter/bin:$PATH"
+
+    # online-judge-tool 用 ｜ `time` を gtimeではなくtimeとして動かす
+    export PATH="/usr/local/opt/gnu-time/libexec/gnubin:$PATH"
+
+    # php 7.4
+    export PATH="/usr/local/opt/icu4c/bin:$PATH"
+    export PATH="/usr/local/opt/icu4c/sbin:$PATH"
+    export LDFLAGS="-L/usr/local/opt/icu4c/lib"
+    export CPPFLAGS="-I/usr/local/opt/icu4c/include"
+    export PATH="/usr/local/opt/libiconv/bin:$PATH"
+    export PATH="/usr/local/opt/bzip2/bin:$PATH"
+    export LDFLAGS="-L/usr/local/opt/bzip2/lib"
+    export CPPFLAGS="-I/usr/local/opt/bzip2/include"
+    export CFLAGS=-DU_DEFINE_FALSE_AND_TRUE=1
+    [[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
+
+    # anyenv
+    if [[ -e "$HOME/.anyenv" ]]; then
+        export PATH="$HOME/.anyenv/bin:$PATH"
+
+        if command -v anyenv 1>/dev/null 2>&1; then
+            eval "$(anyenv init -)"
+        fi
     fi
+
+    # direnv
+    if type direnv >/dev/null 2>&1; then
+        eval "$(direnv hook zsh)"
+    fi
+
+    # tfenv
+    export PATH="$HOME/.anyenv/envs/tfenv/bin:$PATH"
+
+    export PATH="/usr/local/opt/bison/bin:$PATH"
+    export PATH="/usr/local/opt/libxml2/bin:$PATH"
+
+    # Dockerイメージのセキュリティ対策
+    export DOCKER_CONTENT_TRUST=1
+
+    # export LC_ALL=ja_JP.UTF-8
+    export HOMEBREW_PREFIX="/usr/local"
 fi
 
-# direnv
-if type direnv >/dev/null 2>&1; then
-    eval "$(direnv hook zsh)"
-fi
-
-# tfenv
-export PATH="$HOME/.anyenv/envs/tfenv/bin:$PATH"
-
-export PATH="/usr/local/opt/bison/bin:$PATH"
-export PATH="/usr/local/opt/libxml2/bin:$PATH"
+export HISTTIMEFORMAT='%Y%m%d %T%z | '
+export EDITOR=vim
 
 # パスの重複を削除
 typeset -U PATH
 
-export LC_ALL=ja_JP.UTF-8
-export HOMEBREW_PREFIX="/usr/local"
-export HISTTIMEFORMAT='%Y%m%d %T%z | '
-export EDITOR=vim
-
 # ls
-#export LS_COLORS="uu=37"
+export LS_COLORS="uu=37"
 # exa
 export EXA_COLORS="uu=37:gu=37"
 # bat
@@ -92,18 +111,14 @@ autoload -Uz _zinit
 # zsh / zinit 設定ファイル読み込み
 # ----------------------------------------------------------------------------
 
-DOTFILES_PATH=$HOME/dotfiles
-
-source ~/.zprofile
 source $DOTFILES_PATH/.zsh/alias.zsh
-source $DOTFILES_PATH/.zsh/function.zsh
 source $DOTFILES_PATH/.zsh/plugin.zsh
 
 # for "There are insecure files:" Error when executing "compaudit"
 # https://stackoverflow.com/questions/13762280/zsh-compinit-insecure-directories
-# [[ ! -e compaudit ]] && compaudit | xargs chmod g-w
+# [[ -e! compaudit ]] && compaudit | xargs chmod g-w
 # compaudit && compaudit | xargs chmod g-w
-if [[ -e compaudit ]]; then
+if [ ! -e compaudit ]; then
     compaudit | xargs chown root
     compaudit | xargs chmod go-w
 fi

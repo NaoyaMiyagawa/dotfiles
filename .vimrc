@@ -24,6 +24,8 @@ set background=dark
 let g:hybrid_custom_term_colors = 1
 let g:hybrid_reduced_contrast = 1 " Remove this line if using the default palette.
 let g:hybrid_use_iTerm_colors = 2
+" let g:hybrid_custom_term_colors = 1
+" let g:hybrid_reduced_contrast = 1 " Remove this line if using the default palette.
 colorscheme hybrid
 
 "viとの互換性を無効にする(INSERT中にカーソルキーが有効になる)

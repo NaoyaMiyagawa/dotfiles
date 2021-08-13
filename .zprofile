@@ -53,9 +53,9 @@ setopt numeric_glob_sort  # 辞書順ではなく数字順に並べる。
 # 履歴 ｜ 履歴の保存先
 export HISTFILE=${HOME}/.zhistory
 # 履歴 ｜ メモリに保存する履歴件数
-export HISTSIZE=100000
+export HISTSIZE=3000
 # 履歴 ｜ ファイルに保存される履歴の件数
-export SAVEHIST=100000
+export SAVEHIST=30000
 
 # 履歴 ｜ 各種設定
 setopt EXTENDED_HISTORY       # 開始と終了を記録

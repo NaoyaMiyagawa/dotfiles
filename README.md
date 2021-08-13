@@ -6,7 +6,7 @@
 # deploy dotfiles
 cd ~
 git clone https://github.com/NaoyaMiyagawa/dotfiles.git
-cd ~/dotfiles; make install; cd -
+cd ~/dotfiles; make install; cd ~
 ```
 
 ## How to see the list of dotfiles
@@ -25,7 +25,7 @@ docker run -it --rm amazonlinux:2 /bin/bash
 ----
 
 # install necessary utilities to run installer of dotfiles
-yum install -y git unzip tar make python3 zsh file
+yum install -y git unzip tar make python3 zsh file gcc vim-enhanced
 # (optional) apply Japanese Launguage Pack
 yum install -y glibc-langpack-ja
 
@@ -35,8 +35,21 @@ zsh
 # deploy dotfiles
 cd ~
 git clone https://github.com/NaoyaMiyagawa/dotfiles.git
-cd ~/dotfiles; make install; cd -
+cd ~/dotfiles; make install; cd ~
 
 # reload zsh
 source ~/.zshrc
+```
+
+#### for Linux
+necessary utilities installation should be this instead
+
+```bash
+yum update
+yum install -y git zip tar make python3 zsh file gcc vim-enhanced
+```
+
+```bash
+apt-get update
+apt-get -y git zip tar make python3 zsh file gcc vim-enhanced
 ```
