@@ -9,6 +9,26 @@ git clone https://github.com/NaoyaMiyagawa/dotfiles.git
 cd ~/dotfiles; make install; cd ~
 ```
 
+#### for Linux
+The following utilities are required.
+
+```bash
+yum install -y \
+    git zip tar make python3 zsh file gcc vim-enhanced
+zsh
+```
+
+```bash
+apt-get -y \
+    git zip tar make python3 zsh file gcc vim-enhanced
+zsh
+```
+
+```
+# (optional) apply Japanese Launguage Pack
+yum install -y glibc-langpack-ja
+```
+
 ## How to see the list of dotfiles
 
 ```bash
@@ -39,17 +59,4 @@ cd ~/dotfiles; make install; cd ~
 
 # reload zsh
 source ~/.zshrc
-```
-
-#### for Linux
-necessary utilities installation should be this instead
-
-```bash
-yum install -y \
-    git zip tar make python3 zsh file gcc vim-enhanced
-```
-
-```bash
-apt-get -y \
-    git zip tar make python3 zsh file gcc vim-enhanced
 ```
