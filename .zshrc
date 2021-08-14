@@ -120,8 +120,7 @@ source $DOTFILES_PATH/.zsh/plugin.zsh
 # compaudit && compaudit | xargs chmod g-w
 if [ ! -e compaudit ]; then
     # https://github.com/zsh-users/zsh-completions/issues/433
-    for f in $(compaudit);
-    do
+    for f in $(compaudit); do
         chown $(whoami):admin $f;
         chmod go-w $f;
     done;
