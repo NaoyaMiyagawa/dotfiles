@@ -88,17 +88,6 @@ export EXA_COLORS="uu=37:gu=37"
 export BAT_THEME="TwoDark"
 
 # ----------------------------------------------------------------------------
-# zinit セットアップの事前準備
-# ----------------------------------------------------------------------------
-if is_amazonlinux || is_centos; then
-    yum update
-    yum install -y git zip tar make python3 zsh file gcc vim-enhanced
-elif is_ubuntu; then
-    apt-get update
-    apt-get -y git zip tar make python3 zsh file gcc vim-enhanced
-fi
-
-# ----------------------------------------------------------------------------
 # zinit 本体読み込み
 #
 # https://github.com/zdharma/zinit

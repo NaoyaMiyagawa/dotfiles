@@ -74,8 +74,6 @@ zinit load zdharma/history-search-multi-word
 export ZSH_PLUGINS_ALIAS_TIPS_TEXT='------ alias-tips: '
 zinit wait lucid light-mode for 'djui/alias-tips'
 
-# fzf - incremental search (load from binary file)
-zinit wait lucid from"gh-r" as"program" for 'junegunn/fzf-bin'
 # fzf を使ったウィジェットが複数バンドルされたもの
 zinit wait'3' lucid light-mode for 'mollifier/anyframe'
 
@@ -92,6 +90,9 @@ zinit wait'3' lucid light-mode for 'mollifier/anyframe'
 #     atclone"rm -f src/auto/config.cache; \
 #         ./configure --prefix=$HOME/local --with-features=huge --enable-multibyte --enable-rubyinterp --enable-pythoninterp --enable-perlinterp --enable-fontset" \
 #     atpull"%atclone" make pick"src/vim" for 'vim/vim'
+zinit ice as"program" atclone"rm -f src/auto/config.cache; ./configure" \
+    atpull"%atclone" make pick"src/vim"
+zinit light vim/vim
 
 # 作業中のGitのルートディレクトリまでジャンプするコマンドを定義する
 zinit wait'1' lucid light-mode for 'mollifier/cd-gitroot'
@@ -109,18 +110,12 @@ zinit wait lucid pick'init.sh' nocompile'!' for 'b4b4r07/enhancd'
 export ENHANCD_FILTER=fzf:peco:fzy
 
 # peco ｜ fuzzy-search
-zinit wait lucid light-mode from"gh-r" as"command" mv"peco* -> peco" pick"peco/peco" for 'peco/peco'
+# zinit wait lucid light-mode from"gh-r" as"command" mv"peco* -> peco" pick"peco/peco" for 'peco/peco'
+zinit ice from"gh-r" as"program" pick"*/peco"
+zinit light "peco/peco"
 
 # ripgrep ｜ grep上位互換
 zinit wait'3' lucid light-mode from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg/rg" for 'BurntSushi/ripgrep'
-
-# exa ｜ ls上位互換
-# zinit wait lucid light-mode from"gh-r" as"null" for mv"exa* -> exa" ogham/exa
-
-# zinit as"null" wait"2" lucid from"gh-r" for \
-#     mv"exa* -> exa" sbin ogham/exa \
-#     mv"fd* -> fd" sbin"fd/fd" @sharkdp/fd \
-#     sbin"fzf" junegunn/fzf-bin
 
 # LS_COLORS ｜ https://zdharma.github.io/zinit/wiki/LS_COLORS-explanation/
 zinit ice atclone"dircolors -b LS_COLORS > clrs.zsh" \
@@ -128,29 +123,22 @@ zinit ice atclone"dircolors -b LS_COLORS > clrs.zsh" \
     atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”'
 zinit light trapd00r/LS_COLORS
 # Download the default profile
-# zinit pack for ls_colors
+zinit pack for ls_colors
 
 # bat ｜ less上位互換
-zinit wait lucid light-mode from"gh-r" as"command" mv"bat* -> bat" pick"bat/bat" for '@sharkdp/bat'
+# zinit wait lucid light-mode from"gh-r" as"command" mv"bat* -> bat" pick"bat/bat" for '@sharkdp/bat'
+zinit ice as"command" from"gh-r" mv"bat* -> bat" pick"bat/bat"
+zinit light sharkdp/bat
 
-# # fd ｜ find上位互換
+# fd ｜ find上位互換
 # zinit wait'3' lucid light-mode from"gh-r" as"command" mv"fd* -> fd" pick"fd/fd" for '@sharkdp/fd'
+zinit ice from"gh-r" as"program"
+zinit light junegunn/fzf-bin
 
-# # junegunn/fzf-bin
-# zinit ice from"gh-r" as"program"
-# zinit light junegunn/fzf-bin
-
-# # sharkdp/fd
-# zinit ice as"command" from"gh-r" mv"fd* -> fd" pick"fd/fd"
-# zinit light sharkdp/fd
-
-# # sharkdp/bat
-# zinit ice as"command" from"gh-r" mv"bat* -> bat" pick"bat/bat"
-# zinit light sharkdp/bat
-
-# # ogham/exa, replacement for ls
-# zinit ice wait"2" lucid from"gh-r" as"program" mv"exa* -> exa"
-# zinit light ogham/exa
+# exa ｜ ls上位互換
+# zinit wait lucid light-mode from"gh-r" as"null" for mv"exa* -> exa" ogham/exa
+zinit ice wait"2" lucid from"gh-r" as"program" mv"exa* -> exa"
+zinit light ogham/exa
 
 # # All of the above using the for-syntax and also z-a-bin-gem-node annex
 # zinit wait"1" lucid from"gh-r" as"null" for \

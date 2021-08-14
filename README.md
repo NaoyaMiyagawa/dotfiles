@@ -42,16 +42,14 @@ source ~/.zshrc
 ```
 
 #### for Linux
-Introduced auto-exec commands below while setting up.
-
-<!-- necessary utilities installation should be this instead -->
+necessary utilities installation should be this instead
 
 ```bash
-# yum update
-# yum install -y git zip tar make python3 zsh file gcc vim-enhanced
+yum install -y \
+    git zip tar make python3 zsh file gcc vim-enhanced
 ```
 
 ```bash
-# apt-get update
-# apt-get -y git zip tar make python3 zsh file gcc vim-enhanced
+apt-get -y \
+    git zip tar make python3 zsh file gcc vim-enhanced
 ```
