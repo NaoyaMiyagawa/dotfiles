@@ -119,8 +119,14 @@ source $DOTFILES_PATH/.zsh/plugin.zsh
 # [[ -e! compaudit ]] && compaudit | xargs chmod g-w
 # compaudit && compaudit | xargs chmod g-w
 if [ ! -e compaudit ]; then
-    compaudit | xargs chown root
-    compaudit | xargs chmod go-w
+    # https://github.com/zsh-users/zsh-completions/issues/433
+    for f in $(compaudit);
+    do
+        chown $(whoami):admin $f;
+        chmod go-w $f;
+    done;
+    # compaudit | xargs chown root
+    # compaudit | xargs chmod go-w
 fi
 
 # ----------------------------------------------------------------------------

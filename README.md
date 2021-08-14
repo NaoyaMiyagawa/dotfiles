@@ -7,7 +7,7 @@
 cd ~
 git clone https://github.com/NaoyaMiyagawa/dotfiles.git
 cd ~/dotfiles; make install; cd ~
-source ~/.zshrc
+zsh
 ```
 
 #### for Linux
@@ -15,14 +15,12 @@ The following utilities are required.
 
 ```bash
 yum install -y \
-    git zip tar make python3 zsh file gcc vim-enhanced
-zsh
+    git zip unzip tar make python3 zsh file gcc vim-enhanced
 ```
 
 ```bash
 apt-get -y \
-    git zip tar make python3 zsh file gcc vim-enhanced
-zsh
+    git zip unzip tar make python3 zsh file gcc vim-enhanced
 ```
 
 ```

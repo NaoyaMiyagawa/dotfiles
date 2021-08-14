@@ -90,9 +90,9 @@ zinit wait'3' lucid light-mode for 'mollifier/anyframe'
 #     atclone"rm -f src/auto/config.cache; \
 #         ./configure --prefix=$HOME/local --with-features=huge --enable-multibyte --enable-rubyinterp --enable-pythoninterp --enable-perlinterp --enable-fontset" \
 #     atpull"%atclone" make pick"src/vim" for 'vim/vim'
-zinit ice as"program" atclone"rm -f src/auto/config.cache; ./configure" \
-    atpull"%atclone" make pick"src/vim"
-zinit light vim/vim
+# zinit ice as"program" atclone"rm -f src/auto/config.cache; ./configure" \
+#     atpull"%atclone" make pick"src/vim"
+# zinit light vim/vim
 
 # 作業中のGitのルートディレクトリまでジャンプするコマンドを定義する
 zinit wait'1' lucid light-mode for 'mollifier/cd-gitroot'
