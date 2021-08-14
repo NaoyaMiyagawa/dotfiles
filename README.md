@@ -7,6 +7,7 @@
 cd ~
 git clone https://github.com/NaoyaMiyagawa/dotfiles.git
 cd ~/dotfiles; make install; cd ~
+source ~/.zshrc
 ```
 
 #### for Linux
