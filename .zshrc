@@ -72,6 +72,30 @@ if is_osx; then
 
     # export LC_ALL=ja_JP.UTF-8
     export HOMEBREW_PREFIX="/usr/local"
+
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    # m1 mac homebrew
+    # 参考: https://zenn.dev/ress/articles/069baf1c305523dfca3d
+    typeset -U path PATH
+    path=(
+        /opt/homebrew/bin(N-/)
+        /usr/local/bin(N-/)
+        $path
+    )
+    if (( $+commands[sw_vers] )) && (( $+commands[arch] )); then
+        [[ -x /usr/local/bin/brew ]] && alias brew="arch -arch x86_64 /usr/local/bin/brew"
+        alias x64='exec arch -x86_64 /bin/zsh'
+        alias a64='exec arch -arm64e /bin/zsh'
+        switch-arch() {
+            if  [[ "$(uname -m)" == arm64 ]]; then
+                arch=x86_64
+            elif [[ "$(uname -m)" == x86_64 ]]; then
+                arch=arm64e
+            fi
+            exec arch -arch $arch /bin/zsh
+        }
+    fi
+    setopt magic_equal_subst
 fi
 
 export HISTTIMEFORMAT='%Y%m%d %T%z | '
@@ -86,6 +110,9 @@ export LS_COLORS="uu=37"
 export EXA_COLORS="uu=37:gu=37"
 # bat
 export BAT_THEME="TwoDark"
+# fzf
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+export FZF_DEFAULT_OPTS='--preview "bat  --color=always --style=header,grid --line-range :100 {}"'
 
 # ----------------------------------------------------------------------------
 # zinit 本体読み込み

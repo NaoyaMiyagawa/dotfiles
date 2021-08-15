@@ -34,7 +34,10 @@ zinit wait lucid light-mode for \
     jsforce/jsforce-zsh-completions
 
 # コマンドハイライト
-zinit wait lucid light-mode for atload'_zsh_highlight' 'zdharma/fast-syntax-highlighting'
+# zinit wait lucid light-mode for atload'_zsh_highlight' 'zdharma/fast-syntax-highlighting'
+# シンタックスハイライト
+zinit light zdharma/fast-syntax-highlighting
+
 
 # コマンドをサジェストする
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#55aa55,bg=white,underline"
@@ -128,17 +131,19 @@ zinit pack for ls_colors
 # bat ｜ less上位互換
 # zinit wait lucid light-mode from"gh-r" as"command" mv"bat* -> bat" pick"bat/bat" for '@sharkdp/bat'
 zinit ice as"command" from"gh-r" mv"bat* -> bat" pick"bat/bat"
-zinit light sharkdp/bat
+zinit light "sharkdp/bat"
 
 # fd ｜ find上位互換
 # zinit wait'3' lucid light-mode from"gh-r" as"command" mv"fd* -> fd" pick"fd/fd" for '@sharkdp/fd'
 zinit ice from"gh-r" as"program"
-zinit light junegunn/fzf-bin
+zinit light "junegunn/fzf-bin"
 
 # exa ｜ ls上位互換
 # zinit wait lucid light-mode from"gh-r" as"null" for mv"exa* -> exa" ogham/exa
-zinit ice wait"2" lucid from"gh-r" as"program" mv"exa* -> exa"
-zinit light ogham/exa
+# zinit ice wait"2" lucid from"gh-r" as"program" mv"exa* -> exa"
+# zinit light "ogham/exa"
+# zinit ice as"program" from"gh-r" mv"exa* -> exa"
+# zinit light ogham/exa
 
 # # All of the above using the for-syntax and also z-a-bin-gem-node annex
 # zinit wait"1" lucid from"gh-r" as"null" for \
@@ -146,6 +151,20 @@ zinit light ogham/exa
 #     sbin"**/fd" @sharkdp/fd \
 #     sbin"**/bat" @sharkdp/bat \
 #     sbin"exa* -> exa" ogham/exa
+
+
+# tmux のウィンドウを作業中のGitレポジトリ名に応じて自動的にリネームしてくれるプラグイン
+zplugin light 'sei40kr/zsh-tmux-rename'
+
+if is_osx; then
+    # AWS CLI v2の補完。
+    # 要 AWS CLI v2
+    # この順序で記述しないと `complete:13: command not found: compdef` のようなエラーになるので注意
+    autoload bashcompinit && bashcompinit
+    source ~/.zinit/plugins/drgr33n---oh-my-zsh_aws2-plugin/aws2_zsh_completer.sh
+    complete -C '/usr/local/bin/aws_completer' aws
+    zinit light drgr33n/oh-my-zsh_aws2-plugin
+fi
 
 # ----------------------------------------------------------------------------
 # Plugins: End

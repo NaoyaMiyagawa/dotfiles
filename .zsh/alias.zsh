@@ -16,7 +16,7 @@ alias cp='cp -i'
 alias mv='mv -i'
 # alias rm='rm -i'
 
-alias ls='ls -G --group-directories-first --color="auto"'
+alias ls='ls -G'
 alias l='ls'
 alias ll='ls -l'
 alias lla='ls -la'
@@ -43,7 +43,7 @@ alias gcz='git cz'
 # exa ( https://github.com/ogham/exa )
 # ----------------------------------------------------------------------------
 if builtin command -v exa >/dev/null; then
-    alias exa='exa --group-directories-first --git'
+    alias exa='exa -G --group-directories-first --git'
     alias e='exa'
     alias el='exa -l'
     alias ee='exa --time-style=long-iso -alg'
