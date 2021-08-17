@@ -96,6 +96,8 @@ if is_osx; then
         }
     fi
     setopt magic_equal_subst
+
+    test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 fi
 
 export HISTTIMEFORMAT='%Y%m%d %T%z | '
@@ -169,5 +171,4 @@ eval "$(starship init zsh)"
 # New
 # ----------------------------------------------------------------------------
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
