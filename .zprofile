@@ -46,6 +46,7 @@ setopt glob_complete      # globを展開しないで候補の一覧から補完
 setopt magic_equal_subst  # コマンドラインの引数で --prefix=/usr などの = 以降でも補完できる
 setopt mark_dirs          # ファイル名の展開でディレクトリにマッチした場合 末尾に / を付加
 setopt numeric_glob_sort  # 辞書順ではなく数字順に並べる。
+setopt correct            # スペルミス対応
 
 # ----------------------------------------------------------------------------
 # 履歴
@@ -60,7 +61,7 @@ export SAVEHIST=30000
 # 履歴 ｜ 各種設定
 setopt EXTENDED_HISTORY       # 開始と終了を記録
 setopt auto_pushd             # cd したら pushd
-setopt append_history         # 複数の zsh を同時に使う時など history ファイルに上書きせず追加
+#setopt append_history         # 複数の zsh を同時に使う時など history ファイルに上書きせず追加
 setopt extended_history       # $HISTFILEに時間も記録
 setopt hist_expand            # 補完時にヒストリを自動的に展開
 setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
