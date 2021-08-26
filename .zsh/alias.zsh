@@ -16,7 +16,7 @@ alias cp='cp -i'
 alias mv='mv -i'
 # alias rm='rm -i'
 
-alias ls='ls -G'
+alias ls='ls'
 alias l='ls'
 alias ll='ls -l'
 alias lla='ls -la'
@@ -84,6 +84,7 @@ alias fig='docker compose'
 
 # terraform
 alias tf='terraform'
+alias tfp='terraform plan'
 
 # fzf
 alias fzf='fzf --reverse'
