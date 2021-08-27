@@ -28,6 +28,17 @@ apt-get -y \
 yum install -y glibc-langpack-ja
 ```
 
+#### Error Reference
+
+If you encounter this error while using zsh on amazonlinux, try it again on bash.
+```
+x x86_64 builds for amazonlinux are not yet available for Starship
+
+> If you would like to see a build for your configuration,
+> please create an issue requesting a build for x86_64-amazonlinux:
+> https://github.com/starship/starship/issues/new/
+```
+
 ## How to see the list of dotfiles
 
 ```bash
