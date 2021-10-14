@@ -154,7 +154,7 @@ zinit light "junegunn/fzf-bin"
 
 
 # tmux のウィンドウを作業中のGitレポジトリ名に応じて自動的にリネームしてくれるプラグイン
-zplugin light 'sei40kr/zsh-tmux-rename'
+# zplugin light 'sei40kr/zsh-tmux-rename'
 
 if is_osx; then
     # AWS CLI v2の補完。
