@@ -46,7 +46,7 @@ setopt glob_complete      # globを展開しないで候補の一覧から補完
 setopt magic_equal_subst  # コマンドラインの引数で --prefix=/usr などの = 以降でも補完できる
 setopt mark_dirs          # ファイル名の展開でディレクトリにマッチした場合 末尾に / を付加
 setopt numeric_glob_sort  # 辞書順ではなく数字順に並べる。
-setopt correct            # スペルミス対応
+#setopt correct            # スペルミス対応
 
 # ----------------------------------------------------------------------------
 # 履歴

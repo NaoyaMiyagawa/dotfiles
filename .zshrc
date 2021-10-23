@@ -36,16 +36,28 @@ if is_osx; then
     export PATH="/usr/local/opt/gnu-time/libexec/gnubin:$PATH"
 
     # php 7.4
+    # - icu4c
     export PATH="/usr/local/opt/icu4c/bin:$PATH"
     export PATH="/usr/local/opt/icu4c/sbin:$PATH"
     export LDFLAGS="-L/usr/local/opt/icu4c/lib"
     export CPPFLAGS="-I/usr/local/opt/icu4c/include"
+    export PKG_CONFIG_PATH="/usr/local/opt/icu4c/lib/pkgconfig"
+    # -
     export PATH="/usr/local/opt/libiconv/bin:$PATH"
+    # - bzip2
     export PATH="/usr/local/opt/bzip2/bin:$PATH"
     export LDFLAGS="-L/usr/local/opt/bzip2/lib"
     export CPPFLAGS="-I/usr/local/opt/bzip2/include"
+    # -
     export CFLAGS=-DU_DEFINE_FALSE_AND_TRUE=1
     [[ -e ~/.phpbrew/bashrc ]] && source ~/.phpbrew/bashrc
+    # - openssl
+    export OPENSSL_CFLAGS="-I$(brew --prefix openssl)/include"
+    export OPENSSL_LIBS="-L$(brew --prefix openssl)/lib"
+    # - curl
+    export LDFLAGS="-L/usr/local/opt/curl/lib"
+    export CPPFLAGS="-I/usr/local/opt/curl/include"
+    export PKG_CONFIG_PATH="/usr/local/opt/curl/lib/pkgconfig"
 
     # anyenv
     if [[ -e "$HOME/.anyenv" ]]; then
@@ -64,7 +76,6 @@ if is_osx; then
     # tfenv
     export PATH="$HOME/.anyenv/envs/tfenv/bin:$PATH"
 
-    export PATH="/usr/local/opt/bison/bin:$PATH"
     export PATH="/usr/local/opt/libxml2/bin:$PATH"
 
     # Dockerイメージのセキュリティ対策
@@ -98,6 +109,9 @@ if is_osx; then
     setopt magic_equal_subst
 
     test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+    # asdf
+    . /usr/local/opt/asdf/asdf.sh
 fi
 
 export HISTTIMEFORMAT='%Y%m%d %T%z | '
@@ -170,5 +184,3 @@ eval "$(starship init zsh)"
 # ----------------------------------------------------------------------------
 # New
 # ----------------------------------------------------------------------------
-
-
