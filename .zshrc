@@ -84,7 +84,8 @@ if is_osx; then
     # export LC_ALL=ja_JP.UTF-8
     export HOMEBREW_PREFIX="/usr/local"
 
-    eval "$(/opt/homebrew/bin/brew shellenv)"
+    #eval "$(/opt/homebrew/bin/brew shellenv)"
+
     # m1 mac homebrew
     # 参考: https://zenn.dev/ress/articles/069baf1c305523dfca3d
     typeset -U path PATH
@@ -167,8 +168,8 @@ if [ ! -e compaudit ]; then
         chown $(whoami):admin $f;
         chmod go-w $f;
     done;
-    # compaudit | xargs chown root
-    # compaudit | xargs chmod go-w
+    compaudit | xargs chown root
+    compaudit | xargs chmod go-w
 fi
 
 # ----------------------------------------------------------------------------

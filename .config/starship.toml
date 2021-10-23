@@ -65,9 +65,10 @@ symbol = "🐘:"
 [aws]
 format = '[$profile]($style) '
 symbol = "☁️:"
-style = "blue"
+style = "bold 110"
 
 [terraform]
+format = "[$symbol$workspace]($style) "
 symbol = "💠:"
 
 [python]
