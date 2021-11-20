@@ -135,7 +135,7 @@ zinit light "sharkdp/bat"
 # fd ｜ find上位互換
 # zinit wait'3' lucid light-mode from"gh-r" as"command" mv"fd* -> fd" pick"fd/fd" for '@sharkdp/fd'
 zinit ice from"gh-r" as"program"
-zinit light "junegunn/fzf-bin"
+zinit light "junegunn/fzf"
 
 # exa ｜ ls上位互換
 # zinit wait lucid light-mode from"gh-r" as"null" for mv"exa* -> exa" ogham/exa
@@ -146,7 +146,7 @@ zinit light "junegunn/fzf-bin"
 
 # # All of the above using the for-syntax and also z-a-bin-gem-node annex
 # zinit wait"1" lucid from"gh-r" as"null" for \
-#     sbin"fzf" junegunn/fzf-bin \
+#     sbin"fzf" junegunn/fzf \
 #     sbin"**/fd" @sharkdp/fd \
 #     sbin"**/bat" @sharkdp/bat \
 #     sbin"exa* -> exa" ogham/exa

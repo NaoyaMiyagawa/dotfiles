@@ -128,8 +128,8 @@ export EXA_COLORS="uu=37:gu=37"
 # bat
 export BAT_THEME="TwoDark"
 # fzf
-export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
-export FZF_DEFAULT_OPTS='--preview "bat  --color=always --style=header,grid --line-range :100 {}"'
+# export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
+# export FZF_DEFAULT_OPTS='--preview "bat  --color=always --style=header,grid --line-range :100 {}"'
 
 # ----------------------------------------------------------------------------
 # zinit 本体読み込み
