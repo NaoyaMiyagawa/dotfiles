@@ -20,7 +20,7 @@ zinit snippet 'OMZ::plugins/github/github.plugin.zsh'
 # 非GNU系OSにインストールしたGNU系ツールをプリフィックスなしで使えるようにする
 zinit snippet 'OMZ::plugins/gnu-utils/gnu-utils.plugin.zsh'
 # .zshrc を zcompile してロードしてくれる src コマンドを定義する
-zinit snippet 'OMZ::plugins/zsh_reload/zsh_reload.plugin.zsh'
+# zinit snippet 'OMZ::plugins/zsh_reload/zsh_reload.plugin.zsh'
 # 作業ディレクトリに .env ファイルがあった場合に自動的にロードする
 # zinit snippet 'OMZ::plugins/dotenv/dotenv.plugin.zsh'
 
@@ -34,10 +34,9 @@ zinit wait lucid light-mode for \
     jsforce/jsforce-zsh-completions
 
 # コマンドハイライト
-# zinit wait lucid light-mode for atload'_zsh_highlight' 'zdharma/fast-syntax-highlighting'
+# zinit wait lucid light-mode for atload'_zsh_highlight' 'zdharma-continuum/fast-syntax-highlighting'
 # シンタックスハイライト
-zinit light zdharma/fast-syntax-highlighting
-
+zinit light zdharma-continuum/fast-syntax-highlighting
 
 # コマンドをサジェストする
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#55aa55,bg=white,underline"
@@ -61,7 +60,7 @@ zinit wait"2" lucid light-mode as"program" pick"$ZPFX/bin/git-*" make"PREFIX=$ZP
 
 # diff-so-fancy
 # zinit ice wait'2' lucid as"program" pick"bin/git-dsf"
-# zinit load zdharma/zsh-diff-so-fancy
+# zinit load zdharma-continuum/zsh-diff-so-fancy
 
 # dandavision/delta
 zinit wait lucid light-mode from"gh-r" as"program" mv"delta* -> delta" pick"delta/delta" for 'dandavison/delta'
@@ -71,7 +70,7 @@ zinit wait lucid light-mode from"gh-r" as"program" mv"delta* -> delta" pick"delt
 # ----------------------------------------------------------------------------
 
 # history-search plugin
-zinit load zdharma/history-search-multi-word
+zinit load zdharma-continuum/history-search-multi-word
 
 # エイリアスが使える際に表示する
 export ZSH_PLUGINS_ALIAS_TIPS_TEXT='------ alias-tips: '
@@ -88,7 +87,7 @@ zinit wait'3' lucid light-mode for 'mollifier/anyframe'
 #     OMZP::cargo/_cargo \
 #     OMZP::rustup/_rustup
 
-# # vim ｜ https://zdharma.github.io/zinit/wiki/Compiling-programs/
+# # vim ｜ https://zdharma-continuum.github.io/zinit/wiki/Compiling-programs/
 # zinit wait'1' lucid light-mode as"program" \
 #     atclone"rm -f src/auto/config.cache; \
 #         ./configure --prefix=$HOME/local --with-features=huge --enable-multibyte --enable-rubyinterp --enable-pythoninterp --enable-perlinterp --enable-fontset" \
@@ -120,7 +119,7 @@ zinit light "peco/peco"
 # ripgrep ｜ grep上位互換
 zinit wait'3' lucid light-mode from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg/rg" for 'BurntSushi/ripgrep'
 
-# # LS_COLORS ｜ https://zdharma.github.io/zinit/wiki/LS_COLORS-explanation/
+# # LS_COLORS ｜ https://zdharma-continuum.github.io/zinit/wiki/LS_COLORS-explanation/
 # zinit ice atclone"dircolors -b LS_COLORS > clrs.zsh" \
 #     atpull'%atclone' pick"clrs.zsh" nocompile'!' \
 #     atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”'
@@ -151,7 +150,6 @@ zinit light "junegunn/fzf-bin"
 #     sbin"**/fd" @sharkdp/fd \
 #     sbin"**/bat" @sharkdp/bat \
 #     sbin"exa* -> exa" ogham/exa
-
 
 # tmux のウィンドウを作業中のGitレポジトリ名に応じて自動的にリネームしてくれるプラグイン
 # zplugin light 'sei40kr/zsh-tmux-rename'
