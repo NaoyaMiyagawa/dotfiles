@@ -1,0 +1,4 @@
+#!/bin/bash
+# カレントディレクトリが変わらないようにしつつ、すべてのpaneに対してrespawn-paneする
+# https://www.pandanoir.info/entry/2020/02/16/000351
+tmux list-panes -as -F '#{pane_id} : #{pane_current_path}' | sed -e 's/ : /\n/' | xargs -n 2 bash -c 'tmux respawn-pane -c $1 -t $0 -k $SHELL'
