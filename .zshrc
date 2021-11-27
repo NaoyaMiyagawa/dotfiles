@@ -29,6 +29,11 @@ source $DOTFILES_PATH/.zsh/function.zsh
 # ----------------------------------------------------------------------------
 
 if is_osx; then
+    #### FIG ENV VARIABLES ####
+    # Please make sure this block is at the start of this file.
+    [ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
+    #### END FIG ENV VARIABLES ####
+
     # fluter
     export PATH="$PATH:$HOME/Documents/flutter/bin:$PATH"
 
@@ -185,3 +190,10 @@ eval "$(starship init zsh)"
 # ----------------------------------------------------------------------------
 # New
 # ----------------------------------------------------------------------------
+
+if is_osx; then
+    ### FIG ENV VARIABLES ####
+    # Please make sure this block is at the end of this file.
+    [ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
+    ### END FIG ENV VARIABLES ####
+fi

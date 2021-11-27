@@ -74,9 +74,9 @@ fi
 # ----------------------------------------------------------------------------
 # docker
 # ----------------------------------------------------------------------------
-alias dc='docker'
+alias d='docker'
 alias de='docker exec -it $(docker ps | peco | cut -d " " -f 1) /bin/bash' # dockerコンテナに入る
-alias fig='docker compose'
+alias dc='docker compose'
 
 # ----------------------------------------------------------------------------
 # Others

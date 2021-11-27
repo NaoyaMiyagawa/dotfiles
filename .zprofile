@@ -1,3 +1,8 @@
+
+#### FIG ENV VARIABLES ####
+# Please make sure this block is at the start of this file.
+[ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
+#### END FIG ENV VARIABLES ####
 # .zprofile
 
 autoload -U promptinit && promptinit
@@ -93,3 +98,8 @@ zstyle ":plugin:history-search-multi-word" active "bg=blue"          # 選択行
 # if [ $SHLVL = 1 ]; then
 #   tmux
 # fi
+
+#### FIG ENV VARIABLES ####
+# Please make sure this block is at the end of this file.
+[ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
+#### END FIG ENV VARIABLES ####
