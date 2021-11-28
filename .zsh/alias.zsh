@@ -38,6 +38,8 @@ alias grs='git restore'
 alias gop='git open'
 # commitizen
 alias gcz='git cz'
+# lazygit
+alias lg='lazygit'
 
 # ----------------------------------------------------------------------------
 # exa ( https://github.com/ogham/exa )
