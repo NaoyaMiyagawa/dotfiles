@@ -136,6 +136,9 @@ export BAT_THEME="TwoDark"
 # export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 # export FZF_DEFAULT_OPTS='--preview "bat  --color=always --style=header,grid --line-range :100 {}"'
 
+# git settings
+git config --global core.ignorecase false
+
 # ----------------------------------------------------------------------------
 # zinit 本体読み込み
 #
