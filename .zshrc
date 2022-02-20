@@ -115,9 +115,6 @@ if is_osx; then
     setopt magic_equal_subst
 
     test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-    # asdf
-    . /usr/local/opt/asdf/libexec/asdf.sh
 fi
 
 export HISTTIMEFORMAT='%Y%m%d %T%z | '
