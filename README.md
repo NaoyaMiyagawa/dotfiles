@@ -19,8 +19,8 @@ yum install -y \
 ```
 
 ```bash
-apt-get -y \
-    git zip unzip tar make python3 zsh file gcc vim-enhanced
+apt-get install -y \
+    git zip unzip tar make python3 zsh file gcc vim
 ```
 
 ```
