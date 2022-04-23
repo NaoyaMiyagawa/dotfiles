@@ -186,7 +186,7 @@ fi
 # ----------------------------------------------------------------------------
 
 if [[ ! -f /usr/local/bin/starship ]]; then
-    command curl -fsSL https://starship.rs/install.sh | bash -s -- -y
+    command curl -sS https://starship.rs/install.sh | sh -s -- -y
 fi
 
 eval "$(starship init zsh)"
