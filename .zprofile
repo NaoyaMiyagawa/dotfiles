@@ -1,8 +1,6 @@
-# Fig pre block. Keep at the top of this file.
-export PATH="${PATH}:${HOME}/.local/bin"
-[ -s ~/.fig/shell/pre.sh ] && eval "$(fig init zsh pre)"
-
+##############################################################################
 # .zprofile
+##############################################################################
 
 autoload -U promptinit && promptinit
 
@@ -97,6 +95,3 @@ zstyle ":plugin:history-search-multi-word" active "bg=blue"          # 選択行
 # if [ $SHLVL = 1 ]; then
 #   tmux
 # fi
-
-# Fig post block. Keep at the bottom of this file.
-[ -s ~/.fig/shell/pre.sh ] && eval "$(fig init zsh post)"
