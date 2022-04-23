@@ -1,6 +1,6 @@
 # Fig pre block. Keep at the top of this file.
 export PATH="${PATH}:${HOME}/.local/bin"
-eval "$(fig init zsh pre)"
+[ -s ~/.fig/shell/pre.sh ] && eval "$(fig init zsh pre)"
 
 # .zprofile
 
@@ -63,8 +63,8 @@ export HISTSIZE=3000
 export SAVEHIST=30000
 
 # 履歴 ｜ 各種設定
-setopt EXTENDED_HISTORY       # 開始と終了を記録
-setopt auto_pushd             # cd したら pushd
+setopt EXTENDED_HISTORY # 開始と終了を記録
+setopt auto_pushd       # cd したら pushd
 #setopt append_history         # 複数の zsh を同時に使う時など history ファイルに上書きせず追加
 setopt extended_history       # $HISTFILEに時間も記録
 setopt hist_expand            # 補完時にヒストリを自動的に展開
@@ -99,5 +99,4 @@ zstyle ":plugin:history-search-multi-word" active "bg=blue"          # 選択行
 # fi
 
 # Fig post block. Keep at the bottom of this file.
-eval "$(fig init zsh post)"
-
+[ -s ~/.fig/shell/pre.sh ] && eval "$(fig init zsh post)"
