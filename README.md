@@ -14,13 +14,13 @@ zsh
 The following utilities are required.
 
 ```bash
+# Redhel
 yum install -y \
     git zip unzip tar make python3 zsh file gcc vim-enhanced
-```
 
-```bash
-apt-get -y \
-    git zip unzip tar make python3 zsh file gcc vim-enhanced
+# Debian
+apt-get update && apt-get install -y \
+    git zip unzip tar make python3 zsh file gcc vim
 ```
 
 ```
