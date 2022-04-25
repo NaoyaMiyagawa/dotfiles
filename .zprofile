@@ -1,9 +1,6 @@
-
-#### FIG ENV VARIABLES ####
-# Please make sure this block is at the start of this file.
-[ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
-#### END FIG ENV VARIABLES ####
+##############################################################################
 # .zprofile
+##############################################################################
 
 autoload -U promptinit && promptinit
 
@@ -64,8 +61,8 @@ export HISTSIZE=3000
 export SAVEHIST=30000
 
 # 履歴 ｜ 各種設定
-setopt EXTENDED_HISTORY       # 開始と終了を記録
-setopt auto_pushd             # cd したら pushd
+setopt EXTENDED_HISTORY # 開始と終了を記録
+setopt auto_pushd       # cd したら pushd
 #setopt append_history         # 複数の zsh を同時に使う時など history ファイルに上書きせず追加
 setopt extended_history       # $HISTFILEに時間も記録
 setopt hist_expand            # 補完時にヒストリを自動的に展開
@@ -98,8 +95,3 @@ zstyle ":plugin:history-search-multi-word" active "bg=blue"          # 選択行
 # if [ $SHLVL = 1 ]; then
 #   tmux
 # fi
-
-#### FIG ENV VARIABLES ####
-# Please make sure this block is at the end of this file.
-[ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
-#### END FIG ENV VARIABLES ####

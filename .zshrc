@@ -2,6 +2,12 @@
 # .zshrc
 ##############################################################################
 
+# Fig pre block. Keep at the top of this file.
+export PATH="${PATH}:${HOME}/.local/bin"
+if [[ -f ~/.fig/shell/pre.sh ]]; then
+    eval "$(fig init zsh pre)"
+fi
+
 # ----------------------------------------------------------------------------
 # environment variables
 # ----------------------------------------------------------------------------
@@ -29,10 +35,7 @@ source $DOTFILES_PATH/.zsh/function.zsh
 # ----------------------------------------------------------------------------
 
 if is_osx; then
-    #### FIG ENV VARIABLES ####
-    # Please make sure this block is at the start of this file.
-    [ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
-    #### END FIG ENV VARIABLES ####
+
 
     # fluter
     export PATH="$PATH:$HOME/Documents/flutter/bin:$PATH"
@@ -78,13 +81,16 @@ if is_osx; then
         eval "$(direnv hook zsh)"
     fi
 
+    # asdf
+    . /usr/local/opt/asdf/libexec/asdf.sh
+
     # tfenv
     export PATH="$HOME/.anyenv/envs/tfenv/bin:$PATH"
 
     export PATH="/usr/local/opt/libxml2/bin:$PATH"
 
     # Dockerイメージのセキュリティ対策
-    export DOCKER_CONTENT_TRUST=1
+    #export DOCKER_CONTENT_TRUST=1
 
     # export LC_ALL=ja_JP.UTF-8
     export HOMEBREW_PREFIX="/usr/local"
@@ -182,7 +188,7 @@ fi
 # ----------------------------------------------------------------------------
 
 if [[ ! -f /usr/local/bin/starship ]]; then
-    command curl -fsSL https://starship.rs/install.sh | bash -s -- -y
+    command curl -sS https://starship.rs/install.sh | sh -s -- -y
 fi
 
 eval "$(starship init zsh)"
@@ -194,6 +200,10 @@ eval "$(starship init zsh)"
 if is_osx; then
     ### FIG ENV VARIABLES ####
     # Please make sure this block is at the end of this file.
-    [ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
-    ### END FIG ENV VARIABLES ####
+        ### END FIG ENV VARIABLES ####
+fi
+
+# Fig post block. Keep at the bottom of this file.
+if [[ -f ~/.fig/shell/pre.sh ]]; then
+    eval "$(fig init zsh post)"
 fi
