@@ -5,10 +5,13 @@
 ##############################################################################
 
 # Fig pre block. Keep at the top of this file.
-export PATH="${PATH}:${HOME}/.local/bin"
-if [[ -f ~/.fig/shell/pre.sh ]]; then
-    eval "$(fig init zsh pre)"
-fi
+. "$HOME/.fig/shell/zshrc.pre.zsh"
+
+# # Fig pre block. Keep at the top of this file.
+# export PATH="${PATH}:${HOME}/.local/bin"
+# if [[ -f ~/.fig/shell/pre.sh ]]; then
+#     eval "$(fig init zsh pre)"
+# fi
 
 # ----------------------------------------------------------------------------
 # environment variables
@@ -207,7 +210,5 @@ fi
 
 # Fig post block. Keep at the bottom of this file.
 if [[ -f ~/.fig/shell/pre.sh ]]; then
-    fi
-
-# Fig post block. Keep at the bottom of this file.
-[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && . "$HOME/.fig/shell/zshrc.post.zsh"
+    eval "$(fig init zsh post)"
+fi

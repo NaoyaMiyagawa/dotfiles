@@ -4,6 +4,9 @@
 # .zprofile
 ##############################################################################
 
+# Fig pre block. Keep at the top of this file.
+. "$HOME/.fig/shell/zprofile.pre.zsh"
+
 autoload -U promptinit && promptinit
 
 # ----------------------------------------------------------------------------
@@ -97,6 +100,3 @@ zstyle ":plugin:history-search-multi-word" active "bg=blue"          # 選択行
 # if [ $SHLVL = 1 ]; then
 #   tmux
 # fi
-
-# Fig post block. Keep at the bottom of this file.
-[[ -f "$HOME/.fig/shell/zprofile.post.zsh" ]] && . "$HOME/.fig/shell/zprofile.post.zsh"
