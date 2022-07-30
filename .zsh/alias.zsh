@@ -100,6 +100,9 @@ alias fzf='fzf --reverse'
 # tmux
 alias tm='tmux'
 
+# multipass
+alias mp='multipass'
+
 # vscode
 alias c.='code .'
 
