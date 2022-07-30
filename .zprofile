@@ -1,9 +1,8 @@
+# Fig pre block. Keep at the top of this file.
+[[ -f "$HOME/.fig/shell/zprofile.pre.zsh" ]] && . "$HOME/.fig/shell/zprofile.pre.zsh"
 ##############################################################################
 # .zprofile
 ##############################################################################
-
-# Fig pre block. Keep at the top of this file.
-. "$HOME/.fig/shell/zprofile.pre.zsh"
 
 autoload -U promptinit && promptinit
 
@@ -100,4 +99,4 @@ zstyle ":plugin:history-search-multi-word" active "bg=blue"          # 選択行
 # fi
 
 # Fig post block. Keep at the bottom of this file.
-. "$HOME/.fig/shell/zprofile.post.zsh"
+[[ -f "$HOME/.fig/shell/zprofile.post.zsh" ]] && . "$HOME/.fig/shell/zprofile.post.zsh"
