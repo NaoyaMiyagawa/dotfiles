@@ -47,9 +47,9 @@ alias lg='lazygit'
 if builtin command -v exa >/dev/null; then
     alias exa='exa --group-directories-first --git'
     alias e='exa'
-    alias el='exa -l'
-    alias ee='exa --time-style=long-iso -alg'
-    alias ela='exa --time-style=long-iso -alg'
+    alias el='exa -gl --time-style=long-iso'
+    alias ee='exa -alg --time-style=long-iso'
+    alias ela='exa -alg --time-style=long-iso'
     alias et='exa -T -L 1'
     alias eta='exa -aT -L 1'
 
