@@ -1,7 +1,5 @@
 # Fig pre block. Keep at the top of this file.
 [[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && . "$HOME/.fig/shell/zshrc.pre.zsh"
-# Fig pre block. Keep at the top of this file.
-[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && . "$HOME/.fig/shell/zshrc.pre.zsh"
 ##############################################################################
 # .zshrc
 ##############################################################################
@@ -31,7 +29,7 @@ DOTFILES_PATH=$HOME/dotfiles
 # zsh / zinit 設定ファイル読み込み
 # ----------------------------------------------------------------------------
 
-source ~/.zprofile
+# source ~/.zprofile
 source $DOTFILES_PATH/.zsh/function.zsh
 
 # ----------------------------------------------------------------------------
@@ -86,7 +84,9 @@ if is_osx; then
     fi
 
     # asdf
-    . /usr/local/opt/asdf/libexec/asdf.sh
+    if [[ -e /usr/local/opt/asdf/libexec/asdf.sh ]]; then
+        . /usr/local/opt/asdf/libexec/asdf.sh
+    fi
 
     # tfenv
     export PATH="$HOME/.anyenv/envs/tfenv/bin:$PATH"
@@ -95,6 +95,9 @@ if is_osx; then
 
     # Dockerイメージのセキュリティ対策
     #export DOCKER_CONTENT_TRUST=1
+    # multipass docker
+    export PATH="$PATH:/Users/miyagawa/Library/Application Support/multipass/bin"
+    export DOCKER_HOST="ssh://ubuntu@docker.local"
 
     # export LC_ALL=ja_JP.UTF-8
     export HOMEBREW_PREFIX="/usr/local"
