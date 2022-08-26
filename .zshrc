@@ -29,7 +29,7 @@ DOTFILES_PATH=$HOME/dotfiles
 # zsh / zinit 設定ファイル読み込み
 # ----------------------------------------------------------------------------
 
-# source ~/.zprofile
+source ~/.zprofile
 source $DOTFILES_PATH/.zsh/function.zsh
 
 # ----------------------------------------------------------------------------
