@@ -1,14 +1,9 @@
-# Fig pre block. Keep at the top of this file.
-[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && . "$HOME/.fig/shell/zshrc.pre.zsh"
 ##############################################################################
 # .zshrc
 ##############################################################################
 
-# # Fig pre block. Keep at the top of this file.
-# export PATH="${PATH}:${HOME}/.local/bin"
-# if [[ -f ~/.fig/shell/pre.sh ]]; then
-#     eval "$(fig init zsh pre)"
-# fi
+# Fig pre block. Keep at the top of this file.
+[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && . "$HOME/.fig/shell/zshrc.pre.zsh"
 
 # ----------------------------------------------------------------------------
 # environment variables
@@ -146,9 +141,6 @@ export BAT_THEME="TwoDark"
 # export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 # export FZF_DEFAULT_OPTS='--preview "bat  --color=always --style=header,grid --line-range :100 {}"'
 
-# git settings
-git config --global core.ignorecase false
-
 # ----------------------------------------------------------------------------
 # zinit 本体読み込み
 #
@@ -203,17 +195,6 @@ eval "$(starship init zsh)"
 # ----------------------------------------------------------------------------
 # New
 # ----------------------------------------------------------------------------
-
-if is_osx; then
-    ### FIG ENV VARIABLES ####
-    # Please make sure this block is at the end of this file.
-        ### END FIG ENV VARIABLES ####
-fi
-
-# Fig post block. Keep at the bottom of this file.
-if [[ -f ~/.fig/shell/pre.sh ]]; then
-    eval "$(fig init zsh post)"
-fi
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && . "$HOME/.fig/shell/zshrc.post.zsh"
