@@ -29,7 +29,8 @@
 !/.zshrc
 !/.zprofile
 !/.zsh/
-!/.zsh/*.zsh
+!/.zsh/**
+!/.zsh/**/*.zsh
 
 # .config
 !/.config
