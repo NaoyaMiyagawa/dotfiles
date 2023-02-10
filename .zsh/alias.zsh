@@ -109,7 +109,7 @@ alias mp='multipass'
 alias c.='code .'
 
 # xxenv で brew doctor の warning対策
-alias brew="PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin brew"
+# alias brew="PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin brew"
 
 # atcoder-cli で pypy として提出するためのsubmitコマンド
 alias accs='acc s --skip-filename -- --guess-python-interpreter pypy'

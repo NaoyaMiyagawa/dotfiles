@@ -98,5 +98,7 @@ zstyle ":plugin:history-search-multi-word" active "bg=blue"          # 選択行
 #   tmux
 # fi
 
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zprofile.post.zsh" ]] && builtin source "$HOME/.fig/shell/zprofile.post.zsh"
