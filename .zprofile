@@ -11,6 +11,9 @@ autoload -U promptinit && promptinit
 
 # emacsモード｜terminalで、Ctrl+A:行頭、Ctrl+E:行末 を有効にする設定
 bindkey -e
+bindkey "[D" backward-word
+bindkey "[C" forward-word
+
 # テーマ読み込み
 # source ~/dotfiles/zsh-my-theme.sh
 
