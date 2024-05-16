@@ -1,5 +1,9 @@
-if [[ ! -f /usr/local/bin/starship ]]; then
-    command curl -sS https://starship.rs/install.sh | sh -s -- -y
+if ! command -v starship &>/dev/null; then
+    if is_osx; then
+        brew install starship
+    else
+        command curl -sS https://starship.rs/install.sh | sh -s -- -y
+    fi
 fi
 
 eval "$(starship init zsh)"
