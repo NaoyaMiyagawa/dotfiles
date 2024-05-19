@@ -122,7 +122,7 @@ function peco-cdr () {
     fi
 }
 zle -N peco-cdr
-bindkey '^[' peco-cdr
+bindkey '^u' peco-cdr
 
 # ----------------------------------------------------------------------------
 # fbr ： Git ローカルブランチの曖昧検索 + git switch
