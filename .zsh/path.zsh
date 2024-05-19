@@ -74,6 +74,8 @@ if is_osx; then
     # export LC_ALL=ja_JP.UTF-8
     export HOMEBREW_PREFIX="/usr/local"
 
+    export PATH="$HOME/.console-ninja/.bin:$PATH"
+
     # # homebrew
     # eval "$(/opt/homebrew/bin/brew shellenv)"
 

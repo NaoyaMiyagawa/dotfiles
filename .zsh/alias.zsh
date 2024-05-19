@@ -86,7 +86,7 @@ alias dc='docker compose'
 # laravel php artisan
 alias pa='php artisan'
 # laravel sail
-alias sail='./vendor/bin/sail'
+alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
 
 # ----------------------------------------------------------------------------
 # Others
