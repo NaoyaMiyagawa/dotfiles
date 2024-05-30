@@ -39,6 +39,17 @@ if is_osx; then
     # export CPPFLAGS="-I/usr/local/opt/curl/include"
     # export PKG_CONFIG_PATH="/usr/local/opt/curl/lib/pkgconfig"
 
+    # php 8.1
+    export PATH="/opt/homebrew/opt/php@8.3/bin:$PATH"
+    export PATH="/opt/homebrew/opt/php@8.3/sbin:$PATH"
+    export LDFLAGS="-L/opt/homebrew/opt/php@8.3/lib"
+    export CPPFLAGS="-I/opt/homebrew/opt/php@8.3/include"
+
+    export PATH="/opt/homebrew/opt/icu4c/bin:$PATH"
+    export PATH="/opt/homebrew/opt/icu4c/sbin:$PATH"
+    export LDFLAGS="-L/opt/homebrew/opt/icu4c/lib"
+    export CPPFLAGS="-I/opt/homebrew/opt/icu4c/include"
+
     # anyenv
     if [[ -e "$HOME/.anyenv" ]]; then
         export PATH="$HOME/.anyenv/bin:$PATH"
@@ -54,9 +65,11 @@ if is_osx; then
     fi
 
     # asdf
-    if [[ -e /usr/local/opt/asdf/libexec/asdf.sh ]]; then
-        . /usr/local/opt/asdf/libexec/asdf.sh
-    fi
+    # if [[ -e /opt/homebrew/opt/asdf/etc/bash_completion.d/asdf.bash ]]; then
+    # echo -e "\n. $(brew --prefix asdf)/etc/bash_completion.d/asdf.bash"
+    # . /opt/homebrew/opt/asdf/etc/bash_completion.d/asdf.bash
+    # fi
+    . /opt/homebrew/opt/asdf/libexec/asdf.sh
 
     # tfenv
     if type tfenv >/dev/null 2>&1; then
@@ -75,6 +88,9 @@ if is_osx; then
     export HOMEBREW_PREFIX="/usr/local"
 
     export PATH="$HOME/.console-ninja/.bin:$PATH"
+
+    # lazy git config directory
+    export XDG_CONFIG_HOME="$HOME/.config"
 
     # # homebrew
     # eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -120,3 +136,6 @@ export BAT_THEME="TwoDark"
 # fzf
 # export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
 # export FZF_DEFAULT_OPTS='--preview "bat  --color=always --style=header,grid --line-range :100 {}"'
+# bzt (taurus)
+export PATH="$HOME/.console-ninja/.bin:$PATH"
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"

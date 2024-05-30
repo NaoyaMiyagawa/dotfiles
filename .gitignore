@@ -43,6 +43,9 @@
 # - iterm2
 !/.config/iterm2/
 !/.config/iterm2/**
+# - lazygit
+!/.config/lazygit/
+!/.config/lazygit/**
 
 # vim
 !/.vimrc
@@ -50,6 +53,10 @@
 /.vim/**
 !/.vim/colors
 !/.vim/colors/*
+
+# vscode
+!/vscode
+!/vscode/**
 
 # tmux
 !/.tmux.conf
