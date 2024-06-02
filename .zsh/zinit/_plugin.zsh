@@ -144,6 +144,20 @@ zinit light "junegunn/fzf"
 # zinit ice as"program" from"gh-r" mv"exa* -> exa"
 # zinit light ogham/exa
 
+# Install Rust (when not installed)
+if ! command -v rustc &>/dev/null; then
+    echo "Installing Rust as not installed..."
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    source $HOME/.cargo/env
+fi
+
+# eza | Rust based reinforced ls/exa https://github.com/eza-community/eza
+zinit ice from"gh-r" as"command" \
+    atclone"cargo install eza" \
+    atpull"%atclone" \
+    pick"eza"
+zinit load eza-community/eza
+
 # # All of the above using the for-syntax and also z-a-bin-gem-node annex
 # zinit wait"1" lucid from"gh-r" as"null" for \
 #     sbin"fzf" junegunn/fzf \
