@@ -1,0 +1,28 @@
+[init]
+    defaultBranch = main
+[pull]
+    rebase = false
+[core]
+    ignorecase = false
+[push]
+    autoSetupRemote = true
+[safe]
+    directory = /var/www/html
+[alias]
+   vacuum = "!f () { git checkout $1; git branch --merged | egrep -v '\\*|develop|main' | xargs git branch -d; git fetch --prune; };f"
+
+# >>> delta >>>
+[core]
+    pager = delta
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    line-numbers = true
+	side-by-side = true
+    navigate = true    # use n and N to move between diff sections
+    dark = true
+[merge]
+    conflictstyle = diff3
+[diff]
+    colorMoved = default
+# <<< delta <<<
