@@ -42,18 +42,18 @@ alias gcz='git cz'
 alias lg='lazygit'
 
 # ----------------------------------------------------------------------------
-# exa ( https://github.com/ogham/exa )
+# eza ( https://github.com/eza-community/eza )
 # ----------------------------------------------------------------------------
-if builtin command -v exa >/dev/null; then
-    alias exa='exa --group-directories-first --git'
-    alias e='exa'
-    alias el='exa -gl --time-style=long-iso'
-    alias ee='exa -alg --time-style=long-iso'
-    alias ela='exa -alg --time-style=long-iso'
-    alias et='exa -T -L 1'
-    alias eta='exa -aT -L 1'
+if builtin command -v eza >/dev/null; then
+    alias eza='eza --group-directories-first --git'
+    alias e='eza'
+    alias el='eza -gl --time-style=long-iso'
+    alias ee='eza -alg --time-style=long-iso'
+    alias ela='eza -alg --time-style=long-iso'
+    alias et='eza -T -L 1'
+    alias eta='eza -aT -L 1'
 
-    alias ls="exa"
+    alias ls="eza"
 fi
 
 # ----------------------------------------------------------------------------

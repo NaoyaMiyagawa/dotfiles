@@ -137,19 +137,14 @@ zinit light "sharkdp/bat"
 zinit ice from"gh-r" as"program"
 zinit light "junegunn/fzf"
 
-# exa ｜ ls上位互換
-# zinit wait lucid light-mode from"gh-r" as"null" for mv"exa* -> exa" ogham/exa
-# zinit ice wait"2" lucid from"gh-r" as"program" mv"exa* -> exa"
-# zinit light "ogham/exa"
-# zinit ice as"program" from"gh-r" mv"exa* -> exa"
-# zinit light ogham/exa
+# eza | Rust based reinforced ls/exa https://github.com/eza-community/eza
+zinit wait lucid light-mode from"gh-r" as"program" mv"eza* -> eza" pick"eza/eza" for 'eza-community/eza'
 
 # # All of the above using the for-syntax and also z-a-bin-gem-node annex
 # zinit wait"1" lucid from"gh-r" as"null" for \
 #     sbin"fzf" junegunn/fzf \
 #     sbin"**/fd" @sharkdp/fd \
 #     sbin"**/bat" @sharkdp/bat \
-#     sbin"exa* -> exa" ogham/exa
 
 # tmux のウィンドウを作業中のGitレポジトリ名に応じて自動的にリネームしてくれるプラグイン
 # zplugin light 'sei40kr/zsh-tmux-rename'
