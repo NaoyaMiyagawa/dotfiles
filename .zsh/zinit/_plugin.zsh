@@ -119,14 +119,6 @@ zinit light "peco/peco"
 # ripgrep ｜ grep上位互換
 zinit wait'3' lucid light-mode from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg/rg" for 'BurntSushi/ripgrep'
 
-# # LS_COLORS ｜ https://zdharma-continuum.github.io/zinit/wiki/LS_COLORS-explanation/
-# zinit ice atclone"dircolors -b LS_COLORS > clrs.zsh" \
-#     atpull'%atclone' pick"clrs.zsh" nocompile'!' \
-#     atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”'
-# zinit light trapd00r/LS_COLORS
-# # Download the default profile
-# zinit pack for ls_colors
-
 # bat ｜ less上位互換
 # zinit wait lucid light-mode from"gh-r" as"command" mv"bat* -> bat" pick"bat/bat" for '@sharkdp/bat'
 zinit ice as"command" from"gh-r" mv"bat* -> bat" pick"bat/bat"

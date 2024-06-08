@@ -77,6 +77,9 @@ fd() {
         -o -path '*/vendor/*' \
         -o -path '*/vendors/*' \
         -o -path '*/node_modules/*' \
+        -o -path '*/.git/*' \
+        -o -path '*/dist/*' \
+        -o -path '*/build/*' \
         \) -prune -o -type d -print 2>/dev/null | fzf +m) &&
         cd "$dir"
 }

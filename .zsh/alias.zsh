@@ -113,3 +113,6 @@ alias c.='code .'
 
 # atcoder-cli で pypy として提出するためのsubmitコマンド
 alias accs='acc s --skip-filename -- --guess-python-interpreter pypy'
+
+# zsh-benchmark
+alias zsh-benchmark='for i in {1..5}; do time zsh -ic exit; done'
