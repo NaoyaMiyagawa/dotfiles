@@ -97,6 +97,9 @@ zinit wait lucid from"gh-r" as"program" for @'junegunn/fzf'
 # bat ｜ enhanced `less`
 zinit wait lucid light-mode as"command" from"gh-r" mv"bat* -> bat" pick"bat/bat" for @'sharkdp/bat'
 
+# rust, cargo | required for rust based plugins
+zinit wait lucid light-mode for @'zdharma-continuum/zinit-annex-rust'
+
 # eza | Rust based reinforced ls/exa https://github.com/eza-community/eza
 zinit wait lucid light-mode from"gh-r" as"program" mv"eza* -> eza" pick"eza/eza" for @'eza-community/eza'
 
