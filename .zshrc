@@ -10,25 +10,24 @@
 
 DOTFILES_PATH=$HOME/dotfiles
 
-export XDG_CONFIG_HOME="$HOME/.config"
-
-# source $DOTFILES_PATH/.zprofile
-source $DOTFILES_PATH/.zsh/function.zsh
-source $DOTFILES_PATH/.zsh/env.zsh
-source $DOTFILES_PATH/.zsh/alias.zsh
-source $DOTFILES_PATH/.zsh/path.zsh
+source $DOTFILES_PATH/.zshenv
+source $DOTFILES_PATH/.config/zsh/function.zsh
+source $DOTFILES_PATH/.config/zsh/env.zsh
+source $DOTFILES_PATH/.config/zsh/alias.zsh
+source $DOTFILES_PATH/.config/zsh/path.zsh
 
 # ----------------------------------------------------------------------------
 # Load zinit
 # ----------------------------------------------------------------------------
 
-source $DOTFILES_PATH/.zsh/zinit/index.zsh
+source $DOTFILES_PATH/.config/zsh/zinit/index.zsh
+source $DOTFILES_PATH/.config/zsh/zinit/_plugin.zsh
 
 # ----------------------------------------------------------------------------
 # Load prompt theme
 # ----------------------------------------------------------------------------
 
-source $DOTFILES_PATH/.zsh/prompt_theme.zsh
+source $DOTFILES_PATH/.config/zsh/prompt_theme.zsh
 
 # ----------------------------------------------------------------------------
 # New
