@@ -26,6 +26,8 @@ path=(
     "/opt/homebrew/opt/php@8.3/sbin"(N-/)
     "/opt/homebrew/opt/icu4c/bin"(N-/)
     "/opt/homebrew/opt/icu4c/sbin"(N-/)
+    # cargo
+    "$HOME/.cargo/bin"(N-/)
     # online-judge-tool 用 ｜ `time` を gtimeではなくtimeとして動かす
     "/usr/local/opt/gnu-time/libexec/gnubin"(N-/)
     # tfenv
@@ -44,9 +46,10 @@ if is_osx; then
     fi
 
     # asdf
-    if [[ -e /opt/homebrew/opt/asdf/etc/bash_completion.d/asdf.bash ]]; then
-        echo -e "\n. $(brew --prefix asdf)/etc/bash_completion.d/asdf.bash"
-        . /opt/homebrew/opt/asdf/etc/bash_completion.d/asdf.bash
-    fi
+    # if command -v asdf &> /dev/null; then
+    #     export ASDF_DIR =
+    #     . $HOME/.asdf/asdf.sh
+    #     . $HOME/.asdf/completions/asdf.bash
+    # fi
 fi
 
