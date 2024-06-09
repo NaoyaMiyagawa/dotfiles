@@ -64,6 +64,19 @@ is_ubuntu() {
     if [ "$PLATFORM" = $TARGET ]; then return 0; else return 1; fi
 }
 
+# ----------------------------------------------------------------------------
+# zsh hooks
+# ----------------------------------------------------------------------------
+
+# control commands to record in history
+zshaddhistory() {
+    local line="${1%%$'\n'}"
+    local lsCmds = "ls|ll|lla|ls"
+    local gitCmds = "ga|gd|gds|gf|gst"
+    local lazygitCmds = "lazygit|lg"
+
+    [[ ! "$line" =~ "^(cd|$lsCmds|$gitCmds|$lazygitCmds)($| )" ]]
+}
 
 # ----------------------------------------------------------------------------
 # fd ： 曖昧検索を使ったディレクトリ移動
