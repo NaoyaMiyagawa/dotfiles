@@ -21,17 +21,3 @@ autoload -Uz _zinit
 ### End of Zinit's installer chunk
 
 source $DOTFILES_PATH/.zsh/zinit/_plugin.zsh
-
-# # for "There are insecure files:" Error when executing "compaudit"
-# # https://stackoverflow.com/questions/13762280/zsh-compinit-insecure-directories
-# # [[ -e! compaudit ]] && compaudit | xargs chmod g-w
-# # compaudit && compaudit | xargs chmod g-w
-# if [ ! -e compaudit ]; then
-#     # https://github.com/zsh-users/zsh-completions/issues/433
-#     for f in $(compaudit); do
-#         chown $(whoami):admin $f
-#         chmod go-w $f
-#     done
-#     compaudit | xargs chown root
-#     compaudit | xargs chmod go-w
-# fi
