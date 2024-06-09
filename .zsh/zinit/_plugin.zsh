@@ -1,145 +1,107 @@
 ##############################################################################
-# Plugins
+# Plugins: Start
 ##############################################################################
+
+# Articles
+# - [zinit をしっかりと理解する](https://zenn.dev/xeres/articles/2021-05-05-understanding-zinit-syntax)
+
+# Modifiers
+# - wait : lazy load. it's called 'Turbo mode'. wait = wait"0"
+# - lucid : not to show loading message
+# - blockf : block plugins to modify $fpath. better to use with plugins of completion
+
+# Syntax
+# - load : load a plugin with tracking
+# - light : load a plugin without tracking. faster
+# - snippet : load a snippet of code
+# - ice : apply modifiers for the following plugin load once
+# - for : apply modifiers for the following multiple plugins
 
 # 補完をリセット
 autoload -Uz compinit && compinit
 
 # ----------------------------------------------------------------------------
-# oh-my-zsh: snippet
-# ----------------------------------------------------------------------------
-# OS間のクリップボードの差異を吸収するコマンド定義
-zinit snippet 'OMZ::lib/clipboard.zsh'
-# zsh の補完を使いやすく設定する
-zinit snippet 'OMZ::lib/completion.zsh'
-zinit snippet 'OMZ::lib/compfix.zsh'
-# Gitの補完と大量のエイリアスを定義する
-zinit snippet 'OMZ::plugins/git/git.plugin.zsh'
-# GitHub のレポジトリを管理するためのコマンドを定義する
-zinit snippet 'OMZ::plugins/github/github.plugin.zsh'
-# 非GNU系OSにインストールしたGNU系ツールをプリフィックスなしで使えるようにする
-zinit snippet 'OMZ::plugins/gnu-utils/gnu-utils.plugin.zsh'
-# .zshrc を zcompile してロードしてくれる src コマンドを定義する
-# zinit snippet 'OMZ::plugins/zsh_reload/zsh_reload.plugin.zsh'
-# 作業ディレクトリに .env ファイルがあった場合に自動的にロードする
-# zinit snippet 'OMZ::plugins/dotenv/dotenv.plugin.zsh'
-
-# ----------------------------------------------------------------------------
 # Zsh Supports
 # ----------------------------------------------------------------------------
 
-# コマンド補完
-zinit wait lucid light-mode for \
-    zsh-users/zsh-completions \
-    jsforce/jsforce-zsh-completions
+# - zsh-users/zsh-completions                       : provide additional completion definitions
+# - zsh-users/zsh-autosuggestions                   : suggest commands as you type based on history
+# - zdharma-continuum/fast-syntax-highlighting      : syntax highlighting
+# - OMZ::lib/clipboard.zsh                          : absorb clipboard differences between OSs
+# - OMZ::lib/completion.zsh                         : make zsh completions easier to use
+# - OMZ::lib/compfix.zsh                            : make zsh completions easier to use
+# - OMZ::plugins/gnu-utils/gnu-utils.plugin.zsh     : make non-GNU OSes use GNU tools without prefix
+# - OMZ::plugins/dotenv/dotenv.plugin.zsh           : automatically load .env files if they exist
 
-# コマンドハイライト
-# zinit wait lucid light-mode for atload'_zsh_highlight' 'zdharma-continuum/fast-syntax-highlighting'
-# シンタックスハイライト
-zinit light zdharma-continuum/fast-syntax-highlighting
+zinit wait lucid blockf light-mode for \
+    @'zsh-users/zsh-completions' \
+    @'zdharma-continuum/fast-syntax-highlighting' \
+    @'OMZ::lib/clipboard.zsh' \
+    @'OMZ::plugins/gnu-utils/gnu-utils.plugin.zsh' \
+    @'OMZ::plugins/dotenv/dotenv.plugin.zsh'
 
-# コマンドをサジェストする
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#55aa55,bg=white,underline"
-zinit wait lucid light-mode for atload'_zsh_autosuggest_start' 'zsh-users/zsh-autosuggestions'
+zinit wait lucid light-mode atload'_zsh_autosuggest_start' for \
+    @'zsh-users/zsh-autosuggestions'
 
 # ----------------------------------------------------------------------------
 # Git Supports
 # ----------------------------------------------------------------------------
 
-# `git open` | クローンしたGit作業ディレクトリで、コマンド `git open` を実行するとブラウザでGitHubが開く
-zinit wait lucid light-mode for paulirish/git-open
+# Alias
+# - OMZ::plugins/git/git.plugin.zsh                 : define git completions and a ton of aliases
+# - OMZ::plugins/github/github.plugin.zsh           : define commands to manage GitHub repositories
 
-# ls の代替コマンド k でgithub連携あり
-zinit wait lucid light-mode for pick'k.sh' 'supercrabtree/k'
+zinit wait lucid blockf light-mode for \
+    @'OMZ::plugins/git/git.plugin.zsh' \
+    @'OMZ::plugins/github/github.plugin.zsh'
 
-# gitの拡張コマンド
-zinit wait"2" lucid light-mode as"program" pick"$ZPFX/bin/git-*" make"PREFIX=$ZPFX" for 'tj/git-extras'
+# Tools
+# - paulirish/git-open                              : `git open` open repository in browser
+# - mollifier/cd-gitroot                            : `cd-gitroot` jump to the root directory of the current repository
 
-# git diif や tig の可読性を良くする（前提｜`HOMEBREW_PREFIX` に Homebrew のpathを設定している）
-# zinit snippet --command "${HOMEBREW_PREFIX}/share/git-core/contrib/diff-highlight/diff-highlight"
-
-# diff-so-fancy
-# zinit ice wait'2' lucid as"program" pick"bin/git-dsf"
-# zinit load zdharma-continuum/zsh-diff-so-fancy
+zinit wait'1' lucid light-mode for \
+    @'paulirish/git-open' \
+    @'mollifier/cd-gitroot'
 
 # dandavision/delta
-zinit wait lucid light-mode from"gh-r" as"program" mv"delta* -> delta" pick"delta/delta" for 'dandavison/delta'
+zinit ice wait'1' lucid from"gh-r" as"program" mv"delta* -> delta" pick"delta/delta"
+zinit light 'dandavison/delta'
 
 # ----------------------------------------------------------------------------
 # Utilities
 # ----------------------------------------------------------------------------
 
+# - zdharma-continuum/history-search-multi-word     : provide additional completion definitions
+# - zsh-users/zsh-autosuggestions                   : suggest commands as you type based on history
+# - mollifier/cd-bookmark                           : bookmark directories
+
 # history-search plugin
-zinit load zdharma-continuum/history-search-multi-word
+zinit wait lucid for \
+    @'zdharma-continuum/history-search-multi-word' \
+    @'djui/alias-tips' \
+    @'mollifier/cd-bookmark'
 
-# エイリアスが使える際に表示する
-export ZSH_PLUGINS_ALIAS_TIPS_TEXT='------ alias-tips: '
-zinit wait lucid light-mode for 'djui/alias-tips'
+export ZSH_PLUGINS_ALIAS_TIPS_TEXT='----- alias-tips: '
 
-# fzf を使ったウィジェットが複数バンドルされたもの
-zinit wait'3' lucid light-mode for 'mollifier/anyframe'
-
-# .zshでないファイルをcompletionファイルとして認識させつつバルクロード
-# zinit wait lucid is-snippet as"completion" for \
-#     OMZP::docker/_docker \
-#     OMZP::docker-compose/_docker-compose \
-#     OMZP::rust/_rust \
-#     OMZP::cargo/_cargo \
-#     OMZP::rustup/_rustup
-
-# # vim ｜ https://zdharma-continuum.github.io/zinit/wiki/Compiling-programs/
-# zinit wait'1' lucid light-mode as"program" \
-#     atclone"rm -f src/auto/config.cache; \
-#         ./configure --prefix=$HOME/local --with-features=huge --enable-multibyte --enable-rubyinterp --enable-pythoninterp --enable-perlinterp --enable-fontset" \
-#     atpull"%atclone" make pick"src/vim" for 'vim/vim'
-# zinit ice as"program" atclone"rm -f src/auto/config.cache; ./configure" \
-#     atpull"%atclone" make pick"src/vim"
-# zinit light vim/vim
-
-# 作業中のGitのルートディレクトリまでジャンプするコマンドを定義する
-zinit wait'1' lucid light-mode for 'mollifier/cd-gitroot'
-# ディレクトリをブックマークする
-zinit wait'1' lucid light-mode for 'mollifier/cd-bookmark'
-
-# 文章を複数キーワードで一括ハイライトする
-zinit wait'3' lucid light-mode for pick"h.sh" 'paoloantinori/hhighlighter'
-
-# fzf で絵文字を検索＆入力する
-zinit wait'3' lucid light-mode for 'b4b4r07/emoji-cli'
-
-# enhancd | cd上位互換
-zinit wait lucid pick'init.sh' nocompile'!' for 'b4b4r07/enhancd'
+# enhancd | enhanced `cd`
+zinit wait lucid pick'init.sh' nocompile'!' for 'babarot/enhancd'
 export ENHANCD_FILTER=fzf:peco:fzy
 
 # peco ｜ fuzzy-search
-# zinit wait lucid light-mode from"gh-r" as"command" mv"peco* -> peco" pick"peco/peco" for 'peco/peco'
-zinit ice from"gh-r" as"program" pick"*/peco"
-zinit light "peco/peco"
+zinit wait lucid from"gh-r" as"program" pick"*/peco" for @'peco/peco'
 
-# ripgrep ｜ grep上位互換
-zinit wait'3' lucid light-mode from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg/rg" for 'BurntSushi/ripgrep'
+# fzf ｜ fuzzy-search
+zinit wait lucid from"gh-r" as"program" for @'junegunn/fzf'
 
-# bat ｜ less上位互換
-# zinit wait lucid light-mode from"gh-r" as"command" mv"bat* -> bat" pick"bat/bat" for '@sharkdp/bat'
-zinit ice as"command" from"gh-r" mv"bat* -> bat" pick"bat/bat"
-zinit light "sharkdp/bat"
-
-# fd ｜ find上位互換
-# zinit wait'3' lucid light-mode from"gh-r" as"command" mv"fd* -> fd" pick"fd/fd" for '@sharkdp/fd'
-zinit ice from"gh-r" as"program"
-zinit light "junegunn/fzf"
+# bat ｜ enhanced `less`
+zinit wait lucid light-mode as"command" from"gh-r" mv"bat* -> bat" pick"bat/bat" for @'sharkdp/bat'
 
 # eza | Rust based reinforced ls/exa https://github.com/eza-community/eza
-zinit wait lucid light-mode from"gh-r" as"program" mv"eza* -> eza" pick"eza/eza" for 'eza-community/eza'
+zinit wait lucid light-mode from"gh-r" as"program" mv"eza* -> eza" pick"eza/eza" for @'eza-community/eza'
 
-# # All of the above using the for-syntax and also z-a-bin-gem-node annex
-# zinit wait"1" lucid from"gh-r" as"null" for \
-#     sbin"fzf" junegunn/fzf \
-#     sbin"**/fd" @sharkdp/fd \
-#     sbin"**/bat" @sharkdp/bat \
-
-# tmux のウィンドウを作業中のGitレポジトリ名に応じて自動的にリネームしてくれるプラグイン
-# zplugin light 'sei40kr/zsh-tmux-rename'
+# ripgrep ｜ enhanced `grep`
+zinit wait'3' lucid light-mode from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg/rg" for @'BurntSushi/ripgrep'
 
 if is_osx; then
     # AWS CLI v2の補完。
