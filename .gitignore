@@ -42,6 +42,7 @@
 !/.config/karabiner/assets/**
 # - iterm2
 !/.config/iterm2/
+!/.config/iterm2/AppSupport
 !/.config/iterm2/**
 # - lazygit
 !/.config/lazygit/
