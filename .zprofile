@@ -14,13 +14,6 @@ bindkey -e
 bindkey "[D" backward-word
 bindkey "[C" forward-word
 
-# テーマ読み込み
-# source ~/dotfiles/zsh-my-theme.sh
-
-setopt auto_cd # ディレクトリ名だけでcdする
-# setopt list_packed
-setopt list_types
-
 ## 実行したプロセスの消費時間が3秒以上かかったら
 ## 自動的に消費時間の統計情報を表示する。
 REPORTTIME=3
@@ -43,6 +36,7 @@ zstyle ':completion:*' recent-dirs-insert both
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 # 補完 ｜ 各種設定
 setopt always_last_prompt # 無駄なスクロールを避ける
+setopt auto_cd            # ディレクトリ名だけでcdする
 setopt auto_list          # 補完候補が複数ある時に、一覧表示
 setopt auto_menu          # 補完キー連打で順に補完候補を自動で補完
 setopt auto_param_slash   # ディレクトリ名の補完で末尾の / を自動的に付加し、次の補完に備える
@@ -50,6 +44,7 @@ setopt complete_in_word   # 語の途中でもカーソル位置で補完
 setopt extended_glob      # 拡張globを有効にする。
 setopt glob               #
 setopt glob_complete      # globを展開しないで候補の一覧から補完する。
+setopt list_types         #
 setopt magic_equal_subst  # コマンドラインの引数で --prefix=/usr などの = 以降でも補完できる
 setopt mark_dirs          # ファイル名の展開でディレクトリにマッチした場合 末尾に / を付加
 setopt numeric_glob_sort  # 辞書順ではなく数字順に並べる。
@@ -66,9 +61,9 @@ export HISTSIZE=3000
 export SAVEHIST=30000
 
 # 履歴 ｜ 各種設定
-setopt EXTENDED_HISTORY # 開始と終了を記録
-setopt auto_pushd       # cd したら pushd
-#setopt append_history         # 複数の zsh を同時に使う時など history ファイルに上書きせず追加
+# setopt append_history          # 複数の zsh を同時に使う時など history ファイルに上書きせず追加
+setopt EXTENDED_HISTORY       # 開始と終了を記録
+setopt auto_pushd             # cd したら pushd
 setopt extended_history       # $HISTFILEに時間も記録
 setopt hist_expand            # 補完時にヒストリを自動的に展開
 setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
@@ -97,9 +92,9 @@ zstyle ":plugin:history-search-multi-word" active "bg=blue"          # 選択行
 # bindkey "^S" history-incremental-search-forward
 
 # 初回シェル時のみ tmux実行
-# if [ $SHLVL = 1 ]; then
-#   tmux
-# fi
+if [ $SHLVL = 1 ]; then
+    tmux attach -t default || tmux new -s default
+fi
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
