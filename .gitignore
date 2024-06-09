@@ -28,6 +28,7 @@
 # zsh
 !/.zshrc
 !/.zprofile
+!/.zshenv
 !/.zsh/
 !/.zsh/**
 !/.zsh/**/*.zsh
@@ -49,6 +50,9 @@
 # - git/config
 !/.config/git/
 !/.config/git/**
+# - config/zsh
+!/.config/zsh/
+!/.config/zsh/**
 
 # vim
 !/.vimrc

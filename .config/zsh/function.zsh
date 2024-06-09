@@ -71,9 +71,9 @@ is_ubuntu() {
 # control commands to record in history
 zshaddhistory() {
     local line="${1%%$'\n'}"
-    local lsCmds = "ls|ll|lla|ls"
-    local gitCmds = "ga|gd|gds|gf|gst"
-    local lazygitCmds = "lazygit|lg"
+    local lsCmds="ls|ll|lla|ls"
+    local gitCmds="ga|gd|gds|gf|gst"
+    local lazygitCmds="lazygit|lg"
 
     [[ ! "$line" =~ "^(cd|$lsCmds|$gitCmds|$lazygitCmds)($| )" ]]
 }
