@@ -46,10 +46,11 @@ if is_osx; then
     fi
 
     # asdf
-    # if command -v asdf &> /dev/null; then
-    #     export ASDF_DIR =
-    #     . $HOME/.asdf/asdf.sh
-    #     . $HOME/.asdf/completions/asdf.bash
-    # fi
+    if command -v asdf &> /dev/null; then
+        # export ASDF_DIR =
+        . "$HOME/.asdf/asdf.sh"
+        # . "$HOME/.asdf/completions/asdf.bash"
+        fpath=(${ASDF_DIR}/completions $fpath)
+    fi
 fi
 
