@@ -22,6 +22,10 @@ export XDG_CACHE_HOME="$HOME/.cache"
 
 # zsh
 export HISTFILE="$XDG_STATE_HOME/zsh_history"
+# - in memory
+export HISTSIZE=3000
+# - in file
+export SAVEHIST=30000
 
 # ts-node | https://github.com/TypeStrong/ts-node#ts_node_history
 export TS_NODE_HISTORY="$XDG_STATE_HOME/ts_node_repl_history"
