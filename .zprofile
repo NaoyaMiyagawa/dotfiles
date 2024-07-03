@@ -53,13 +53,6 @@ setopt numeric_glob_sort  # 辞書順ではなく数字順に並べる。
 # ----------------------------------------------------------------------------
 # 履歴
 
-# 履歴 ｜ 履歴の保存先
-export HISTFILE=${HOME}/.zhistory
-# 履歴 ｜ メモリに保存する履歴件数
-export HISTSIZE=3000
-# 履歴 ｜ ファイルに保存される履歴の件数
-export SAVEHIST=30000
-
 # 履歴 ｜ 各種設定
 # setopt append_history          # 複数の zsh を同時に使う時など history ファイルに上書きせず追加
 setopt EXTENDED_HISTORY       # 開始と終了を記録
@@ -90,13 +83,6 @@ zstyle ":history-search-multi-word" highlight-color "fg=yellow,bold" # 一致箇
 zstyle ":plugin:history-search-multi-word" active "bg=blue"          # 選択行のスタイル
 # bindkey "^R" history-incremental-search-backward
 # bindkey "^S" history-incremental-search-forward
-
-# 初回シェル時のみ tmux実行
-if [ $SHLVL = 1 ]; then
-    tmux attach -t default || tmux new -s default
-fi
-
-eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh"
