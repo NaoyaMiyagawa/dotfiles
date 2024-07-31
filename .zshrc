@@ -35,7 +35,9 @@ source $DOTFILES_PATH/.config/zsh/prompt_theme.zsh
 
 # 初回シェル時のみ tmux実行
 if [ $SHLVL = 1 ]; then
-    tmux attach -t default || tmux new -s default
+    if command -v tmux &>/dev/null; then
+        tmux attach -t default || tmux new -s default
+    fi
 fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
