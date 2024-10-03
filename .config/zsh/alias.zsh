@@ -40,6 +40,8 @@ alias gop='git open'
 alias gcz='git cz'
 # lazygit
 alias lg='lazygit'
+# git town
+alias gt='git town'
 
 # ----------------------------------------------------------------------------
 # eza ( https://github.com/eza-community/eza )
