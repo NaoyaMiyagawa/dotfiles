@@ -17,7 +17,7 @@
 # - ice : apply modifiers for the following plugin load once
 # - for : apply modifiers for the following multiple plugins
 
-# 補完をリセット
+# Reset completion
 autoload -Uz compinit && compinit
 
 # ----------------------------------------------------------------------------
@@ -41,8 +41,10 @@ zinit wait lucid blockf light-mode for \
     @'OMZ::plugins/dotenv/dotenv.plugin.zsh'
 
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#55aa55,bg=white,underline"
-zinit wait lucid light-mode atload'_zsh_autosuggest_start' for \
-    @'zsh-users/zsh-autosuggestions'
+# - comment out because amazon q gives error (e.g. _zsh_highlight_widget_orig-s000-r305-accept-line:9: maximum nested...)
+# zinit wait lucid light-mode atload'_zsh_autosuggest_start' for \
+#     @'zsh-users/zsh-autosuggestions'
+zinit light 'zsh-users/zsh-autosuggestions'
 
 # ----------------------------------------------------------------------------
 # Git Supports
