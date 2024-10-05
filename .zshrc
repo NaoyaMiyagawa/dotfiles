@@ -36,12 +36,13 @@ source $DOTFILES_PATH/.config/zsh/prompt_theme.zsh
 
 # 初回シェル時のみ tmux実行
 if [ $SHLVL = 1 ]; then
-    if command -v tmux &>/dev/null; then
-        tmux attach -t default || tmux new -s default
-    fi
+  if command -v tmux &>/dev/null; then
+    tmux attach -t default || tmux new -s default
+  fi
 fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+# Q post block. Keep at the bottom of this file.
