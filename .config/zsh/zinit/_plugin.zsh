@@ -17,9 +17,6 @@
 # - ice : apply modifiers for the following plugin load once
 # - for : apply modifiers for the following multiple plugins
 
-# Reset completion
-autoload -Uz compinit && compinit
-
 # ----------------------------------------------------------------------------
 # Zsh Supports
 # ----------------------------------------------------------------------------
