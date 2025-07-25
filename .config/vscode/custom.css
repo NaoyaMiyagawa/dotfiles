@@ -1,0 +1,11 @@
+/* Notification at left bottom */
+.notifications-list-container {
+  width: 500px !important;
+  left: calc(50% - 200px);
+}
+
+/* Command Palette */
+.quick-input-widget {
+  width: 800px !important;
+  left: calc(50% - 500px);
+}
