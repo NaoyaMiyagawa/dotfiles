@@ -1,3 +1,8 @@
+/**
+ * Examples:
+ * - https://gist.github.com/joshcirre/bf958a8636e2bdeaf484be5d0f49ba50
+ */
+
 /* Notification at left bottom */
 .notifications-list-container {
   width: 500px !important;
@@ -7,5 +12,14 @@
 /* Command Palette */
 .quick-input-widget {
   width: 800px !important;
-  left: calc(50% - 500px);
+  left: calc(25% - 400px);
+
+  /* transform: translateY(-50%) !important; */
+  /* top: 50% !important; */
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.45) !important;
+  padding: 10px 10px 18px 10px !important;
+  background-color: #2b2e3c !important;
+  border-radius: 6px !important;
+  border: 1px solid #63697355 !important;
+  z-index: 1000000 !important;
 }
