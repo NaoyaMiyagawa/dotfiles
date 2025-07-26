@@ -1,0 +1,32 @@
+# starship.toml
+!starship.toml
+
+# karabiner
+!karabiner/
+!karabiner/*.json
+!karabiner/assets
+!karabiner/assets/**
+
+# iterm2
+!iterm2/
+!iterm2/com.googlecode.iterm2.plist
+
+# lazygit
+!lazygit/
+!lazygit/**
+
+# git
+!git/
+!git/**
+
+# tmux
+!tmux/
+!tmux/**
+
+# vscode
+!vscode/
+!vscode/**
+
+# zsh
+!zsh/
+!zsh/**
