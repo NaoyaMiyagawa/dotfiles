@@ -35,24 +35,6 @@
 
 # .config
 !/.config
-!/.config/starship.toml
-# - karabiner
-!/.config/karabiner
-!/.config/karabiner/*.json
-!/.config/karabiner/assets
-!/.config/karabiner/assets/**
-# - iterm2
-!/.config/iterm2/
-!/.config/iterm2/com.googlecode.iterm2.plist
-# - lazygit
-!/.config/lazygit/
-!/.config/lazygit/**
-# - git/config
-!/.config/git/
-!/.config/git/**
-# - config/zsh
-!/.config/zsh/
-!/.config/zsh/**
 
 # vim
 !/.vimrc
@@ -64,11 +46,6 @@
 # vscode
 !/vscode
 !/vscode/**
-
-# tmux
-!/.tmux.conf
-!.config/tmux
-!.config/tmux/**
 
 # linter
 !/.stylelintrc.js
