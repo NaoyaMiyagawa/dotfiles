@@ -1,35 +1,11 @@
 /**
  * Examples:
  * - https://www.youtube.com/watch?v=9_I0bySQoCs&ab_channel=GlennRaya
+ *   https://github.com/glennraya/vscode-settings-json/blob/main/custom-vscode.css
+ *
  * - https://www.youtube.com/watch?v=axPTJq-Yfd0&t=321s&ab_channel=JoshCirre
+ *   https://gist.github.com/joshcirre/bf958a8636e2bdeaf484be5d0f49ba50
  */
-
-/** Scrollbar */
-.scrollbar {
-  --color-scrollbar: #94a3df;
-
-  &.vertical {
-    .slider {
-      width: 2px !important;
-      background: var(--color-scrollbar) !important;
-      border-radius: 5px !important;
-      margin-left: 10px !important;
-    }
-  }
-
-  &.horizontal {
-    position: absolute !important;
-    height: 2px !important;
-    bottom: 3px !important;
-    left: 0px !important;
-
-    .slider {
-      background: var(--color-scrollbar) !important;
-      border-radius: 5px !important;
-      height: 2px !important;
-    }
-  }
-}
 
 /** Notification at left bottom */
 .notifications-list-container {
@@ -109,6 +85,44 @@
             font-size: var(--font-size-search-result-item-dir) !important;
           }
         }
+      }
+    }
+  }
+}
+
+/** Editor section */
+.editor-instance {
+  /** Line numbers */
+  .line-numbers,
+  .sticky-line-number-inner {
+    font-size: 14px !important;
+    /* width: 26px !important; */
+    /* padding-left: 20px !important; */
+  }
+
+  /** Scrollbar */
+  .scrollbar {
+    --color-scrollbar: #94a3df;
+
+    &.vertical {
+      .slider {
+        width: 2px !important;
+        background: var(--color-scrollbar) !important;
+        border-radius: 5px !important;
+        margin-left: 10px !important;
+      }
+    }
+
+    &.horizontal {
+      position: absolute !important;
+      height: 2px !important;
+      bottom: 3px !important;
+      left: 0px !important;
+
+      .slider {
+        background: var(--color-scrollbar) !important;
+        border-radius: 5px !important;
+        height: 2px !important;
       }
     }
   }
