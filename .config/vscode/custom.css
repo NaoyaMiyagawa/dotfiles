@@ -1,25 +1,283 @@
 /**
  * Examples:
- * - https://gist.github.com/joshcirre/bf958a8636e2bdeaf484be5d0f49ba50
+ * - https://www.youtube.com/watch?v=9_I0bySQoCs&ab_channel=GlennRaya
+ * - https://www.youtube.com/watch?v=axPTJq-Yfd0&t=321s&ab_channel=JoshCirre
  */
 
-/* Notification at left bottom */
+/** Scrollbar */
+.scrollbar {
+  --color-scrollbar: #94a3df;
+
+  &.vertical {
+    .slider {
+      width: 2px !important;
+      background: var(--color-scrollbar) !important;
+      border-radius: 5px !important;
+      margin-left: 10px !important;
+    }
+  }
+
+  &.horizontal {
+    position: absolute !important;
+    height: 2px !important;
+    bottom: 3px !important;
+    left: 0px !important;
+
+    .slider {
+      background: var(--color-scrollbar) !important;
+      border-radius: 5px !important;
+      height: 2px !important;
+    }
+  }
+}
+
+/** Notification at left bottom */
 .notifications-list-container {
   width: 500px !important;
   left: calc(50% - 200px);
 }
 
-/* Command Palette */
+/** Command Palette */
 .quick-input-widget {
-  width: 800px !important;
-  left: calc(25% - 400px);
+  --bg-color-command-palette: #2b2e3c;
+  --bg-color-search-result-item__focused: #414660;
+  --bg-color-search-result-item__hover: #363a4f;
+  --font-size-search-placeholder: 16px;
+  --font-size-search-result-item-file: 14px;
+  --font-size-search-result-item-dir: 12px;
 
-  /* transform: translateY(-50%) !important; */
-  /* top: 50% !important; */
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.45) !important;
-  padding: 10px 10px 18px 10px !important;
+  width: 50% !important;
+
+  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.35) !important;
+  padding: 10px 10px !important;
+  background-color: var(--bg-color-command-palette) !important;
+  backdrop-filter: blur(3px) !important;
+  border-radius: 20px !important;
+
+  .quick-input-header {
+    * {
+      font-size: var(--font-size-search-placeholder) !important;
+    }
+  }
+
+  .quick-input-list {
+    max-height: calc(50vh - 60px) !important;
+    overflow-y: auto !important;
+
+    background-color: var(--bg-color-command-palette) !important;
+
+    /** Search result list  */
+    .monaco-list {
+      &:not(.mouse-support) {
+        border: none !important;
+
+        .monaco-list-row:hover:not(.focused) {
+          background-color: inherit !important;
+        }
+      }
+
+      .monaco-list-rows {
+        background-color: inherit !important;
+
+        /** Each row  */
+        .monaco-list-row {
+          &.focused {
+            background-color: var(
+              --bg-color-search-result-item__focused
+            ) !important;
+          }
+
+          &:hover:not(.focused) {
+            background-color: var(
+              --bg-color-search-result-item__hover
+            ) !important;
+          }
+
+          /** Separator */
+          .quick-input-list-entry.quick-input-list-separator-border {
+            border-top-width: 2px !important;
+            padding-top: 2px !important;
+          }
+
+          /** Filename / Command name */
+          .label-name {
+            font-size: var(--font-size-search-result-item-file);
+          }
+
+          /** Filepath */
+          .label-description {
+            font-size: var(--font-size-search-result-item-dir) !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* .monaco-workbench .part > .header-or-footer,
+.monaco-workbench .part > .title {
+  height: 28px !important;
+  padding-left: 0px !important;
+}
+
+.monaco-workbench .part > .title > .title-label {
+  line-height: 30px !important;
+}
+
+.monaco-editor {
+  .scroll-decoration {
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.75) !important;
+    top: -6px !important;
+  }
+
+  .cursor {
+    background: linear-gradient(to bottom, #7f00ff, #e100ff) !important;
+    color: #292d3e !important;
+  }
+}
+
+.monaco-workbench .part.titlebar > .titlebar-container {
   background-color: #2b2e3c !important;
+} */
+
+/* Project title's style at the top. */
+/* .monaco-workbench
+  .part.titlebar
+  > .titlebar-container
+  > .titlebar-center
+  > .window-title
+  > .command-center
+  .action-item.command-center-center {
+  border: none !important;
+  background: transparent !important;
+} */
+
+/* File Explorer Selected Item */
+/* .monaco-list.list_id_1 .monaco-list-row.selected {
+  background-color: #4f5971 !important;
+  opacity: 1 !important;
+  border-top: 1px #727b90 solid;
+  border-bottom: 1px #727b90 solid;
+} */
+
+/* .monaco-workbench
+  .part.editor
+  > .content
+  .editor-group-container
+  > .title
+  .editor-actions {
+  display: none !important;
+} */
+
+/* .monaco-editor-hover,
+.monaco-hover {
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.45) !important;
+  padding: 10px !important;
+  background-color: #2b2e3c !important;
+  backdrop-filter: blur(3px) !important;
+  margin: 6px !important;
   border-radius: 6px !important;
   border: 1px solid #63697355 !important;
-  z-index: 1000000 !important;
+} */
+
+/* Project Title */
+/* .titlebar-left {
+  justify-content: flex-start !important;
+  flex-grow: 0 !important;
+  width: auto !important;
+} */
+
+/* .monaco-split-view2.horizontal
+  > .monaco-scrollable-element
+  > .split-view-container
+  > .split-view-view {
+  background-color: rgb(49, 52, 69) !important;
 }
+.monaco-workbench
+  .part.titlebar
+  > .titlebar-container
+  > .titlebar-center
+  > .window-title
+  > .command-center
+  .action-item.command-center-center {
+  width: 200px !important;
+} */
+
+/* Search Label */
+/* .search-label {
+  font-family: 'Dank Mono' !important;
+  font-size: 11px !important;
+  color: rgb(198, 208, 245) !important;
+} */
+
+/* Search icon */
+/* .search-icon {
+  display: none !important;
+} */
+
+/* .codicon {
+  &-search::before {
+    display: none !important;
+  }
+
+  &-arrow-right,
+  &-arrow-left {
+    display: none !important;
+  }
+} */
+
+/* .titlebar-right > * {
+  display: none !important;
+} */
+
+/* #command-blur {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.15);
+  top: 0;
+  left: 0;
+  backdrop-filter: blur(8px);
+} */
+
+/* .monaco-workbench .activitybar {
+  display: none !important;
+} */
+
+/* .monaco-workbench .sidebar .title-actions {
+  display: none !important;
+} */
+
+/* .monaco-workbench::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  z-index: 999999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  visibility: hidden;
+} */
+
+/* .monaco-scrollable-element .shadow.top {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.75) !important;
+  top: -3px !important;
+} */
+
+/* .monaco-inputbox {
+  background-color: #2b2e3c !important;
+
+  input {
+    background-color: #2b2e3c !important;
+    color: #c6d0f5 !important;
+  }
+} */
+
+/* .decorationsOverviewRuler {
+  display: none !important;
+} */
