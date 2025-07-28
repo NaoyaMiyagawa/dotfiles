@@ -11,6 +11,9 @@
 bindkey -e
 bindkey "[D" backward-word
 bindkey "[C" forward-word
+# # Enable Alt+Left/Right to navigate through words
+# bindkey "\e\e[D" backward-word
+# bindkey "\e\e[C" forward-word
 
 ## 実行したプロセスの消費時間が3秒以上かかったら
 ## 自動的に消費時間の統計情報を表示する。
@@ -18,32 +21,19 @@ REPORTTIME=3
 
 # ----------------------------------------------------------------------------
 # Completion
-# 補完
-# Completion
 
-# Completion | Colorize completion candidates
-# 補完 ｜ 候補に色付け
 # Completion | Colorize completion candidates
 autoload -Uz add-zsh-hook
 autoload -U colors && colors
 zstyle ':completion:*' list-colors "${LS_COLORS}"
 # Completion | Select completion candidates from menu
-# 補完 ｜ 候補をメニューから選択
-# Completion | Select completion candidates from menu
 zstyle ':completion:*:default' menu select=2
 # Completion | Use cache for faster completion
-# 補完 ｜ キャッシュ利用で高速化
-# Completion | Use cache for faster completion
 zstyle ':completion::complete:*' use-cache true
-#
 zstyle ':completion:*' keep-prefix
 zstyle ':completion:*' recent-dirs-insert both
 # Completion | Ignore case
-# 補完 ｜ 大文字/小文字を区別しない
-# Completion | Ignore case
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-# Completion | for cd
-# Completion for cd
 # Completion | for cd
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
 # Completion | settings for cd command
@@ -64,50 +54,6 @@ setopt complete_in_word   # Complete at word boundaries
 setopt extended_glob      # Enable extended globbing
 setopt glob               # Enable globbing
 setopt glob_complete      # Expand globs without completing
-# Completion settings for cd command
-zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories
-zstyle ':completion:*:*:cd:*:directory-stack' menu yes select
-zstyle ':completion:*:*:cd:*:local-directories' menu yes select
-zstyle ':completion:*:*:cd:*:path-directories' menu yes select
-# Improve directory completion
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*:descriptions' format '%F{yellow}completing %B%d%b%f'
-# Completion | settings for cd command
-zstyle ':completion:*:*:cd:*' tag-order local-directories directory-stack path-directories
-zstyle ':completion:*:*:cd:*:directory-stack' menu yes select
-zstyle ':completion:*:*:cd:*:local-directories' menu yes select
-zstyle ':completion:*:*:cd:*:path-directories' menu yes select
-# Completion | Improve directory completion
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*:descriptions' format '%F{yellow}completing %B%d%b%f'
-# Completion | Various settings
-setopt always_last_prompt # Avoid unnecessary scrolling
-setopt auto_cd            # cd with just the directory name
-setopt auto_list          # Display multiple completion candidates
-setopt auto_menu          # Auto-complete with consecutive completion keys
-setopt auto_param_slash   # Add a trailing slash to directory completions
-setopt complete_in_word   # Complete at word boundaries
-setopt extended_glob      # Enable extended globbing
-setopt glob               # Enable globbing
-setopt glob_complete      # Expand globs without completing
-setopt always_last_prompt # 無駄なスクロールを避ける
-setopt auto_cd            # ディレクトリ名だけでcdする
-setopt auto_list          # 補完候補が複数ある時に、一覧表示
-setopt auto_menu          # 補完キー連打で順に補完候補を自動で補完
-setopt auto_param_slash   # ディレクトリ名の補完で末尾の / を自動的に付加し、次の補完に備える
-setopt complete_in_word   # 語の途中でもカーソル位置で補完
-setopt extended_glob      # 拡張globを有効にする。
-setopt glob               #
-setopt glob_complete      # globを展開しないで候補の一覧から補完する。
-setopt magic_equal_subst  # Allow completion for options like --prefix=/usr
-setopt mark_dirs          # Add a trailing slash to directory completions
-setopt numeric_glob_sort  # Sort numbers numerically
-setopt auto_menu          # 補完キー連打で順に補完候補を自動で補完
-setopt auto_param_slash   # ディレクトリ名の補完で末尾の / を自動的に付加し、次の補完に備える
-setopt complete_in_word   # 語の途中でもカーソル位置で補完
-setopt extended_glob      # 拡張globを有効にする。
-setopt glob               #
-setopt glob_complete      # globを展開しないで候補の一覧から補完する。
 setopt list_types         #
 setopt magic_equal_subst  # Allow completion for options like --prefix=/usr
 setopt mark_dirs          # Add a trailing slash to directory completions
@@ -150,3 +96,7 @@ zstyle ":plugin:history-search-multi-word" active "bg=blue"          # 選択行
 
 # Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh"
+
+# Added by OrbStack: command-line tools and integration
+# This won't be added again if you remove it.
+source ~/.orbstack/shell/init.zsh 2>/dev/null || :

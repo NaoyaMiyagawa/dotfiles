@@ -55,7 +55,7 @@ if builtin command -v eza >/dev/null; then
     alias et='eza -T -L 1'
     alias eta='eza -aT -L 1'
 
-    alias ls="eza"
+    # alias ls="eza"
 fi
 
 # ----------------------------------------------------------------------------
