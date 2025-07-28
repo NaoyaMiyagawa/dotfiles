@@ -84,8 +84,8 @@ zinit wait lucid for \
 export ZSH_PLUGINS_ALIAS_TIPS_TEXT='----- alias-tips: '
 
 # enhancd | enhanced `cd`
-zinit wait lucid pick'init.sh' nocompile'!' for 'babarot/enhancd'
-export ENHANCD_FILTER=fzf:peco:fzy
+# zinit wait lucid pick'init.sh' nocompile'!' for 'babarot/enhancd'
+# export ENHANCD_FILTER=fzf:peco:fzy
 
 # peco ｜ fuzzy-search
 zinit wait lucid from"gh-r" as"program" pick"*/peco" for @'peco/peco'
