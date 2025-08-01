@@ -33,6 +33,9 @@
 !/.zsh/**
 !/.zsh/**/*.zsh
 
+# .claude
+!/.claude
+
 # .config
 !/.config
 
