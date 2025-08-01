@@ -1,0 +1,30 @@
+{
+  "feedbackSurveyState": {
+    "lastShownTime": 1754018190379
+  },
+  "permissions": {
+    "allow": [
+      // Read
+      "Read(~/.zshrc)",
+      "Read(~/.claude/*)",
+      // Bash
+      "Bash(serena:*)",
+      "Bash(grep:*)",
+      "Bash(mkdir:*)",
+      "Bash(sail test:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run test:*)"
+    ],
+    "deny": [
+      // Bash
+      "Bash(rm -rf *)",
+      "Bash(curl:*)",
+      "Bash(git:*)",
+      "Bash(git clone:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git fetch:*)",
+      "Bash(git reset:*)"
+    ]
+  }
+}
