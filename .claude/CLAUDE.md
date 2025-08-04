@@ -57,3 +57,32 @@ Please write AAA pattern comments as following:
 // - xxx (if needed)
 ...
 ```
+
+#### Static Analytics
+##### PHPStan
+Please run phpstan with the following commend after finishing planned last step.
+
+```bash
+sail exec app ./vendor/bin/phpstan
+```
+##### Pint
+Please run pint to format code so that I can commit without running pint manually.
+
+```bash
+vendor/bin/pint --dirty
+```
+
+
+## PR Code Review Fix
+### How to get to know what to fix
+When I ask you for code review fix, please look at the latest comments that are not resolved by this command:
+
+```bash
+gh pr view --comments
+```
+
+Please ignore comments from `sonarqubecloud` as it's just a summary.
+Please ignore comments start from `## Pull Request Overview` as it's just a summary.
+
+### How to proceed the fix
+I want to commit a fix for a comment one by one. Please list down fixes to do while working on it. And please wait for my approval to go next once you are done with 1 item so that I can commit.
