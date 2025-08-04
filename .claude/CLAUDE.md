@@ -46,7 +46,7 @@ And please use `->createOne()` or `->createMany()` to get better return-value ty
 Please write AAA pattern comments as following:
 
 ```php
-// ararnge
+// arrange
 // - xxx (if needed)
 ...
 
@@ -59,12 +59,6 @@ Please write AAA pattern comments as following:
 ```
 
 #### Static Analytics
-##### PHPStan
-Please run phpstan with the following commend after finishing planned last step.
-
-```bash
-sail exec app ./vendor/bin/phpstan
-```
 ##### Pint
 Please run pint to format code so that I can commit without running pint manually.
 

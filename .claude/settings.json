@@ -8,6 +8,8 @@
       // Read
       "Read(~/.zshrc)",
       "Read(~/.claude/*)",
+      // MCP
+      "mcp__serena",
       // Bash
       "Bash(serena:*)",
       "Bash(grep:*)",
@@ -30,6 +32,30 @@
       "Bash(git pull:*)",
       "Bash(git fetch:*)",
       "Bash(git reset:*)"
+    ]
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat | jq -r '\"display notification \\\"\" + .message + \"\\\" with title \\\"\" + .title + \"\\\" sound name \\\"Glass\\\"\"' | xargs -I {} osascript -e '{}'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Task is completed.\" with title \"Claude Code\" sound name \"Glass\"'"
+          }
+        ]
+      }
     ]
   }
 }
