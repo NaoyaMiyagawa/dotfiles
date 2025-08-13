@@ -4,6 +4,7 @@ Please collect task details from GitHub PR based on the current git branch name,
 
 ```bash
 gh pr view --json body --jq .body
+gh pr view --comments
 ```
 
 ## Basic flow of implementation
@@ -17,6 +18,10 @@ The definition of test-driven development is as follows:
 Repeat from step 2 until the test list is empty.
 
 ### Backend (PHP 8, Laravel 11)
+#### General
+Please add `use` statement instead of doing like \App\Models\User inline.
+
+
 #### Test file
 Please write in Pest way.
 
@@ -34,28 +39,82 @@ class XxxService
 
 ```php
 describe('handle', function () {
-//
+  it('stores xxx', function () {
+    //...
+  });
+
+  describe('unhappy - validation', function () {
+    //...
+  });
+
+  describe('unhappy - authentication', function () {
+    //...
+  });
+});
+```
+
+##### BeforeEach
+Please use variables first, then set to $this so make properties look simple.
+
+```php
+beforeEach(function () {
+  /** @var User $user */
+  $user = User::factory()->createOne();
+  actingAs($user);
+
+  $this->user = $user;
 });
 ```
 
 ##### Factory
-Please use factory's state methods as much as you can to reduce typing amount.
-And please use `->createOne()` or `->createMany()` to get better return-value types.
+Please use factory's state methods defined in each model factory as much as you
+can to reduce manual-typing amount.
+Please use `->forEachSequence()` when we want all data pattern.
+Please use `->createOne()` or `->createMany()` to get better return-value types.
 
 ##### Comments
-Please write AAA pattern comments as following:
+Please write AAA pattern comments following this. It can be combined like `// Act & Assert`
+if the test case is compact enough.
 
 ```php
-// arrange
-// - xxx (if needed)
-...
+// Arrange
+// - Set up ... (if needed. 'set up ...' is just for example)
 
-// act
-...
 
-// assert
-// - xxx (if needed)
-...
+// Act
+
+
+// Assert
+// - check ... (if needed. 'check ...' is just for example)
+```
+
+##### Pest functions
+Please use by always importing to simplify test code.
+
+```
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\mock;
+```
+
+##### BeforeEach
+Please set `Event::fake([Xxx::class])` `Storage::fake('xx')` etc in `beforeEach`
+when the endpoint or service class use those classes.
+
+##### Feature test (= Controller test)
+Please use `route('xxx')` to send requests.
+
+Preferred to separate sending HTTP request and assertion like the following.
+
+```php
+// Act
+$response = post(route(...))
+
+// Assert
+$response
+  ->assertValid()
+  ->assertRedirect();
+
+... other data check
 ```
 
 #### Static Analytics
@@ -72,7 +131,7 @@ vendor/bin/pint --dirty
 When I ask you for code review fix, please look at the latest comments that are not resolved by this command:
 
 ```bash
-gh pr view --comments
+gh api repos/:owner/:repo/pulls/$(gh pr view --json number --jq .number)/comments
 ```
 
 Please ignore comments from `sonarqubecloud` as it's just a summary.
