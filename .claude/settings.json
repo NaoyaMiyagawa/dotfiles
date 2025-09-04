@@ -14,15 +14,19 @@
       "Bash(serena:*)",
       "Bash(grep:*)",
       "Bash(mkdir:*)",
-      "Bash(sail test:*)",
+      // - Sail
+      "Bash(./vendor/bin/sail artisan:*)",
+      "Bash(./vendor/bin/sail exec app:*)",
+      "Bash(./vendor/bin/sail test:*)",
+      // - NPM
       "Bash(npm run lint)",
       "Bash(npm run test:*)",
+      // - GitHub
       "Bash(gh api repos/:owner/:repo/pulls/$(gh pr view --json number --jq .number)/comments:*)",
       "Bash(gh pr view --json body --jq .body:*)",
       "Bash(gh pr view --comments)",
       "Bash(git status *)",
-      "Bash(git diff *)",
-      "Bash(sail artisan:*)"
+      "Bash(git diff *)"
     ],
     "deny": [
       // Bash
@@ -34,7 +38,7 @@
       "Bash(git pull:*)",
       "Bash(git fetch:*)",
       "Bash(git reset:*)",
-      "Bash(sail artisan migrate:*)"
+      "Bash(docker compose exec app:*)"
     ]
   },
   "hooks": {

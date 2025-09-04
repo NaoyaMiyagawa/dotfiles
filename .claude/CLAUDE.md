@@ -3,9 +3,12 @@
 Please collect task details from GitHub PR based on the current git branch name, please refer PR details for the task.
 
 ```bash
+gh pr view --json title --jq .title
 gh pr view --json body --jq .body
-gh pr view --comments
+gh pr view --json comments --jq .comments
 ```
+
+Our base branch for new feature is 'develop'.
 
 ## Basic flow of implementation
 Please develop using t_wada’s test-driven development (TDD) method.
@@ -24,6 +27,13 @@ Please add `use` statement instead of doing like \App\Models\User inline.
 
 #### Test file
 Please write in Pest way.
+
+##### Command
+Please run by this command.
+
+```bash
+./vendor/bin/sail test [filepath]
+```
 
 ##### Describe block
 `describe(x)` block's x should match with subject file's public method name.
@@ -54,7 +64,8 @@ describe('handle', function () {
 ```
 
 ##### BeforeEach
-Please use variables first, then set to $this so make properties look simple.
+Please use variables first, then set to $this so make properties look simple,
+unless the value to set to $this is static value which is not using factory.
 
 ```php
 beforeEach(function () {
@@ -71,6 +82,7 @@ Please use factory's state methods defined in each model factory as much as you
 can to reduce manual-typing amount.
 Please use `->forEachSequence()` when we want all data pattern.
 Please use `->createOne()` or `->createMany()` to get better return-value types.
+Please use `::factory(x)` instead of `->count(x)` to shorten line.
 
 ##### Comments
 Please write AAA pattern comments following this. It can be combined like `// Act & Assert`
@@ -125,12 +137,25 @@ Please run pint to format code so that I can commit without running pint manuall
 vendor/bin/pint --dirty
 ```
 
+##### PHPStan
+Only runs when I asked for phpstan fixes because running phpstan would take a while.
+Please use this command to run
+
+```bash
+# For entire app
+./vendor/bin/sail exec app ./vendor/bin/phpstan
+
+# For specific file
+./vendor/bin/sail exec app ./vendor/bin/phpstan analyze {filepath}
+```
+
 
 ## PR Code Review Fix
 ### How to get to know what to fix
 When I ask you for code review fix, please look at the latest comments that are not resolved by this command:
 
 ```bash
+gh pr view --json comments --jq .comments
 gh api repos/:owner/:repo/pulls/$(gh pr view --json number --jq .number)/comments
 ```
 
