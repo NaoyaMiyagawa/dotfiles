@@ -134,7 +134,7 @@ $response
 Please run pint to format code so that I can commit without running pint manually.
 
 ```bash
-vendor/bin/pint --dirty
+vendor/bin/pint --dirty --parallel
 ```
 
 ##### PHPStan

@@ -107,8 +107,8 @@ alias tm='tmux'
 # multipass
 alias mp='multipass'
 
-# vscode
-alias c.='code .'
+# cursor
+alias c.='cursor .'
 
 # xxenv で brew doctor の warning対策
 # alias brew="PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin brew"
