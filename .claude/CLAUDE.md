@@ -22,7 +22,8 @@ Repeat from step 2 until the test list is empty.
 
 ### Backend (PHP 8, Laravel 11)
 #### General
-Please add `use` statement instead of doing like \App\Models\User inline.
+- Use `use` statement instead of FQN.
+- Use `__invoke()` when invoking invokable class for better IDE support.
 
 
 #### Test file
@@ -76,6 +77,31 @@ beforeEach(function () {
   $this->user = $user;
 });
 ```
+
+##### Dataset
+When you can combine multiple test cases by using dataset `->with()`, you should do so.
+
+Please always add line break to argument like this, so that it's easier to tell this test case uses dataset.
+```php
+    it('returns true when filename contains malicious strings', function (
+      string $filename, // do not forget to add `,` anytime
+    ) {
+        // Arrange
+        // - The filename is supplied via dataset
+
+        // Act
+        $result = FilenameSanitizer::containsMaliciousString($filename);
+
+        // Assert
+        expect($result)->toBeTrue();
+    })->with([
+        // if arguments are more than one, please use variable `$xxx =` in front of value so that it's easier to match which arg this value goes to
+        'parent directory traversal' => ['../etc/passwd'],
+        'double parent directory traversal' => ['../../etc/passwd'],
+    ]);
+
+```
+
 
 ##### Factory
 Please use factory's state methods defined in each model factory as much as you
