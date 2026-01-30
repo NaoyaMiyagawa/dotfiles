@@ -34,6 +34,10 @@ path=(
     "$HOME/.anyenv/envs/tfenv/bin"(N-/)
     # console-ninja
     "$HOME/.console-ninja/.bin"(N-/)
+    # opencode
+    "$HOME/.opencode/bin"(N-/)
+    # cursor agent
+    "$HOME/.local/bin"(N-/)
     # ?
     "/usr/local/opt/libxml2/bin"(N-/)
     "$path[@]"
