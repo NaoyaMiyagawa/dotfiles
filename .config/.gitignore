@@ -1,3 +1,9 @@
+# ----------------------------------------------------------------------------
+# Ignore All (base settings)
+# ----------------------------------------------------------------------------
+/*
+/.**
+
 # starship.toml
 !starship.toml
 
@@ -18,6 +24,10 @@
 # git
 !git/
 !git/**
+
+# opencode
+!opencode/oh-my-opencode.json
+!opencode/opencode.json
 
 # tmux
 !tmux/

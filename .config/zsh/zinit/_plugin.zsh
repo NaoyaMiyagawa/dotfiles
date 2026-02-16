@@ -105,9 +105,6 @@ zinit wait lucid light-mode from"gh-r" as"program" mv"eza* -> eza" pick"eza/eza"
 # ripgrep ｜ enhanced `grep`
 zinit wait'3' lucid light-mode from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg/rg" for @'BurntSushi/ripgrep'
 
-# asdf
-zinit wait lucid light-mode for @'asdf-vm/asdf'
-
 if is_osx; then
     # AWS CLI v2の補完。
     # 要 AWS CLI v2
