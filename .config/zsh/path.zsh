@@ -6,6 +6,9 @@
 typeset -gU PATH path
 typeset -gU FPATH fpath
 
+# asdf (0.16+) uses a binary; keep data dir explicit for shim path.
+export ASDF_DATA_DIR="${ASDF_DATA_DIR:-$HOME/.asdf}"
+
 path=(
     '/usr/local/bin'(N-/)
     '/usr/local/sbin'(N-/)
@@ -16,6 +19,8 @@ path=(
 )
 
 path=(
+    # asdf
+    "$ASDF_DATA_DIR/shims"(N-/)
     # composer
     "$HOME/.composer/vendor/bin"(N-/)
     # yarn
@@ -52,12 +57,5 @@ if is_osx; then
         eval "$(direnv hook zsh)"
     fi
 
-    # asdf
-    if command -v asdf &> /dev/null; then
-        # export ASDF_DIR =
-        . "$HOME/.asdf/asdf.sh"
-        # . "$HOME/.asdf/completions/asdf.bash"
-        fpath=(${ASDF_DIR}/completions $fpath)
-    fi
 fi
 
