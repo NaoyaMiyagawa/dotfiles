@@ -25,6 +25,9 @@
 !.gitignore
 !.gitkeep
 
+# .ai
+!/.ai
+
 # zsh
 !/.zshrc
 !/.zprofile
@@ -34,7 +37,8 @@
 !/.zsh/**/*.zsh
 
 # .claude
-!/.claude
+!/.claude/CLAUDE.md
+!/.claude/settings.json
 
 # .config
 !/.config
