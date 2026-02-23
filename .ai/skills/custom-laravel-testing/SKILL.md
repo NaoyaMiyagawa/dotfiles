@@ -50,6 +50,16 @@ beforeEach(function () {
 
   $this->user = $user;
 });
+
+describe('{class method name}', function () {
+  beforeEach(function () {
+    // Set fakes
+  });
+
+  it('...', function () {
+
+  });
+});
 ```
 
 ## Dataset Pattern
@@ -60,10 +70,12 @@ beforeEach(function () {
 
 ## Factory Pattern
 
-1. Prefer factory state methods when available.
+1. Prefer factory state methods when available to reduce hardcoding keys.
+   e.g. `withStatus(XxxStatus $status)` when having `status` column.
+   If there is no existing state method for a column, you can add it.
 2. Use `->forEachSequence()` when all patterns must be covered.
 3. Use `->createOne()` / `->createMany()` for better return types.
-4. Prefer `::factory(x)` over `->count(x)`.
+4. Prefer `::factory(x)` over `->count(x)` when creating more than one record.
 
 ## AAA Comments
 
@@ -85,7 +97,15 @@ Use `// Act & Assert` for compact tests only.
 Example:
 
 ```php
-$response = post(route(...))
+// [When only assert chains covers test targets]
+// Act & Assert
+post(route(...))
   ->assertValid()
   ->assertRedirect();
+
+// [When you need to use response value]
+// Act & Assert
+$response = post(route(...))
+  ->assertValid()
+  ->...
 ```
