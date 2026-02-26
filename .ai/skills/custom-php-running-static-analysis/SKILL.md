@@ -1,6 +1,6 @@
 ---
 name: custom-php-running-static-analysis
-description: Run static analysis rules for php code. Use after changing any php code.
+description: Runs PHP static analysis using PHPStan with project-specific scope rules. Use when PHP code changes need static analysis; run full-application analysis only when the user explicitly requests it.
 ---
 
 # Custom PHP Running Static Analysis

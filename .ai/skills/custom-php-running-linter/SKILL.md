@@ -1,6 +1,6 @@
 ---
 name: custom-php-running-linter
-description: Run linting/formatting rules for php code. Use after changing any php code.
+description: Runs PHP linting and formatting using Pint. Use after modifying PHP files, or when the user asks to lint or format specific files or directories.
 ---
 
 # Custom PHP Running Linter
