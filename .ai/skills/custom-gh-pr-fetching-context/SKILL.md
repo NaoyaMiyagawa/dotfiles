@@ -1,6 +1,6 @@
 ---
-name: custom-gh-pr-context
-description: Fetch GitHub PR task context on demand for the current branch. Use when the user requests PR details, PR summary, or asks to proceed based on the open PR.
+name: custom-gh-pr-fetching-context
+description: Fetch GitHub PR information for better context understanding for the current branch. Use when you don't have enough understanding of the current details.
 ---
 
 # Custom GitHub PR Context Fetch
