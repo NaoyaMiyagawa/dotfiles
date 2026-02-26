@@ -1,6 +1,6 @@
 ---
 name: custom-laravel-writing-tests
-description: Enforce project testing conventions for Laravel/Pest tests. Use when writing or updating Pest tests, feature tests, factories, datasets, beforeEach setup, and test structure. Also, refer command when running test.
+description: Applies Laravel and Pest testing conventions, including TDD workflow and test structure rules. Use when writing or updating Pest tests, feature tests, factories, datasets, beforeEach setup, or assertion patterns.
 ---
 
 # Custom Laravel Testing Conventions
