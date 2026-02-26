@@ -27,6 +27,7 @@
 
 # .ai
 !/.ai
+!/.ai/.gitignore
 
 # zsh
 !/.zshrc

@@ -1,9 +1,9 @@
 ---
-name: custom-laravel-backend
+name: custom-laravel-coding
 description: Apply Laravel backend modern conventions following used versions in the repository. Use when implementing or refactoring Laravel backend code, service classes, controllers, models, or general PHP application logic.
 ---
 
-# Custom Laravel Backend Conventions
+# Custom Laravel Coding
 
 ## Scope
 

@@ -1,6 +1,6 @@
 ---
-name: custom-laravel-testing
-description: Enforce project testing conventions for Laravel/Pest tests. Use when writing or updating Pest tests, feature tests, factories, datasets, beforeEach setup, and test structure.
+name: custom-laravel-writing-tests
+description: Enforce project testing conventions for Laravel/Pest tests. Use when writing or updating Pest tests, feature tests, factories, datasets, beforeEach setup, and test structure. Also, refer command when running test.
 ---
 
 # Custom Laravel Testing Conventions
@@ -53,7 +53,7 @@ beforeEach(function () {
 
 describe('{class method name}', function () {
   beforeEach(function () {
-    // Set fakes
+    // Set fakes e.g. Queue::f
   });
 
   it('...', function () {
@@ -67,6 +67,18 @@ describe('{class method name}', function () {
 1. Use `->with()` when cases can be combined.
 2. Keep multiline function arguments for dataset-driven tests.
 3. For multiple parameters in dataset rows, use named variables in values for readability.
+
+```php
+it('xxx', function (
+  XxxStatus $status, // always add line break even if it's only 1 arg for readability
+) {
+
+})->with([
+  '{case name}' => [
+    $status = XxxStatus::Pending, // use variable so that it's easier to match with args
+  ]
+]);
+```
 
 ## Factory Pattern
 
@@ -109,3 +121,7 @@ $response = post(route(...))
   ->assertValid()
   ->...
 ```
+
+## Assertions
+
+- Don't use `->and()`, just use two separate lines since it looks clean.
