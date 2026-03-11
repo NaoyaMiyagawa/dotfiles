@@ -33,9 +33,13 @@ Run tests using:
 
 ```bash
 ./vendor/bin/sail test [filepath]
+
+# or use parallel for faster test run
+./vendor/bin/sail test --parallel [filepath]
 ```
 
-## beforeEach Pattern
+## Coding standard
+### beforeEach Pattern
 
 1. Create local variables first, then assign to `$this` properties.
 2. Exception: static literal values that do not come from factories.
@@ -51,7 +55,7 @@ beforeEach(function () {
   $this->user = $user;
 });
 
-describe('{class method name}', function () {
+describe('{method name}', function () {
   beforeEach(function () {
     // Set fakes e.g. Queue::f
   });
@@ -62,7 +66,7 @@ describe('{class method name}', function () {
 });
 ```
 
-## Dataset Pattern
+### Dataset Pattern
 
 1. Use `->with()` when cases can be combined.
 2. Keep multiline function arguments for dataset-driven tests.
@@ -80,7 +84,7 @@ it('xxx', function (
 ]);
 ```
 
-## Factory Pattern
+### Factory Pattern
 
 1. Prefer factory state methods when available to reduce hardcoding keys.
    e.g. `withStatus(XxxStatus $status)` when having `status` column.
@@ -89,7 +93,7 @@ it('xxx', function (
 3. Use `->createOne()` / `->createMany()` for better return types.
 4. Prefer `::factory(x)` over `->count(x)` when creating more than one record.
 
-## AAA Comments
+### AAA Comments
 
 Use AAA comments:
 
@@ -101,7 +105,7 @@ Use AAA comments:
 
 Use `// Act & Assert` for compact tests only.
 
-## Feature Test Pattern
+#### Feature Test Pattern
 
 1. Use `route('...')` to build request URLs.
 2. Prefer combining request and assertion fluently when clear.
@@ -122,6 +126,37 @@ $response = post(route(...))
   ->...
 ```
 
-## Assertions
+3. Use `describe()` blocks effectively to group same category of test cases
+  By default, you can have these ones.
+  ```php
+  describe('{method name}', function () {
+    describe('happy paths', function () {
+      // Test successful cases
+    });
+
+    describe('unhappy paths', function () {
+      // Test error cases
+      // e.g.)
+        it('returns 404 for workflow from another org', function () {
+          // ...
+        });
+    });
+
+    describe('validations', function () {
+      // Test validation error cases
+    });
+
+    describe('authorization', function () {
+      // Test policy middleware logic
+        // e.g.)
+        it('returns 403 for workflow from another org group', function () {
+          // ...
+        });
+    });
+  });
+  ```
+
+### Assertions
 
 - Don't use `->and()`, just use two separate lines since it looks clean.
+
