@@ -9,12 +9,26 @@ description: Applies Laravel backend coding conventions for PHP implementation a
 
 Apply this skill only for Laravel backend work.
 
-## Rules
-
-1. Use `use` imports instead of inline FQNs like `\App\Models\User`.
-2. Prefer `__invoke()` for invokable classes to improve IDE support.
-
 ## Execution Notes
 
-- Keep changes minimal and consistent with existing project patterns.
+- Keep changes minimal and consistent with existing project patterns unless you are asked to refactor existing codebase.
 - Do not apply this skill to non-PHP or non-Laravel tasks.
+
+## Rules
+
+### PHP
+1. Use `use` imports instead of inline FQNs like `\App\Models\User`.
+2. Prefer calling `__invoke()` for invokable classes to improve IDE support. e.g. `app(Xxx::class)->__invoke()`
+3. Always add line breaks to constructor args
+    ```php
+    public function __constructor(
+        public readonly string $xxx,
+    )
+    {}
+    ```
+4. Use `final` `readonly` for ValueObject, DTO
+
+### Auth
+1. Use `Auth::user()` over `$request->user()` in controller for better IDE support on Cursor.
+2. Access `Auth::user()` only on presentation layers such as Controllers.
+$$
