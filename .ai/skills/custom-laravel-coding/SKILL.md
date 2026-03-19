@@ -27,8 +27,14 @@ Apply this skill only for Laravel backend work.
     {}
     ```
 4. Use `final` `readonly` for ValueObject, DTO
+5. Use string interpolation when possible for better readability. (e.g. `"This is {$user->name}"`)
 
 ### Auth
 1. Use `Auth::user()` over `$request->user()` in controller for better IDE support on Cursor.
 2. Access `Auth::user()` only on presentation layers such as Controllers.
-$$
+
+### Eloquent
+1. Always start from `::query()` for better IDE support.
+2. Use dedicated `whereXxx` methods (e.g. `whereLink`, `whereBetween`, `whereNot`) when applicable.
+3. Use scope defined in model when applicable.
+4. Omit `->value` when enum is used in value part (e.g. `->where('status', UserStatus::Active)`, `->update(['status' => UserStatus::Active])`)
