@@ -39,7 +39,7 @@ Run tests using:
 ```
 
 ## Coding standard
-### beforeEach Pattern
+### beforeEach
 
 1. Create local variables first, then assign to `$this` properties.
 2. Exception: static literal values that do not come from factories.
@@ -57,7 +57,7 @@ beforeEach(function () {
 
 describe('{method name}', function () {
   beforeEach(function () {
-    // Set fakes e.g. Queue::f
+    // Set fakes e.g. Queue::fake([]); Event::fake([]);
   });
 
   it('...', function () {
@@ -66,7 +66,9 @@ describe('{method name}', function () {
 });
 ```
 
-### Dataset Pattern
+4. Use app(Xxx::class) in each test case for better IDE support when the class is the test target.
+
+### Dataset
 
 1. Use `->with()` when cases can be combined.
 2. Keep multiline function arguments for dataset-driven tests.
@@ -84,14 +86,45 @@ it('xxx', function (
 ]);
 ```
 
-### Factory Pattern
+### Factory
 
-1. Prefer factory state methods when available to reduce hardcoding keys.
-   e.g. `withStatus(XxxStatus $status)` when having `status` column.
-   If there is no existing state method for a column, you can add it.
-2. Use `->forEachSequence()` when all patterns must be covered.
-3. Use `->createOne()` / `->createMany()` for better return types.
-4. Prefer `::factory(x)` over `->count(x)` when creating more than one record.
+- Prefer factory state methods when available to reduce hardcoding keys.
+  e.g. `withStatus(XxxStatus $status)` when having `status` column.
+  If there is no existing state method for a column, you can add it.
+  Prefer this order of state methods in factory class.
+  e.g.
+  - definitions() ... factory's default method
+  // relationships
+  - forXxx($modelOrFactory) ... only when we need to specify relationship name with ->for().
+  - hasXxx($modelOrFactory) ... only when we need to specify relationship name with ->has().
+  // states
+  - xxx() ... higher level api for setting specific data for one or more columns (e.g. `pending()`)
+  - withXxx($value) ... low level api for setting data for specific columns.
+- Use `->forEachSequence()` when all patterns must be covered.
+- Use `->createOne()` / `->createMany()` for better return types.
+- Prefer `::factory(x)` over `->count(x)` when creating more than one record.
+- Extract common lines when calling multiple same factories and they are similar.
+   e.g.
+    ```php
+    // Bad
+    WorkflowReviewSubmission::factory()
+        ->for($this->actionRun)
+        ->for($this->reviewers[1], 'reviewer')
+        ->withStatus(WorkflowReviewSubmissionStatus::InProgress)
+        ->createOne();
+    WorkflowReviewSubmission::factory()
+        ->for($this->actionRun)
+        ->for($this->reviewers[2], 'reviewer')
+        ->completed()
+        ->createOne();
+
+    // Good
+    $reviewSubmissionFactory = WorkflowReviewSubmission::factory()->for($this->actionRun);
+    $reviewSubmissionFactory
+        ->forReviewer($reviewers[1])
+        ->withStatus(WorkflowReviewSubmissionStatus::InProgress)
+    // ...
+    ```
 
 ### AAA Comments
 
@@ -99,8 +132,11 @@ Use AAA comments:
 
 ```php
 // Arrange
+...
 // Act
+...
 // Assert
+...
 ```
 
 Use `// Act & Assert` for compact tests only.
@@ -124,6 +160,9 @@ post(route(...))
 $response = post(route(...))
   ->assertValid()
   ->...
+
+$data = $response->...;
+assert($data)->...
 ```
 
 3. Use `describe()` blocks effectively to group same category of test cases
@@ -156,7 +195,18 @@ $response = post(route(...))
   });
   ```
 
+#### Action/Service class test
+- If there are certain flows in business logic, use `describe` block to separate them.
+  e.g.
+  ```
+  describe('entryFlow', function () {
+  });
+
+  describe('completionFlow', function () {
+  });
+  ```
+
 ### Assertions
 
-- Don't use `->and()`, just use two separate lines since it looks clean.
-
+- Don't use `->and()`, just use two separate lines for cleanliness.
+- Use `foreach` over `assert(x)->each()` for cleanliness.
