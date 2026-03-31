@@ -3,8 +3,6 @@ name: custom-laravel-coding
 description: Applies Laravel backend coding conventions for PHP implementation and refactoring. Use when implementing or refactoring Laravel services, controllers, models, actions, or related backend application logic.
 ---
 
-# Custom Laravel Coding
-
 ## Scope
 
 Apply this skill only for Laravel backend work.
@@ -28,6 +26,7 @@ Apply this skill only for Laravel backend work.
     ```
 4. Use `final` `readonly` for ValueObject, DTO
 5. Use string interpolation when possible for better readability. (e.g. `"This is {$user->name}"`)
+6. Use named args when method calls goes multiple lines due to line length.
 
 ### Auth
 1. Use `Auth::user()` over `$request->user()` in controller for better IDE support on Cursor.
@@ -38,3 +37,27 @@ Apply this skill only for Laravel backend work.
 2. Use dedicated `whereXxx` methods (e.g. `whereLink`, `whereBetween`, `whereNot`) when applicable.
 3. Use scope defined in model when applicable.
 4. Omit `->value` when enum is used in value part (e.g. `->where('status', UserStatus::Active)`, `->update(['status' => UserStatus::Active])`)
+
+#### Bulk insert
+When it is expected to create more than 1 record for a same table/model, use bulk insert using `{Model}::query()->insert();` with chunk.
+e.g.
+```php
+      $organization->users()
+            ->chunkById(self::INSERT_CHUNK_SIZE, function (Collection $submissions) use ($user): void {
+                $now = CarbonImmutable::now();
+
+                $notificationsData = $submissions
+                    ->map(function () {
+                        $notification = new UserNotification();
+                        $notification->user()->associate($user);
+                        $notification->sent_at = $now;
+                        $notification->updateTimestamps()
+
+                        return $notificationData->getAttributes();
+                    });
+                Notification::insert($notificationsData->toArray());
+            });
+```
+
+### Email sending
+- Use `ShouldQueueAfterCommit` if sending is done in listener or job.

@@ -210,3 +210,12 @@ assert($data)->...
 
 - Don't use `->and()`, just use two separate lines for cleanliness.
 - Use `foreach` over `assert(x)->each()` for cleanliness.
+
+### Test target exclusion
+No need to write tests for the following classes:
+- Resource
+- DTO
+- Event
+
+### Verify tests
+Refer [~/dotfiles/.ai/skills/custom-php-running-test]
