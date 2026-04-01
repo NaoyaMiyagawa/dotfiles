@@ -198,7 +198,7 @@ assert($data)->...
 #### Action/Service class test
 - If there are certain flows in business logic, use `describe` block to separate them.
   e.g.
-  ```
+  ```php
   describe('entryFlow', function () {
   });
 
@@ -210,6 +210,17 @@ assert($data)->...
 
 - Don't use `->and()`, just use two separate lines for cleanliness.
 - Use `foreach` over `assert(x)->each()` for cleanliness.
+- Add a line break when test target entity changes.
+  e.g.)
+  ```php
+  expect($submission->status)->toBe(WorkflowReviewSubmissionStatus::Pending);
+  expect($submission->completed_at)->toBeNull();
+
+  expect($submission->decisions->count())->toBe(count(xxx));
+  foreach ($submission->decisions as $decision) {
+    expect($decision->...)...;
+  }
+  ```
 
 ### Test target exclusion
 No need to write tests for the following classes:
