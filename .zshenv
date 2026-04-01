@@ -41,3 +41,13 @@ export PSQL_HISTORY="$XDG_STATE_HOME/psql_history"
 
 export HISTTIMEFORMAT='%Y%m%d %T%z | '
 export EDITOR=vim
+
+# Essential PATH/bootstrap must load in every zsh mode, including non-interactive shells.
+if [[ -z "${DOTFILES_ZSH_PATH_BOOTSTRAPPED:-}" ]]; then
+    export DOTFILES_ZSH_PATH_BOOTSTRAPPED=1
+    : "${DOTFILES_PATH:=$HOME/dotfiles}"
+    source "$DOTFILES_PATH/.config/zsh/path.zsh"
+fi
+
+# Load machine-local secrets and API tokens if present.
+[[ -f "$DOTFILES_PATH/.config/zsh/secrets.local.zsh" ]] && source "$DOTFILES_PATH/.config/zsh/secrets.local.zsh"

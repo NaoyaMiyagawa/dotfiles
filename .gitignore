@@ -43,6 +43,7 @@
 
 # .config
 !/.config
+/.config/zsh/secrets.local.zsh
 
 # vim
 !/.vimrc

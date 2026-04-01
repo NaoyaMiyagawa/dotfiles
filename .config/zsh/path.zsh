@@ -26,9 +26,6 @@ path=(
     # yarn
     "$HOME/.yarn/bin"(N-/)
     "$HOME/.config/yarn/global/node_modules/.bin"(N-/)
-    # php 8.3
-    "/opt/homebrew/opt/php@8.3/bin"(N-/)
-    "/opt/homebrew/opt/php@8.3/sbin"(N-/)
     "/opt/homebrew/opt/icu4c/bin"(N-/)
     "/opt/homebrew/opt/icu4c/sbin"(N-/)
     # cargo
@@ -48,12 +45,12 @@ path=(
     "$path[@]"
 )
 
-if is_osx; then
+if [[ "$OSTYPE" == darwin* ]]; then
     # homebrew
     eval "$(/opt/homebrew/bin/brew shellenv)"
 
     # direnv
-    if type direnv >/dev/null 2>&1; then
+    if [[ -o interactive ]] && type direnv >/dev/null 2>&1; then
         eval "$(direnv hook zsh)"
     fi
 
