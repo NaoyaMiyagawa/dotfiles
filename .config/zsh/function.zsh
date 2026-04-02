@@ -68,6 +68,31 @@ is_ubuntu() {
 # zsh hooks
 # ----------------------------------------------------------------------------
 
+# update terminal (and cmux sidebar) with current working directory via OSC 7
+# also persist last CWD per cmux workspace for session restore
+_update_cwd() {
+    printf "\e]7;file://%s%s\a" "$HOST" "$PWD"
+    if [[ -n "$CMUX_WORKSPACE_ID" ]]; then
+        local dir="${XDG_CACHE_HOME:-$HOME/.cache}/cmux-dirs"
+        mkdir -p "$dir"
+        echo "$PWD" > "$dir/$CMUX_WORKSPACE_ID"
+    fi
+}
+add-zsh-hook chpwd _update_cwd
+_update_cwd  # emit once on shell start
+
+# restore last saved directory for this cmux workspace (call from shell startup or manually)
+cmux-restore-dir() {
+    if [[ -n "$CMUX_WORKSPACE_ID" ]]; then
+        local saved="${XDG_CACHE_HOME:-$HOME/.cache}/cmux-dirs/$CMUX_WORKSPACE_ID"
+        if [[ -f "$saved" ]]; then
+            local dir
+            dir=$(cat "$saved")
+            [[ -d "$dir" ]] && cd "$dir"
+        fi
+    fi
+}
+
 # control commands to record in history
 zshaddhistory() {
     local line="${1%%$'\n'}"

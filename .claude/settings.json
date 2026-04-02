@@ -5,9 +5,6 @@
   },
   "permissions": {
     "allow": [
-      "Bash(./vendor/bin/sail artisan:*)",
-      "Bash(./vendor/bin/sail exec app:*)",
-      "Bash(./vendor/bin/sail test:*)",
       "Bash(* | grep*)",
       "Bash(* | head*)",
       "Bash(* | jq*)",
@@ -35,16 +32,11 @@
       "Bash(gh pr view --comments)",
       "Bash(gh pr view --json body --jq .body:*)",
       "Bash(gh pr*)",
-      "Bash(git blame*)",
-      "Bash(git branch*)",
-      "Bash(git config --get*)",
-      "Bash(git diff*)",
-      "Bash(git log*)",
-      "Bash(git remote -v*)",
-      "Bash(git show*)",
-      "Bash(git status*)",
+      "Bash(gh auth status*)",
+      "Bash(git *)",
       "Bash(grep*)",
-      "Bash(head*)",
+      "Bash(cmux *)",
+      "Bash(head *)",
       "Bash(jq*)",
       "Bash(less *)",
       "Bash(ls*)",
@@ -65,7 +57,6 @@
       "Bash(pydoc*)",
       "Bash(pylint*)",
       "Bash(pytest*)",
-      "Bash(python*)",
       "Bash(python3*)",
       "Bash(readlink *)",
       "Bash(realpath *)",
@@ -81,6 +72,11 @@
       "Bash(wc*)",
       "Bash(which *)",
       "Bash(yq eval*)",
+      "Bash(vendor/bin/sail *)",
+      "Bash(vendor/bin/sail artisan:*)",
+      "Bash(vendor/bin/sail exec app:*)",
+      "Bash(vendor/bin/sail test:*)",
+      "Bash(vendor/bin/pint *)",
       "Edit(**)",
       "Glob(**)",
       "Grep(**)",
@@ -90,26 +86,60 @@
       "Read(**)",
       "Read(~/.claude/*)",
       "Read(~/.zshrc)",
+      "Read(~/dotfiles/.ai/skills/**)",
       "Task(**)",
-      "TodoRead()",
       "TodoWrite(**)",
-      "WebSearch(**)",
       "Write(**)"
     ],
     "deny": [
       "Bash(rm -rf :*)",
-      "Bash(curl:*)",
-      "Bash(git:*)",
       "Bash(git clone:*)",
-      "Bash(git push:*)",
-      "Bash(git pull:*)",
-      "Bash(git fetch:*)",
-      "Bash(git reset:*)",
-      "Bash(docker compose exec app:*)"
+      "Bash(python*)",
+      "Bash(vendor/bin/phpstan *)"
     ]
   },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook session-start || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook stop || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook notification || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "model": "opusplan",
   "statusLine": {
     "type": "command",
-    "command": "input=$(cat); model=$(echo \"$input\" | jq -r '.model.display_name'); cwd=$(echo \"$input\" | jq -r '.workspace.current_dir'); project=$(echo \"$input\" | jq -r '.workspace.project_dir'); style=$(echo \"$input\" | jq -r '.output_style.name'); branch=$(cd \"$project\" 2>/dev/null && git branch --show-current 2>/dev/null || echo 'no-git'); printf \"\\033[2m%s\\033[0m \\033[34m%s\\033[0m [\\033[33m%s\\033[0m] \\033[36m%s\\033[0m\" \"$model\" \"$(basename \"$cwd\")\" \"$branch\" \"$style\""
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0
+  },
+  "enabledPlugins": {
+    "php-lsp@claude-plugins-official": true
   }
 }
