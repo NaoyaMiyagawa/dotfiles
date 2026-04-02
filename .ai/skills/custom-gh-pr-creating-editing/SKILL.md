@@ -30,6 +30,18 @@ When the task is to solve a GitHub Issue, and the code changes covers the all re
 - close: #{issue_number}
 ```
 
+When there is a base branch, and it has a PR, write this at the top of the description.
+```md
+Previous:
+- #{pr_number}
+```
+
+When there is a branch based on the this branch, write this at the top of the description. (after "Previous" if there is.)
+```md
+Next:
+- #{pr_number}
+```
+
 ### Jira ticket link
 If GitHub PR template has a dedicated section for Jira ticket link and you find applicable ticket based on the ticket key in branch name, put a ticket link in the dedicated section in the template.
 
