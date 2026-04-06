@@ -45,6 +45,12 @@
 !/.config
 /.config/zsh/secrets.local.zsh
 
+# .cursor
+!/.cursor/
+!/.cursor/.gitignore
+!/.cursor/rules/
+!/.cursor/rules/**
+
 # vim
 !/.vimrc
 !/.vim
