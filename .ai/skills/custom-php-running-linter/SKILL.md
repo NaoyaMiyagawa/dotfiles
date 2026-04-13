@@ -9,11 +9,11 @@ description: Runs PHP linting and formatting using Pint. Use after modifying PHP
 ### Only for modified files
 
 ```bash
-vendor/bin/pint --parallel --dirty
+vendor/bin/pint -p --dirty
 ```
 
 ### Specific files or directories
 
 ```bash
-vendor/bin/pint --parallel {file/directory paths}
+vendor/bin/pint -p {file/directory paths}
 ```

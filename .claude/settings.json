@@ -19,8 +19,9 @@
       "Bash(black --check*)",
       "Bash(black --diff*)",
       "Bash(cat *)",
-      "Bash(curl*)",
-      "Bash(cut*)",
+      "Bash(curl *)",
+      "Bash(cut *)",
+      "Bash(jira issue view *)",
       "Bash(diff *)",
       "Bash(dirname *)",
       "Bash(echo *)",
@@ -73,11 +74,14 @@
       "Bash(which *)",
       "Bash(yq eval*)",
       "Bash(./vendor/bin/sail *)",
+      "Bash(vendor/bin/sail *)",
       "Bash(./vendor/bin/sail up:*)",
       "Bash(./vendor/bin/sail artisan:*)",
       "Bash(./vendor/bin/sail exec app:*)",
       "Bash(./vendor/bin/sail test:*)",
       "Bash(./vendor/bin/pint *)",
+      "Bash(vendor/bin/pint *)",
+      "Bash(rtk *)",
       "Edit(**)",
       "Glob(**)",
       "Grep(**)",
@@ -99,6 +103,7 @@
       "Bash(vendor/bin/phpstan *)"
     ]
   },
+  "model": "opusplan",
   "hooks": {
     "SessionStart": [
       {
@@ -132,15 +137,36 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/rtk-rewrite.sh"
+          }
+        ]
+      }
     ]
   },
-  "model": "opusplan",
   "statusLine": {
     "type": "command",
     "command": "npx -y ccstatusline@latest",
     "padding": 0
   },
   "enabledPlugins": {
-    "php-lsp@claude-plugins-official": true
-  }
+    "php-lsp@claude-plugins-official": true,
+    "figma@claude-plugins-official": true,
+    "codex@openai-codex": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  },
+  "effortLevel": "high"
 }
