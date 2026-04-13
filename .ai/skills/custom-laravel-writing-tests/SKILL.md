@@ -3,12 +3,6 @@ name: custom-laravel-writing-tests
 description: Applies Laravel and Pest testing conventions, including TDD workflow and test structure rules. Use when writing or updating Pest tests, feature tests, factories, datasets, beforeEach setup, or assertion patterns.
 ---
 
-# Custom Laravel Testing Conventions
-
-## Scope
-
-Apply this skill for test-related tasks in Laravel projects.
-
 ## Core Testing Workflow
 
 Follow t_wada TDD:
@@ -36,6 +30,12 @@ Run tests using:
 
 # or use parallel for faster test run
 ./vendor/bin/sail test --parallel [filepath]
+```
+
+If sail is not running, sail up only necessary containers for running tests. Most of the time, it's only app and mysql, sometimes minio.
+
+```bash
+./vendor/bin/sail up -d app mysql
 ```
 
 ## Coding standard
@@ -205,6 +205,18 @@ assert($data)->...
   describe('completionFlow', function () {
   });
   ```
+
+### Mock
+Always use mock from Pest. Prefer to chain mock and method calls. Have variable when defining mock in beforeEach() or when having multiple `->shouldReceive()` call.
+
+```php
+use function Pest\Laravel\mock;
+
+mock(Xxx::class)
+    ->shouldReceive('')
+    ->once()
+    ...
+```
 
 ### Assertions
 

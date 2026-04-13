@@ -1,6 +1,6 @@
 ---
 name: custom-php-running-test
-description: Runs PHP test (PHPUnit, Pest). Use when you are running php test.
+description: Runs PHP/Laravel test (PHPUnit, Pest). Use when you are running php test.
 ---
 
 ## Command

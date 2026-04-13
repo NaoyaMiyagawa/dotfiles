@@ -24,6 +24,12 @@ Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), th
 - Apply fixes for the selected comments
 - Give a template for user to answer
 
+```md
+Address comments: [1,2,...]
+Commit after each fix: yes/no
+Push and reply on PR after fix: yes/no
+```
+
 ## 4) Commit a fix one by one
 - If user wants you to commit, commit it. If not, ask user if he wants you to commit after fixing one by one.
 - This is to leave a commit hash as a reply to the review comment. (e.g. `Fixed: {commit hash}`)
