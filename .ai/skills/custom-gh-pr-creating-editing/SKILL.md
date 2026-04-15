@@ -17,7 +17,14 @@ Assign @NaoyaMiyagawa.
 ## Labels
 When it's a refactoring work, tag "Refactoring".
 
+## Title
+When the branch or PR is Jira-driven (ticket key in the branch name, or the work clearly maps to a Jira issue you can identify), set the GitHub PR title to **match the Jira ticket Summary** (the issue title). If you only have the key, fetch Summary from Jira (CLI or UI) before `gh pr create` / `gh pr edit`. Prefer this over an invented title unless the repository documents a different naming rule that takes precedence.
+
 ## Description
+
+### Repository PR template
+Before drafting or editing the PR body, look for the repo's GitHub pull request template (common paths: `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE.md`, or `.github/PULL_REQUEST_TEMPLATE/*.md`). **Follow that template:** keep its section headings and fill every section it defines; add the rules below (references, Jira, validation) *inside* the template structure rather than ignoring the template. If the repo has no template, use a clear structured body consistent with team practice.
+
 ### Reference
 
 When putting a reference links of GitHub Issues or Pull Requests, write it using bullet item (-) so that GitHub UI will display corresponding page title.
@@ -43,7 +50,7 @@ Next:
 ```
 
 ### Jira ticket link
-If GitHub PR template has a dedicated section for Jira ticket link and you find applicable ticket based on the ticket key in branch name, put a ticket link in the dedicated section in the template.
+If GitHub PR template has a dedicated section for Jira ticket link and you find applicable ticket based on the ticket key in branch name, put a ticket link in the dedicated section in the template. (PR title should still follow the **Title** section above when the work is Jira-driven.)
 
 ### Validation Run
 If there are commands you used for validation, you can leave at the end of the description, but it should be written using "details" block not to mess the PR description.
