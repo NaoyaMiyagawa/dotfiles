@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Email HTML template review'
+  short_description: 'Audit rendered HTML for email client safety'
+  default_prompt: 'Use $custom-email-html-template-review to review this server-rendered email HTML for client compatibility and rewrite it using the skill checklist.'
