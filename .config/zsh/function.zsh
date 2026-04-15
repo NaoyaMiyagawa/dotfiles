@@ -78,6 +78,7 @@ _update_cwd() {
         echo "$PWD" > "$dir/$CMUX_WORKSPACE_ID"
     fi
 }
+autoload -Uz add-zsh-hook
 add-zsh-hook chpwd _update_cwd
 _update_cwd  # emit once on shell start
 
