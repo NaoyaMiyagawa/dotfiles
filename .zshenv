@@ -51,3 +51,4 @@ fi
 
 # Load machine-local secrets and API tokens if present.
 [[ -f "$DOTFILES_PATH/.config/zsh/secrets.local.zsh" ]] && source "$DOTFILES_PATH/.config/zsh/secrets.local.zsh"
+. "$HOME/.cargo/env"

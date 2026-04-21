@@ -162,3 +162,9 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # opencode
 export PATH=/Users/miyagawa/.opencode/bin:$PATH
+
+# cmux: clear sidebar state when shell exits so stale Claude info doesn't linger
+_cmux_shell_exit() {
+  [ -n "$CMUX_SURFACE_ID" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook stop 2>/dev/null || true
+}
+add-zsh-hook zshexit _cmux_shell_exit
