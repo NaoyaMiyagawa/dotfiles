@@ -3,6 +3,9 @@
   "env": {
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
   },
+  "model": "opus",
+  "effortLevel": "medium",
+  "preferredNotifChannel": "terminal_bell",
   "permissions": {
     "allow": [
       "Bash(* | grep*)",
@@ -103,7 +106,6 @@
       "Bash(vendor/bin/phpstan *)"
     ]
   },
-  "model": "opusplan",
   "hooks": {
     "SessionStart": [
       {
@@ -167,6 +169,5 @@
         "repo": "openai/codex-plugin-cc"
       }
     }
-  },
-  "effortLevel": "high"
+  }
 }
