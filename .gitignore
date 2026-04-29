@@ -38,6 +38,8 @@
 !/.zsh/**/*.zsh
 
 # .claude
+!/.claude/
+/.claude/**
 !/.claude/CLAUDE.md
 !/.claude/settings.json
 
