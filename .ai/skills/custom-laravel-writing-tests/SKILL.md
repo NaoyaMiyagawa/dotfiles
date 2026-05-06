@@ -234,6 +234,23 @@ mock(Xxx::class)
   }
   ```
 
+### Test file naming
+Test file name must mirror the production class name verbatim, including suffixes like `Job`, `Service`, `Action`, `Controller`.
+
+- `RunManualPostIssuanceActionJob` → `RunManualPostIssuanceActionJobTest.php` (not `RunManualPostIssuanceActionTest.php`)
+- `MPIADocumentsController` → `MPIADocumentsControllerTest.php`
+
+### Controller test scope
+When a controller delegates to an Action / Service / Job / Executor class that has its own dedicated test, keep controller tests thin. Mock the delegated class and assert on the call boundary; do **not** re-cover its domain logic.
+
+A controller test should cover only:
+1. **One success case** — verifies the controller passes the right args to the action class (mock `->shouldReceive(...)` with expected args).
+2. **Validation cases** — request validation rules that live in the controller / FormRequest.
+3. **One rejection case** — verifies the controller catches the action's exception and returns the expected response. No need to enumerate every exception message; that belongs in the action's test.
+4. **Authorization cases** — policy / middleware behavior owned by the controller layer.
+
+Domain branching, error variants, and side-effects belong in the Action / Service / Job test, not duplicated in the controller test.
+
 ### Test target exclusion
 No need to write tests for the following classes:
 - Resource
