@@ -3,9 +3,6 @@
   "env": {
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
   },
-  "model": "opus",
-  "effortLevel": "medium",
-  "preferredNotifChannel": "terminal_bell",
   "permissions": {
     "allow": [
       "Bash(* | grep*)",
@@ -104,8 +101,10 @@
       "Bash(git clone:*)",
       "Bash(python*)",
       "Bash(vendor/bin/phpstan *)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
+  "model": "opus[1m]",
   "hooks": {
     "SessionStart": [
       {
@@ -169,5 +168,9 @@
         "repo": "openai/codex-plugin-cc"
       }
     }
-  }
+  },
+  "effortLevel": "medium",
+  "theme": "dark",
+  "preferredNotifChannel": "terminal_bell",
+  "skipAutoPermissionPrompt": true
 }
