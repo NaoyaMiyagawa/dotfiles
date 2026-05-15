@@ -86,6 +86,33 @@ it('xxx', function (
 ]);
 ```
 
+### Validation tests
+- Consolidate validation cases into a single dataset, including uniqueness / "already exists" cases — they are the same kind of assertion.
+- For per-case arrange logic, put a closure column in the dataset row instead of branching with `match`/`switch` on the case label inside the test body.
+- Closure columns do not need identical signatures just because they share a dataset column. Match each closure to how the test invokes it: too many arguments are ignored by user-defined closures, but missing required arguments still throw `ArgumentCountError`.
+  ```php
+  it('rejects invalid payloads', function (
+    Closure $arrange,
+    array $payload,
+    array $errors,
+  ) {
+    $arrange();
+    post(route('...'), $payload)
+        ->assertInvalid($errors);
+  })->with([
+    'file is required' => [
+      $arrange = fn () => null,
+      $payload = [],
+      $errors = ['file' => 'The file field is required.'],
+    ],
+    'name already taken' => [
+      $arrange = fn () => Item::factory()->createOne(),
+      $payload = ['name' => 'dup'],
+      $errors = ['name' => 'The name has already been taken.'],
+    ],
+  ]);
+  ```
+
 ### Factory
 
 - Prefer factory state methods when available to reduce hardcoding keys.
@@ -222,6 +249,14 @@ mock(Xxx::class)
 
 - Don't use `->and()`, just use two separate lines for cleanliness.
 - Use `foreach` over `assert(x)->each()` for cleanliness.
+- For validation failures, always assert with the full expected message map, not the field-only form. Pass the expected message via a dataset column so each case documents its own failure.
+  ```php
+  // Good
+  $response->assertInvalid(['file' => 'The file field is required.']);
+
+  // Bad — field-only or partial match
+  $response->assertInvalid(['file']);
+  ```
 - Add a line break when test target entity changes.
   e.g.)
   ```php
