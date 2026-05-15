@@ -40,6 +40,21 @@ Apply this skill only for Laravel backend work.
 4. Omit `->value` when enum is used in value part (e.g. `->where('status', UserStatus::Active)`, `->update(['status' => UserStatus::Active])`)
 5. **Update through the relation, not a fresh query.** When you have a parent model and want to update its children, prefer `$parent->children()->update([...])` over `Child::query()->where('parent_id', $parent->id)->update([...])`. The relation already encodes the constraint and reads more clearly.
 6. **Don't set `updated_at` manually.** Let the framework manage timestamps. Only touch them explicitly when the value must intentionally diverge from "now" (e.g. backfills, replication).
+7. **Single-record updates: assign attributes and `->save()`.** When you already hold the model instance, prefer attribute assignment + `->save()` over `Model::query()->where('id', $id)->update([...])`. The query-builder form reads as a bulk update at a glance and obscures intent.
+    ```php
+    // Bad — looks like bulk update at first glance
+    ActionRun::query()
+        ->where('id', $actionRun->id)
+        ->update([
+            'status' => ActionRunStatus::Running,
+            'started_at' => now(),
+        ]);
+
+    // Good
+    $actionRun->status = ActionRunStatus::Running;
+    $actionRun->started_at = now();
+    $actionRun->save();
+    ```
 
 ### Routing
 1. **Place a single-resource action under that resource's route group**, not under whatever parent happened to surface it. A "resend email for this document" action belongs at `/documents/{document}/resend-email`, not `/runs/{run}/documents/{document}/resend-email`, even if the UI entry point is the run page.
