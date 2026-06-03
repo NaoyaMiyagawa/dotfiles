@@ -28,10 +28,28 @@ Apply this skill only for Laravel backend work.
 5. Use string interpolation when possible for better readability. (e.g. `"This is {$user->name}"`)
 6. Use named args when method calls goes multiple lines due to line length.
 7. Don't wrap with bracket when instanciating a class. Good: `new Xxx()->...`.
+8. Prefer `$x === null` over `is_null($x)` for null checks.
 
 ### Auth
 1. Use `Auth::user()` over `$request->user()` in controller for better IDE support on Cursor.
 2. Access `Auth::user()` only on presentation layers such as Controllers.
+
+### Authorization (Policies)
+- Map controller actions to standard CRUD policy abilities: `index`/`show` → `viewAny`/`view`, `create`/`store` → `create`, `edit`/`update` → `update`, `destroy` → `delete`. Don't invent abilities like `edit` on the policy — if `show` requires edit-level access for an editable resource, authorize against `update`, not a non-existent `edit` method.
+
+### API Resources
+- When a `JsonResource` field stops being consumed by the frontend, remove it from the resource, the FE TypeScript types, mocks, and any selectors in the same PR. Don't leave dead serialized fields behind "just in case" — they mislead future readers about the contract.
+
+### Domain language
+Before writing a raw conditional involving a domain concept (user role, org membership, status, capability), grep the relevant model (`User`, `Organization`, etc.) for an existing predicate or accessor — `isXxx()`, `hasXxx()`, `getXxx()` — and reuse it instead of duplicating the check inline.
+
+```php
+// Bad — inline re-derivation
+if ($user?->organization_id === Organization::INTERNAL_ID && $user->organization->sso_enabled) { ... }
+
+// Good — reuse domain helpers
+if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEnableSsoLogin()) { ... }
+```
 
 ### Eloquent
 1. Always start from `::query()` for better IDE support.
@@ -84,6 +102,10 @@ e.g.
 ### Queue / Job dispatch
 - Prefer the `dispatch(new JobClass(...))` helper over `JobClass::dispatch(...)` for better IDE / phpstan support on constructor args.
 - Use `ShouldQueueAfterCommit` for listeners and jobs whose effects depend on a DB write completing first (e.g. emails referencing a freshly-created row).
+
+### Config / env
+1. **URL config values**: when an env holds a base URL (e.g. `https://cdn.nexus.accredify.io`), name the config key with a `_base_url` suffix (`cdn_base_url`, not `cdn_bucket`) and strip trailing slashes at read time: `rtrim(env('CDN_BASE_URL', ''), '/')`. Callers should not have to defend against `//path` joins.
+2. **Sync `.env.example` when env vars change.** When you remove or rename a `env('FOO')` usage, update `.env.example` (and `docker-compose*.yml` / FE `.env.example` if mirrored) in the same PR. Stale entries in `.env.example` mislead new devs and trip up deploys.
 
 ### Translations
 - All user-facing strings — including enum labels surfaced in UI, validation messages, and view copy — go through `__()` / translation files. Don't hardcode English literals in enums, resources, or Blade/JSX.

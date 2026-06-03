@@ -1,6 +1,13 @@
 ## Baseline
 @AGENTS.md
 
+## CLI Tool Calling
+- Prefer faster, purpose-built CLI tools over slower legacy defaults.
+- Use `rg` instead of `grep` for searching file contents or line matches.
+- Use `fd` instead of `find` when locating files by name or pattern.
+- Use structured tools or parsers when available instead of ad hoc shell pipelines.
+- If you reach for a slow default, pause and ask whether a faster alternative exists.
+
 ## Subagents
 
 When work is a good fit for a **subagent** (exploration, research, parallel tasks, or an isolated implementation pass), **delegate via the Codex CLI first** if Codex is **not** rate-limited and the CLI runs cleanly. Codex usually has **higher usage limits** than this session, so prefer burning Codex capacity over Claude-only delegation when both can do the job.

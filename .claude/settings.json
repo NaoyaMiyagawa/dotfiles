@@ -145,6 +145,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "~/.claude/hooks/prefer-rg-fd.sh"
+          },
+          {
+            "type": "command",
             "command": "~/.claude/hooks/rtk-rewrite.sh"
           }
         ]
