@@ -90,6 +90,28 @@ it('xxx', function (
 - Consolidate validation cases into a single dataset, including uniqueness / "already exists" cases — they are the same kind of assertion.
 - For per-case arrange logic, put a closure column in the dataset row instead of branching with `match`/`switch` on the case label inside the test body.
 - Closure columns do not need identical signatures just because they share a dataset column. Match each closure to how the test invokes it: too many arguments are ignored by user-defined closures, but missing required arguments still throw `ArgumentCountError`.
+- When a dataset row needs to read `beforeEach` state (`$this->...`), wrap the **entire row** in a closure that returns the array — `$this` is bound to the test instance only inside that closure, not inside per-column closures. Prefer this over duplicating literal values across rows.
+  ```php
+  // Good — $this available across the whole row
+  'file is not an image' => function () {
+      return [
+          UploadedFile::fake()->createWithContent(
+              'not_a_dog.xls',
+              file_get_contents(storage_path($this->invalidImage)),
+          ),
+          'The file field must be an image.',
+      ];
+  },
+
+  // Bad — $this is not bound inside a per-column closure
+  'file is not an image' => [
+      fn () => UploadedFile::fake()->createWithContent(
+          'not_a_dog.xls',
+          file_get_contents(storage_path($this->invalidImage)), // undefined
+      ),
+      'The file field must be an image.',
+  ],
+  ```
   ```php
   it('rejects invalid payloads', function (
     Closure $arrange,
@@ -285,6 +307,9 @@ A controller test should cover only:
 4. **Authorization cases** — policy / middleware behavior owned by the controller layer.
 
 Domain branching, error variants, and side-effects belong in the Action / Service / Job test, not duplicated in the controller test.
+
+### Regression tests
+When adding a test to guard against a specific 500/error you just fixed, assert only the success contract (e.g. `assertOk()` / page renders) on the route that previously broke. Don't over-specify by enumerating `->missing(...)` checks for fields the PR removes or by asserting the absence of every offending shape — those add maintenance cost without strengthening the regression guarantee.
 
 ### Test target exclusion
 No need to write tests for the following classes:
