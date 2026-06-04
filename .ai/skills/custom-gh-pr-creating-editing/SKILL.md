@@ -10,14 +10,45 @@ Use GitHub CLI.
 
 ## Reviewers (Copilot)
 
-Always **assign GitHub Copilot as a reviewer** on the PR (not only a `@copilot` mention in the description). Use the GitHub CLI handle **`@copilot`** so Copilot code review runs.
+Always **assign GitHub Copilot as a reviewer** on the PR (not only a `@copilot` mention in the description).
 
-- **Creating a PR:** pass `--reviewer @copilot` on `gh pr create` (combine with other `--reviewer` values if needed).
-- **Editing an existing PR:** if Copilot is not already listed under reviewers, run `gh pr edit --add-reviewer @copilot` (with the PR number if not on that branch: `gh pr edit <number> --add-reviewer @copilot`).
+### `gh` version gate (required)
 
-Before adding, you may confirm with `gh pr view --json reviewRequests` to avoid duplicate requests when the API rejects duplicates.
+Before using Copilot reviewer flags on `gh pr create` or `gh pr edit`:
 
-Requires [GitHub Copilot code review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review) and a recent `gh` (reviewer support for Copilot is documented there).
+1. Run `gh version` and confirm the CLI version is **≥ 2.88**.
+2. If `gh` is older than 2.88, **do not** pass `--reviewer` / `--add-reviewer` for Copilot. Create or edit the PR without those flags, then tell the user to add Copilot in the GitHub PR UI (**Reviewers** → **Copilot**).
+
+### Exact reviewer handle (strict)
+
+Use **only** the quoted literal **`'@copilot'`** in `gh` flags:
+
+- `--reviewer '@copilot'`
+- `--add-reviewer '@copilot'`
+
+**Never** use unquoted `@copilot`, bare `copilot`, `github-copilot`, `copilot-pull-request-reviewer`, or any other invented bot login. Wrong handles cause API failures and pointless agent retries.
+
+```bash
+gh pr create ... --reviewer '@copilot'
+gh pr edit --add-reviewer '@copilot'
+gh pr edit <number> --add-reviewer '@copilot'
+```
+
+### Workflow
+
+- **Creating a PR:** pass `--reviewer '@copilot'` on `gh pr create` (combine with other `--reviewer` values if needed).
+- **Editing an existing PR:** if Copilot is not already listed under reviewers, run `gh pr edit --add-reviewer '@copilot'` (with the PR number if not on that branch: `gh pr edit <number> --add-reviewer '@copilot'`).
+- Before adding, you may confirm with `gh pr view --json reviewRequests` to avoid duplicate requests when the API rejects duplicates.
+
+### On failure
+
+If `gh pr create` or `gh pr edit` fails when adding the Copilot reviewer:
+
+- **Do not** guess alternate bot usernames or retry with invented logins.
+- Finish PR create/edit without the Copilot reviewer flag if needed.
+- Tell the user explicitly: open the PR on GitHub → **Reviewers** → add **Copilot** in the UI.
+
+Requires [GitHub Copilot code review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review) on the org/repo.
 
 ## Assignees
 Assign @NaoyaMiyagawa.
