@@ -187,7 +187,7 @@ VStack(alignment: .leading, spacing: 5) {
             Spacer(minLength: 0)
         }
         .padding(6)
-        .background(sel ? "#1E6FE8" : "clear")
+        .background(sel ? "#1E6FE855" : "clear")
         .cornerRadius(8)
         .onTapGesture { cmux("workspace.select", workspace_id: w.id) }
     }
