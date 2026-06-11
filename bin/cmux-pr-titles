@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Bridges GitHub PR titles into cmux workspace descriptions.
+#
+# cmux's PR probe (v0.64.14) only tracks number/status/url — no title — so the
+# custom sidebar (~/.config/cmux/sidebars/status.swift) renders the workspace
+# `description` after the PR status. This script keeps those descriptions in
+# sync: for every workspace with a PR it fetches the title via `gh` (cached in
+# ~/.cache/cmux-pr-titles, refreshed daily) and writes it as the description.
+#
+# Safe by design: it only overwrites a description that is empty or one it set
+# itself (i.e. matches a cached title), so manual descriptions are never lost.
+set -uo pipefail
+
+command -v cmux >/dev/null 2>&1 || exit 0
+command -v gh >/dev/null 2>&1 || exit 0
+command -v jq >/dev/null 2>&1 || exit 0
+
+cache_dir="$HOME/.cache/cmux-pr-titles"
+mkdir -p "$cache_dir"
+
+snapshot=$(cmux rpc extension.sidebar.snapshot 2>/dev/null) || exit 0
+
+printf '%s' "$snapshot" |
+  jq -r '.workspaces[]
+         | select((.pull_request_urls | length) > 0)
+         | [.id, .pull_request_urls[0], (.description // "")] | @tsv' |
+  while IFS=$'\t' read -r wid url desc; do
+    key=$(printf '%s' "$url" | shasum | cut -c1-16)
+    cache="$cache_dir/$key"
+
+    title=""
+    if [ -f "$cache" ] && [ -n "$(find "$cache" -mmin -1440 2>/dev/null)" ]; then
+      title=$(cat "$cache")
+    else
+      title=$(gh pr view "$url" --json title --jq .title 2>/dev/null || true)
+      if [ -n "$title" ]; then
+        printf '%s' "$title" >"$cache"
+      elif [ -f "$cache" ]; then
+        title=$(cat "$cache")
+      fi
+    fi
+    [ -z "$title" ] && continue
+    [ "$desc" = "$title" ] && continue
+
+    # Overwrite only descriptions we own (empty, or a previously cached title).
+    if [ -n "$desc" ] && ! grep -qsxF -- "$desc" "$cache_dir"/* 2>/dev/null; then
+      continue
+    fi
+    cmux workspace-action --action set-description \
+      --workspace "$wid" --description "$title" >/dev/null 2>&1 || true
+  done
+
+exit 0
