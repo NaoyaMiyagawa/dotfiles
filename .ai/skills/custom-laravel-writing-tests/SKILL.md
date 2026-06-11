@@ -137,6 +137,7 @@ it('xxx', function (
 
 ### Factory
 
+- **Add a factory class in the same PR as a new Eloquent model.** Without one, tests reach for raw `Model::create([...])` or `DB::insert(...)` and the convention drifts; later contributors then have nothing to copy from. Wire it via the `HasFactory` trait and include at least the columns the model marks as required.
 - Prefer factory state methods when available to reduce hardcoding keys.
   e.g. `withStatus(XxxStatus $status)` when having `status` column.
   If there is no existing state method for a column, you can add it.
