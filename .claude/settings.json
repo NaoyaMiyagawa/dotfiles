@@ -115,6 +115,27 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux clear-progress >/dev/null 2>&1 || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux clear-progress >/dev/null 2>&1 || true",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "Stop": [
@@ -122,7 +143,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook stop || true",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook stop; cmux clear-progress >/dev/null 2>&1; (~/dotfiles/bin/cmux-pr-titles >/dev/null 2>&1 &); } || true",
             "timeout": 10
           }
         ]
@@ -134,6 +155,17 @@
           {
             "type": "command",
             "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook notification || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook prompt-submit; cmux set-progress 0.01 --label working >/dev/null 2>&1; } || true",
             "timeout": 10
           }
         ]
