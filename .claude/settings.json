@@ -25,20 +25,21 @@
       "Bash(diff *)",
       "Bash(dirname *)",
       "Bash(echo *)",
-      "Bash(eslint*)",
-      "Bash(false*)",
-      "Bash(find*)",
-      "Bash(flake8*)",
+      "Bash(eslint *)",
+      "Bash(false *)",
+      "Bash(fd *)",
+      "Bash(find *)",
       "Bash(gh api repos/:owner/:repo/pulls/$(gh pr view --json number --jq .number)/comments:*)",
       "Bash(gh pr view --comments)",
       "Bash(gh pr view --json body --jq .body:*)",
       "Bash(gh pr*)",
       "Bash(gh auth status*)",
       "Bash(git *)",
-      "Bash(grep*)",
+      "Bash(rg *)",
+      "Bash(grep *)",
       "Bash(cmux *)",
       "Bash(head *)",
-      "Bash(jq*)",
+      "Bash(jq *)",
       "Bash(less *)",
       "Bash(ls*)",
       "Bash(make -n*)",
@@ -52,22 +53,22 @@
       "Bash(npm run test:*)",
       "Bash(npm run*)",
       "Bash(npm test*)",
-      "Bash(npx*)",
+      "Bash(npx *)",
       "Bash(printf *)",
-      "Bash(pwd*)",
-      "Bash(pydoc*)",
-      "Bash(pylint*)",
-      "Bash(pytest*)",
-      "Bash(python3*)",
+      "Bash(pwd *)",
+      "Bash(pydoc *)",
+      "Bash(pylint *)",
+      "Bash(pytest *)",
+      "Bash(python3 *)",
       "Bash(readlink *)",
       "Bash(realpath *)",
-      "Bash(sed -n*)",
+      "Bash(sed -n *)",
       "Bash(serena:*)",
-      "Bash(sort*)",
-      "Bash(tail*)",
+      "Bash(sort *)",
+      "Bash(tail *)",
       "Bash(test *)",
-      "Bash(tree*)",
-      "Bash(true*)",
+      "Bash(tree *)",
+      "Bash(true *)",
       "Bash(type *)",
       "Bash(uniq*)",
       "Bash(wc*)",
@@ -99,12 +100,11 @@
     "deny": [
       "Bash(rm -rf :*)",
       "Bash(git clone:*)",
-      "Bash(python*)",
+      "Bash(python *)",
       "Bash(vendor/bin/phpstan *)"
     ],
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
   "hooks": {
     "SessionStart": [
       {
@@ -163,7 +163,8 @@
   "enabledPlugins": {
     "php-lsp@claude-plugins-official": true,
     "figma@claude-plugins-official": true,
-    "codex@openai-codex": true
+    "codex@openai-codex": true,
+    "swift-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
@@ -173,7 +174,7 @@
       }
     }
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "theme": "dark",
   "preferredNotifChannel": "terminal_bell",
   "skipAutoPermissionPrompt": true
