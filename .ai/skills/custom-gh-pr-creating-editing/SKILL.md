@@ -63,7 +63,23 @@ Example: `[AN-1000] User Management Page`
 
 If you only have the key, fetch Summary from Jira (CLI or UI) before `gh pr create` / `gh pr edit`. Prefer this format over an invented title unless the repository documents a different naming rule that takes precedence.
 
+**The title must be scannable at a glance.** A reviewer browsing the PR list should grasp what the PR does without opening it. Lead with the outcome, not the mechanics. Avoid stacked qualifiers, internal-only jargon, or trailing "(...)" notes that belong in the body.
+
+- Good: `[REFACTOR] Use model-binding in Switch Organization endpoint`
+- Bad:   `[REFACTOR] Refactor SwitchOrganizationRequest to remove authorize() block and migrate org_id to route param for cleaner auth (SonarCloud)`
+
 ## Description
+
+### Keep it concise
+Long PR descriptions hurt review more than they help. The diff and commit messages already say *what* changed; the description's job is **why** and the small handful of non-obvious notes a reviewer needs.
+
+- Lead with the motivation in 1–3 sentences. Skip a "Background" preamble if the title already conveys it.
+- List concrete changes as short bullets, not paragraphs. One bullet per behavioural change is enough — don't enumerate every touched file (Copilot's reviewed-files table covers that).
+- Move per-line rationale to inline PR review comments on your own diff (single-PR self-review), not into the description.
+- Cut "Notes" / "Behavioural notes" / "Further comments" sections unless they carry information not derivable from the diff (e.g. an out-of-scope decision, a follow-up PR, a non-obvious test gap).
+- Validation logs go inside the `<details>` block (see below) so they don't dominate the visible body.
+
+If the resulting body feels short, that's the goal. A reviewer should be able to read it in under 30 seconds.
 
 ### Repository PR template
 Before drafting or editing the PR body, look for the repo's GitHub pull request template (common paths: `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE.md`, or `.github/PULL_REQUEST_TEMPLATE/*.md`). **Follow that template:** keep its section headings and fill every section it defines; add the rules below (references, Jira, validation) *inside* the template structure rather than ignoring the template. If the repo has no template, use a clear structured body consistent with team practice.
