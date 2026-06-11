@@ -35,6 +35,8 @@
 !cmux/
 cmux/*
 !cmux/cmux.json
+!cmux/sidebars/
+!cmux/sidebars/**
 
 # vscode
 !vscode/
