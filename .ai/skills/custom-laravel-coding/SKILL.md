@@ -33,6 +33,7 @@ Apply this skill only for Laravel backend work.
 ### Auth
 1. Use `Auth::user()` over `$request->user()` in controller for better IDE support on Cursor.
 2. Access `Auth::user()` only on presentation layers such as Controllers.
+3. **Don't add PHPDoc for `Auth::user()` return type.** IDEs already resolve it via the framework's stubs; the annotation is redundant and rots if the stubs improve.
 
 ### Authorization (Policies)
 - Map controller actions to standard CRUD policy abilities: `index`/`show` → `viewAny`/`view`, `create`/`store` → `create`, `edit`/`update` → `update`, `destroy` → `delete`. Don't invent abilities like `edit` on the policy — if `show` requires edit-level access for an editable resource, authorize against `update`, not a non-existent `edit` method.
@@ -55,10 +56,11 @@ if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEna
 1. Always start from `::query()` for better IDE support.
 2. Use dedicated `whereXxx` methods (e.g. `whereLink`, `whereBetween`, `whereNot`) when applicable.
 3. Use scope defined in model when applicable.
-4. Omit `->value` when enum is used in value part (e.g. `->where('status', UserStatus::Active)`, `->update(['status' => UserStatus::Active])`)
+4. Omit `->value` when enum is used in value part (e.g. `->where('status', UserStatus::Active)`, `->update(['status' => UserStatus::Active])`). This depends on the column being declared with an enum cast on the model — add the cast first if it's missing.
 5. **Update through the relation, not a fresh query.** When you have a parent model and want to update its children, prefer `$parent->children()->update([...])` over `Child::query()->where('parent_id', $parent->id)->update([...])`. The relation already encodes the constraint and reads more clearly.
 6. **Don't set `updated_at` manually.** Let the framework manage timestamps. Only touch them explicitly when the value must intentionally diverge from "now" (e.g. backfills, replication).
-7. **Single-record updates: assign attributes and `->save()`.** When you already hold the model instance, prefer attribute assignment + `->save()` over `Model::query()->where('id', $id)->update([...])`. The query-builder form reads as a bulk update at a glance and obscures intent.
+7. **Prefer `datetime_immutable` cast for new datetime columns.** The codebase is gradually migrating off mutable `datetime` casts toward `CarbonImmutable`. Don't introduce new mutable date columns unless there is a concrete reason.
+8. **Single-record updates: assign attributes and `->save()`.** When you already hold the model instance, prefer attribute assignment + `->save()` over `Model::query()->where('id', $id)->update([...])`. The query-builder form reads as a bulk update at a glance and obscures intent.
     ```php
     // Bad — looks like bulk update at first glance
     ActionRun::query()
@@ -74,9 +76,23 @@ if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEna
     $actionRun->save();
     ```
 
+### Migrations
+1. **Use the `DB` facade for backfills and data manipulation in migrations, not Eloquent models.** Migrations are time-frozen and run against the schema at that point in history; Eloquent models reflect today's schema. A model-based backfill will silently break (or behave inconsistently) once the model's columns, casts, or accessors drift away from what the migration expected.
+    ```php
+    // Good — DB facade, raw column values, independent of any future model changes
+    DB::table('{table}}')->insert([
+        '{column}' => '...',
+    ]);
+
+    // Bad — couples the migration to future model state
+    Model::query()->create([...]);
+    ```
+
 ### Routing
 1. **Place a single-resource action under that resource's route group**, not under whatever parent happened to surface it. A "resend email for this document" action belongs at `/documents/{document}/resend-email`, not `/runs/{run}/documents/{document}/resend-email`, even if the UI entry point is the run page.
 2. Controller class name and directory should match the route resource (e.g. `Http/Controllers/Documents/ResendDocumentEmailController`).
+3. **Prefer route-model binding + policy for resource auth** over receiving an id in the request body and re-resolving it in the controller. `POST /users/{user}/switch` + `->can('switch', 'user')` beats `POST /admin/organisations/switch` with `organization_id` in `FormRequest::authorize()`. Bonus: denials return `403` / unknown ids `404` instead of a silent validation error.
+4. **Use the `->can('ability', 'model')` route helper for model-bound policy enforcement.** Prefer it over `->middleware(['can:ability,model'])` or `Authorize::using(...)` — it reads as a route-level declaration that pairs naturally with model binding.
 
 #### Bulk insert
 When it is expected to create more than 1 record for a same table/model, use bulk insert using `{Model}::query()->insert();` with chunk.
