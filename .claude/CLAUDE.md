@@ -8,6 +8,16 @@
 - Use structured tools or parsers when available instead of ad hoc shell pipelines.
 - If you reach for a slow default, pause and ask whether a faster alternative exists.
 
+## Orchestrator Model Strategy (Fable 5)
+
+When the session runs on Fable 5, treat it as the **orchestrator brain**, not the workhorse:
+
+- **Reserve Fable 5 for thinking:** planning, decomposing tasks, reviewing results, making architectural decisions, and synthesizing the final answer.
+- **Delegate execution to cheaper workers:** spawn subagents with `model: "sonnet"` (or `haiku` for trivial lookups) via the Agent tool, or hand the task to the Codex CLI per the Subagents section below.
+- **Good delegation targets:** file searches and exploration, mechanical edits across many files, running tests/linters and reporting results, drafting boilerplate, research sweeps.
+- **Keep in-session (Fable 5):** ambiguous design choices, tricky debugging that needs full conversation context, small one-off edits where delegation overhead exceeds the work itself.
+- **Verify, don't trust:** review worker output before integrating it; the orchestrator owns correctness.
+
 ## Subagents
 
 When work is a good fit for a **subagent** (exploration, research, parallel tasks, or an isolated implementation pass), **delegate via the Codex CLI first** if Codex is **not** rate-limited and the CLI runs cleanly. Codex usually has **higher usage limits** than this session, so prefer burning Codex capacity over Claude-only delegation when both can do the job.
