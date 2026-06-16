@@ -1,16 +1,5 @@
 ## Baseline
-@AGENTS.md
-
-## CLI Tool Calling
-Prefer fast, purpose-built tools; fall back to a legacy default only when the modern tool genuinely can't do the job.
-- Search file contents → `rg` (not `grep`)
-- Find files by name → `fd` (not `find`)
-- Search/rewrite code by syntax, not text → `ast-grep` / `sg`
-- Simple find-and-replace in files → `sd` (not `sed`)
-- Query/edit JSON → `jq`; YAML → `yq`
-- Diff → `delta`; benchmark a command → `hyperfine`; quick command examples → `tldr`
-- Prefer structured tools or parsers over ad hoc shell pipelines.
-- If you reach for a slow default, pause and check for a faster alternative.
+@~/dotfiles/.ai/AGENTS.md
 
 ## Orchestrator Model Strategy (capable models)
 
@@ -37,5 +26,3 @@ codex exec "Read apps/web/src/foo.ts; summarize data flow; list risks; do not ed
 ```
 
 If not available, use default Claude ones.
-
-@RTK.md
