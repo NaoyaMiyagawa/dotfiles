@@ -44,6 +44,7 @@ You are doing a **self-review**: assume you authored or applied these changes. C
 - Conventions from the Laravel skill(s) (structure, naming, framework patterns, refactors).
 - Test conventions from the Laravel testing skill **for any test/factory changes**.
 - Formatting and lint expectations from the PHP linter skill; static analysis expectations from the PHP static analysis skill; test execution/conventions from the PHP test skill **where relevant**.
+- **Scope creep on refactors**: if the PR title says `[REFACTOR]`, `chore:`, or `refactor:`, confirm no behavior changed. If a behavior delta is intentional, it belongs in a separate PR or must be called out explicitly in the description.
 
 Flag **violations, risks, and gaps** (missing tests, silent edge cases, inconsistent patterns), not generic praise.
 
