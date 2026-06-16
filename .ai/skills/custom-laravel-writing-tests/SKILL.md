@@ -13,6 +13,10 @@ Follow t_wada TDD:
 4. Refactor.
 5. Repeat until test list is empty.
 
+## Refactoring untested code
+
+Before refactoring a code path that has no direct test coverage, first write a **characterisation test** that pins the current observable behaviour and get it green against the *existing* implementation. Then refactor while keeping it green. This proves the change is behaviour-preserving rather than asserting it after the fact.
+
 ## Pest Rules
 
 1. Write tests in Pest style.

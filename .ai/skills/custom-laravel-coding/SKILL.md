@@ -29,6 +29,8 @@ Apply this skill only for Laravel backend work.
 6. Use named args when method calls goes multiple lines due to line length.
 7. Don't wrap with bracket when instanciating a class. Good: `new Xxx()->...`.
 8. Prefer `$x === null` over `is_null($x)` for null checks.
+9. Prefer guard clauses / early returns over wrapping the main path in a positive `if`. Invert the condition and bail out first.
+10. **Comment workarounds with their removal condition.** When you add a compatibility guard or workaround (e.g. code that only matters outside the standard dev/runtime environment), leave an inline comment stating *why* it exists and *when it can be removed*, so future cleanup is self-evident — don't bury the rationale in the PR description alone.
 
 ### Auth
 1. Use `Auth::user()` over `$request->user()` in controller for better IDE support on Cursor.
@@ -114,6 +116,8 @@ e.g.
                 Notification::insert($notificationsData->toArray());
             });
 ```
+
+**Bulk `insert()` bypasses model events.** It skips the model's `creating`/`saving` hooks, attribute casts, and automatic timestamp management — so every column those hooks would have populated (UUIDs, timestamps, derived defaults) must be set explicitly in the inserted rows. If you intentionally diverge from a hook's default on this path (e.g. a different UUID strategy for index locality), apply the same change to the model hook too, so no two write paths produce different formats for the same column.
 
 ### Queue / Job dispatch
 - Prefer the `dispatch(new JobClass(...))` helper over `JobClass::dispatch(...)` for better IDE / phpstan support on constructor args.
