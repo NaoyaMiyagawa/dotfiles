@@ -105,10 +105,11 @@ zshaddhistory() {
 }
 
 # ----------------------------------------------------------------------------
-# fd ： 曖昧検索を使ったディレクトリ移動
+# fuzzy-cd ： 曖昧検索を使ったディレクトリ移動
 # ----------------------------------------------------------------------------
 # -o -path の箇所は除外パス
-fd() {
+# NOTE: named `fuzzy-cd` (not `fd`) to avoid shadowing the sharkdp/fd binary
+fuzzy-cd() {
     local dir
     dir=$(find ${1:-.} \( -path '*/\.*' \
         -o -path '\./Music/*' \
