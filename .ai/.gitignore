@@ -11,6 +11,10 @@
 !/.gitignore
 !/AGENTS.md
 
+# docs (imported by AGENTS.md, e.g. @docs/RTK.md)
+!/docs/
+!/docs/**
+
 # commands
 !/commands/
 
