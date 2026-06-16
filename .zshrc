@@ -168,3 +168,6 @@ _cmux_shell_exit() {
   [ -n "$CMUX_SURFACE_ID" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook stop 2>/dev/null || true
 }
 add-zsh-hook zshexit _cmux_shell_exit
+
+# Added by sonarqube-cli installer
+export PATH="$HOME/.local/share/sonarqube-cli/bin:$PATH"
