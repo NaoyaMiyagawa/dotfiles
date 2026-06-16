@@ -143,7 +143,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook stop; cmux clear-progress >/dev/null 2>&1; (~/dotfiles/bin/cmux-pr-titles >/dev/null 2>&1 &); } || true",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook stop; cmux set-progress 1.0 --label done >/dev/null 2>&1; (~/dotfiles/bin/cmux-pr-titles >/dev/null 2>&1 &); } || true",
             "timeout": 10
           }
         ]
@@ -154,7 +154,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook notification || true",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { i=$(cat); printf '%s' \"$i\" | cmux claude-hook notification; m=$(printf '%s' \"$i\" | jq -r '.message // empty' 2>/dev/null); case \"$m\" in *\"waiting for your input\"*) : ;; *) cmux set-progress 0.5 --label waiting >/dev/null 2>&1 ;; esac; } || true",
             "timeout": 10
           }
         ]
@@ -167,6 +167,16 @@
             "type": "command",
             "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook prompt-submit; cmux set-progress 0.01 --label working >/dev/null 2>&1; } || true",
             "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/sonar-secrets/build-scripts/prompt-secrets.sh",
+            "timeout": 60
           }
         ]
       }
@@ -184,6 +194,16 @@
             "command": "~/.claude/hooks/rtk-rewrite.sh"
           }
         ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/sonar-secrets/build-scripts/pretool-secrets.sh",
+            "timeout": 60
+          }
+        ]
       }
     ]
   },
@@ -193,7 +213,7 @@
     "padding": 0
   },
   "enabledPlugins": {
-    "php-lsp@claude-plugins-official": true,
+    "php-lsp@claude-plugins-official": false,
     "figma@claude-plugins-official": true,
     "codex@openai-codex": true,
     "swift-lsp@claude-plugins-official": true
