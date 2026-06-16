@@ -63,10 +63,6 @@ zinit wait'1' lucid light-mode for \
     @'paulirish/git-open' \
     @'mollifier/cd-gitroot'
 
-# dandavision/delta
-zinit ice wait'1' lucid from"gh-r" as"program" mv"delta* -> delta" pick"delta/delta"
-zinit light 'dandavison/delta'
-
 # ----------------------------------------------------------------------------
 # Utilities
 # ----------------------------------------------------------------------------
@@ -87,23 +83,11 @@ export ZSH_PLUGINS_ALIAS_TIPS_TEXT='----- alias-tips: '
 # zinit wait lucid pick'init.sh' nocompile'!' for 'babarot/enhancd'
 # export ENHANCD_FILTER=fzf:peco:fzy
 
-# peco ｜ fuzzy-search
-zinit wait lucid from"gh-r" as"program" pick"*/peco" for @'peco/peco'
-
-# fzf ｜ fuzzy-search
-zinit wait lucid from"gh-r" as"program" for @'junegunn/fzf'
-
-# bat ｜ enhanced `less`
-zinit wait lucid light-mode as"command" from"gh-r" mv"bat* -> bat" pick"bat/bat" for @'sharkdp/bat'
-
-# rust, cargo | required for rust based plugins
-zinit wait lucid light-mode for @'zdharma-continuum/zinit-annex-rust'
-
-# eza | Rust based reinforced ls/exa https://github.com/eza-community/eza
-zinit wait lucid light-mode from"gh-r" as"program" mv"eza* -> eza" pick"eza/eza" for @'eza-community/eza'
-
-# ripgrep ｜ enhanced `grep`
-zinit wait'3' lucid light-mode from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg/rg" for @'BurntSushi/ripgrep'
+# NOTE: CLI binaries (peco, fzf, bat, eza, ripgrep, delta) are managed by
+# Homebrew via the repo Brewfile (`make brew`), not zinit. Homebrew puts them
+# on PATH for ALL shells — including non-interactive ones (agents, scripts,
+# CI) — whereas zinit's `wait` turbo-loads them only after an interactive
+# prompt renders, leaving them invisible to those shells.
 
 if is_osx; then
     # AWS CLI v2の補完。

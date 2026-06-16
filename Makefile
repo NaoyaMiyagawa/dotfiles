@@ -15,6 +15,10 @@ install: ## Create symlink to home directory
 	@echo ''
 	@$(foreach val, $(DOTFILES), ln -sfnv $(abspath $(val)) $(HOME)/$(val);)
 
+brew: ## Install CLI tools from the Brewfile
+	@echo '==> Installing CLI tools via brew bundle.'
+	brew bundle --file=$(DOTPATH)/Brewfile
+
 clean: ## Remove the dot files and this repo
 	@echo 'Remove dot files in your home directory...'
 	@-$(foreach val, $(DOTFILES), rm -vrf $(HOME)/$(val);)

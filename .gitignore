@@ -18,6 +18,7 @@
 # dotfile installer
 !/install.sh
 !/Makefile
+!/Brewfile
 
 # bin (helper scripts referenced by hooks/config)
 !/bin/
