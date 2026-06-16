@@ -2,11 +2,15 @@
 @AGENTS.md
 
 ## CLI Tool Calling
-- Prefer faster, purpose-built CLI tools over slower legacy defaults.
-- Use `rg` instead of `grep` for searching file contents or line matches.
-- Use `fd` instead of `find` when locating files by name or pattern.
-- Use structured tools or parsers when available instead of ad hoc shell pipelines.
-- If you reach for a slow default, pause and ask whether a faster alternative exists.
+Prefer fast, purpose-built tools; fall back to a legacy default only when the modern tool genuinely can't do the job.
+- Search file contents → `rg` (not `grep`)
+- Find files by name → `fd` (not `find`)
+- Search/rewrite code by syntax, not text → `ast-grep` / `sg`
+- Simple find-and-replace in files → `sd` (not `sed`)
+- Query/edit JSON → `jq`; YAML → `yq`
+- Diff → `delta`; benchmark a command → `hyperfine`; quick command examples → `tldr`
+- Prefer structured tools or parsers over ad hoc shell pipelines.
+- If you reach for a slow default, pause and check for a faster alternative.
 
 ## Orchestrator Model Strategy (capable models)
 
