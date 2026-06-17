@@ -111,7 +111,18 @@ zstyle ":plugin:history-search-multi-word" active "bg=blue"          # Style for
 # ----------------------------------------------------------------------------
 
 autoload -Uz compinit
-compinit
+# Skip the slow compaudit security scan on most startups: run the full compinit
+# (audit + dump rebuild) only when the cached dump is missing or >24h old;
+# otherwise load it with -C. compinit dominates zsh startup time.
+() {
+  local zdump=${ZDOTDIR:-$HOME}/.zcompdump
+  local -a stale=( ${zdump}(#qNmh+24) )
+  if [[ -f $zdump && ${#stale} -eq 0 ]]; then
+    compinit -C -d $zdump
+  else
+    compinit -d $zdump
+  fi
+}
 
 # ----------------------------------------------------------------------------
 # Load zinit
