@@ -227,7 +227,8 @@
     }
   },
   "effortLevel": "high",
-  "theme": "dark",
+  "tui": "fullscreen",
+  "theme": "custom:my-theme",
   "preferredNotifChannel": "terminal_bell",
   "skipAutoPermissionPrompt": true
 }
