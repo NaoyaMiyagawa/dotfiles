@@ -22,6 +22,10 @@ Read **every** path below (full file). Treat them as the source of truth for rev
 **Utils**
 - `~/dotfiles/.ai/skills/ccc/SKILL.md`
 
+**Other applicable standards (read when the diff touches them)**
+- Blade email templates → `~/dotfiles/.ai/skills/custom-email-html-template-review/SKILL.md`
+- Any other `custom-*` coding-standard skill relevant to the changed files — list it under Scope so the criteria are explicit.
+
 ## Get the change set to review
 
 1. **Base branch**: Prefer the PR’s merge base. Use `gh pr view --json baseRefName,headRefName` when a PR exists for the current branch; otherwise use `develop`, `main` or `master` as the repo default (ask once if ambiguous).
@@ -48,12 +52,26 @@ You are doing a **self-review**: assume you authored or applied these changes. C
 
 Flag **violations, risks, and gaps** (missing tests, silent edge cases, inconsistent patterns), not generic praise.
 
+## Independent Codex review (different model, bias-free)
+
+A self-review by the same model that wrote the code shares its blind spots. Get a **second opinion from Codex CLI** — a different model — for an unbiased, different-perspective pass. Do this *after* your own review, before presenting results.
+
+- **Skip if** Codex is rate-limited/unauthenticated or the CLI errors out; note that you couldn't get the second opinion and continue with your own findings.
+- Give Codex a **self-contained, read-only** prompt: the base/head refs, how to get the diff, the standards files above, and "do not edit files."
+
+```bash
+cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+codex exec "Review the diff from \`git diff <base>...HEAD\` (or \`gh pr diff\`). Read the coding-standard skills under ~/dotfiles/.ai/skills/ for criteria. Flag violations, bugs, risks, and missing tests with file:line and a concrete fix. Do not edit files."
+```
+
+Fold Codex's findings into the output: **attribute them** (e.g. "Codex flagged …") and reconcile disagreements with your own pass rather than blindly accepting or discarding them. You own correctness.
+
 ## Output format
 
 1. **Scope**: base ref, head ref, and how the diff was obtained.
 2. **PHPStan**: command(s) run, scope, pass/fail; if skipped, say why.
 3. **Summary**: pass/fail with brief rationale (must be **fail** if PHPStan reported errors or exited non-zero when it was applicable to run).
-4. **Findings**: ordered by severity (blocking / should-fix / nit). Each item: file path, approximate location if possible, what standard it breaks (cite the skill section or rule), and a concrete fix.
+4. **Findings**: ordered by severity (blocking / should-fix / nit). Each item: file path, approximate location if possible, what standard it breaks (cite the skill section or rule), and a concrete fix. Mark which findings came from the **Codex** second opinion vs your own review.
 5. **Residual risk**: what you could not verify from the diff alone.
 
 Do not apply fixes unless the user asks; this command is for review output first.
