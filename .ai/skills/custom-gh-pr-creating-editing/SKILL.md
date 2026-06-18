@@ -50,6 +50,25 @@ If `gh pr create` or `gh pr edit` fails when adding the Copilot reviewer:
 
 Requires [GitHub Copilot code review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review) on the org/repo.
 
+## Post-create review (independent Codex pass)
+After creating the PR, run an **independent review with Codex CLI** — a different model from Claude Code, for an unbiased, different-perspective check.
+
+**Review against the applicable coding-standard skills**, not generic advice. Pick the skills relevant to what the diff touches, e.g.:
+
+- Laravel app code → `~/dotfiles/.ai/skills/custom-laravel-coding/SKILL.md`
+- Pest/feature tests, factories → `~/dotfiles/.ai/skills/custom-laravel-writing-tests/SKILL.md`
+- PHP formatting/lint, static analysis, tests → `~/dotfiles/.ai/skills/custom-php-running-{linter,static-analysis,test}/SKILL.md`
+- Blade email templates → `~/dotfiles/.ai/skills/custom-email-html-template-review/SKILL.md`
+
+Use the `/custom-pr-self-review` command (it loads these standards and includes the Codex step), or invoke Codex directly:
+
+```bash
+cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+codex exec "Review \`gh pr diff\` for this PR against the applicable coding-standard skills under ~/dotfiles/.ai/skills/ (read the ones relevant to the changed files for criteria). Flag violations, bugs, risks, and missing tests with file:line and a concrete fix. Do not edit files."
+```
+
+Skip only if Codex is rate-limited/unauthenticated; note that you couldn't get the second opinion. Surface its findings to the user — don't silently accept or discard them.
+
 ## Assignees
 Assign @NaoyaMiyagawa.
 
@@ -86,10 +105,15 @@ Before drafting or editing the PR body, look for the repo's GitHub pull request 
 
 ### Reference
 
-When putting a reference links of GitHub Issues or Pull Requests, write it using bullet item (-) so that GitHub UI will display corresponding page title.
+**Rule (enforced):** Every GitHub Issue or Pull Request reference (`#{number}`, full `https://github.com/...` URL, or `owner/repo#{number}`) **must** be written as its own bullet item starting with `- ` on its own line. This is the only way GitHub's UI expands the reference into the linked page's title.
+
 ```md
 - #{issue_number}
 ```
+
+- One reference per `- ` bullet line — never two refs on the same line.
+- The `- ` bullet must be the start of a new line (blank line before the list if it follows a paragraph), or GitHub will not expand it.
+- **Never embed a reference inline** inside a sentence or a change bullet (e.g. `Fixes the bug from #123`). Inline refs still render but defeat title expansion and make the line hard to scan — pull the ref onto its own `- ` line instead.
 
 When the task is to solve a GitHub Issue, and the code changes covers the all required changes to solve the GitHub Issue, use `close:` prefix to auto-close the issue. This should be placed at the top of PR description.
 ```md
