@@ -13,6 +13,10 @@ Follow t_wada TDD:
 4. Refactor.
 5. Repeat until test list is empty.
 
+## Test as the source of truth
+
+When an existing test encodes the intended behaviour, change the implementation to satisfy the test — don't rewrite the test to match new (possibly wrong) implementation behaviour. Only edit a test when the specification itself changed.
+
 ## Refactoring untested code
 
 Before refactoring a code path that has no direct test coverage, first write a **characterisation test** that pins the current observable behaviour and get it green against the *existing* implementation. Then refactor while keeping it green. This proves the change is behaviour-preserving rather than asserting it after the fact.
@@ -274,6 +278,7 @@ mock(Xxx::class)
 
 ### Assertions
 
+- To assert a record persisted, prefer `$model->refresh()` (reloads from DB) over `expect($model)->toBeInstanceOf(...)` + `expect($model->exists)->toBeTrue()` — the refresh both confirms persistence and surfaces the stored values for further assertions.
 - Don't use `->and()`, just use two separate lines for cleanliness.
 - Use `foreach` over `assert(x)->each()` for cleanliness.
 - For validation failures, always assert with the full expected message map, not the field-only form. Pass the expected message via a dataset column so each case documents its own failure.
@@ -283,6 +288,15 @@ mock(Xxx::class)
 
   // Bad — field-only or partial match
   $response->assertInvalid(['file']);
+  ```
+- Assert the resolved, human-readable string — never a translation key or `__('key')`. Asserting the key (or comparing against the same translation call the code uses) can pass even when the translation is missing or wrong, because both sides resolve identically or the key matches its own unresolved fallback. Spell out the literal expected sentence so a broken/missing translation fails the test.
+  ```php
+  // Good — a missing translation breaks this
+  expect($notification->subject)->toBe('Your DNS verification failed.');
+
+  // Bad — passes even if the translation key resolves to nothing
+  expect($notification->subject)->toBe('settings::messages.dns_failed');
+  expect($notification->subject)->toBe(__('settings::messages.dns_failed'));
   ```
 - Add a line break when test target entity changes.
   e.g.)

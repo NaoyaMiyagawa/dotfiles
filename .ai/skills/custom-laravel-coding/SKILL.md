@@ -30,7 +30,9 @@ Apply this skill only for Laravel backend work.
 7. Don't wrap with bracket when instanciating a class. Good: `new Xxx()->...`.
 8. Prefer `$x === null` over `is_null($x)` for null checks.
 9. Prefer guard clauses / early returns over wrapping the main path in a positive `if`. Invert the condition and bail out first.
-10. **Comment workarounds with their removal condition.** When you add a compatibility guard or workaround (e.g. code that only matters outside the standard dev/runtime environment), leave an inline comment stating *why* it exists and *when it can be removed*, so future cleanup is self-evident — don't bury the rationale in the PR description alone.
+10. Prefer collection pipelines (`collect($items)->map(...)->filter(...)`) over raw array functions in transformation/serialization code, for readability and chainability.
+11. Use one consistent spelling for identifiers across a file — prefer American English (e.g. `organization`, not `organisation`). Don't mix `-ize`/`-ise`. Comments are exempt.
+12. **Comment workarounds with their removal condition.** When you add a compatibility guard or workaround (e.g. code that only matters outside the standard dev/runtime environment), leave an inline comment stating *why* it exists and *when it can be removed*, so future cleanup is self-evident — don't bury the rationale in the PR description alone.
 
 ### Auth
 1. Use `Auth::user()` over `$request->user()` in controller for better IDE support on Cursor.
@@ -77,6 +79,7 @@ if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEna
     $actionRun->started_at = now();
     $actionRun->save();
     ```
+9. **Prefer time-ordered UUIDs for generated identifiers.** When a model uses a UUID key, generate it with the ordered/sequential variant (`Str::orderedUuid()`) rather than a random UUID, for better DB index locality. Keep the model's `creating`/`booting` hook and any bulk-insert path on the same strategy so no two write paths produce different formats.
 
 ### Migrations
 1. **Use the `DB` facade for backfills and data manipulation in migrations, not Eloquent models.** Migrations are time-frozen and run against the schema at that point in history; Eloquent models reflect today's schema. A model-based backfill will silently break (or behave inconsistently) once the model's columns, casts, or accessors drift away from what the migration expected.
