@@ -47,6 +47,8 @@
 /.claude/**
 !/.claude/CLAUDE.md
 !/.claude/settings.json
+!/.claude/themes/
+!/.claude/themes/my-theme.json
 
 # .config
 !/.config
