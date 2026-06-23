@@ -29,10 +29,15 @@ Apply this skill only for Laravel backend work.
 6. Use named args when method calls goes multiple lines due to line length.
 7. Don't wrap with bracket when instanciating a class. Good: `new Xxx()->...`.
 8. Prefer `$x === null` over `is_null($x)` for null checks.
+8a. **Use strict comparison for membership checks.** Pass `true` as the third arg to `in_array()` / `array_search()` when testing identity-style membership — allowlists, id lists, role/status lists. Loose comparison invites type juggling (`0 == 'foo'`, `'1' == 1`), a correctness and security risk in access checks.
 9. Prefer guard clauses / early returns over wrapping the main path in a positive `if`. Invert the condition and bail out first.
 10. Prefer collection pipelines (`collect($items)->map(...)->filter(...)`) over raw array functions in transformation/serialization code, for readability and chainability.
 11. Use one consistent spelling for identifiers across a file — prefer American English (e.g. `organization`, not `organisation`). Don't mix `-ize`/`-ise`. Comments are exempt.
 12. **Comment workarounds with their removal condition.** When you add a compatibility guard or workaround (e.g. code that only matters outside the standard dev/runtime environment), leave an inline comment stating *why* it exists and *when it can be removed*, so future cleanup is self-evident — don't bury the rationale in the PR description alone.
+
+### PHPDoc / typing
+1. **Prefer `list<T>` over `array<int, T>`** in PHPDoc for zero-indexed sequential arrays (anything produced by `map`, `values()`, `explode`, etc.). `list<T>` states the "no string or sparse keys" guarantee that `array<int, T>` only implies, and the analyzer enforces it.
+2. **Annotate structured associative arrays with array-shape syntax** (`array{id: int, name: string, fields?: list<...>}`) instead of a bare `array` or `array<string, mixed>`. The shape documents the contract at boundaries (DTO/value-object constructors, methods returning decoded API or JSON payloads) and lets static analysis catch missing or misspelled keys. Nest `array{...}` and `list<>` freely.
 
 ### Auth
 1. Use `Auth::user()` over `$request->user()` in controller for better IDE support on Cursor.
@@ -80,6 +85,7 @@ if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEna
     $actionRun->save();
     ```
 9. **Prefer time-ordered UUIDs for generated identifiers.** When a model uses a UUID key, generate it with the ordered/sequential variant (`Str::orderedUuid()`) rather than a random UUID, for better DB index locality. Keep the model's `creating`/`booting` hook and any bulk-insert path on the same strategy so no two write paths produce different formats.
+10. **Removing a redundant cast: make the type explicit, don't silently drop it.** When a cast becomes obsolete, prefer replacing it with the plain primitive cast (e.g. `'string'`) over deleting the line — a missing cast is ambiguous between "deliberately default" and "forgotten", especially for id / primary-key columns. Only drop the line entirely when the default is unmistakable. If removing the cast also makes a conditional unreachable (e.g. a null guard that can no longer be true once the value is always a string), delete that dead branch in the same change, and confirm against the column's real DB nullability rather than assuming.
 
 ### Migrations
 1. **Use the `DB` facade for backfills and data manipulation in migrations, not Eloquent models.** Migrations are time-frozen and run against the schema at that point in history; Eloquent models reflect today's schema. A model-based backfill will silently break (or behave inconsistently) once the model's columns, casts, or accessors drift away from what the migration expected.
