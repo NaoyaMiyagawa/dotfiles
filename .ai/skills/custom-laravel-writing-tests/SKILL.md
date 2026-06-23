@@ -298,6 +298,14 @@ mock(Xxx::class)
   expect($notification->subject)->toBe('settings::messages.dns_failed');
   expect($notification->subject)->toBe(__('settings::messages.dns_failed'));
   ```
+- **Assert datetime values by canonical string, not object instance.** Compare via `->toDateTimeString()` (or a formatted/ISO string) instead of `toBe`/`toEqual` against another datetime object. A mutable vs immutable date class mismatch (e.g. after adding an immutable-datetime cast) fails an object comparison even when the instant is identical; the stringified form sidesteps the class mismatch and still pins the value.
+  ```php
+  // Good — survives a Carbon vs CarbonImmutable cast change
+  expect($model->verified_at->toDateTimeString())->toBe($expected->toDateTimeString());
+
+  // Bad — breaks on class mismatch even when the instant matches
+  expect($model->verified_at)->toEqual($expected);
+  ```
 - Add a line break when test target entity changes.
   e.g.)
   ```php
