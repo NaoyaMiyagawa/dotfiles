@@ -1,6 +1,6 @@
 ---
 name: custom-gh-pr-creating-editing
-description: Create or edit the GitHub pull request for the current branch — title format, concise description, reference bullets, assignee, and post-create review triggers. Use when the user asks to create or edit a PR.
+description: Create or edit the GitHub pull request for the current branch — title format, concise description, reference bullets, assignee, and a local different-model code review. Use when the user asks to create or edit a PR.
 ---
 
 # Custom GitHub PR Creating/Editing
@@ -86,34 +86,8 @@ Assign @NaoyaMiyagawa.
 ## Labels
 When it's a refactoring work, tag "Refactoring".
 
-## Trigger review (Claude bot)
-
-After creating or editing the PR, trigger a review from the **Claude GitHub bot** by posting a single PR comment whose body is **`@claude review once`**. The `once` keyword requests a **one-time** review so the timing stays under your control — the bot won't keep re-reviewing on every subsequent push.
-
-### Comment exactly once (strict)
-
-- Post the mention **once**. Repeating it re-triggers the bot and spams the thread.
-- Before commenting, check for an existing request (`gh pr view --json comments`) and **skip** if a `@claude review once` comment is already present.
-
-```bash
-# On the PR's branch:
-gh pr comment --body "@claude review once"
-# Or by PR number:
-gh pr comment <number> --body "@claude review once"
-```
-
-### On failure
-
-If `gh pr comment` fails, or the bot doesn't respond:
-
-- **Do not** guess alternate handles or spam repeated mentions.
-- Finish PR create/edit regardless.
-- Tell the user explicitly: comment **`@claude review once`** on the PR yourself, and confirm the Claude GitHub app is installed on the org/repo.
-
-Requires the [Claude GitHub app](https://docs.claude.com/en/docs/claude-code/github-actions) installed on the org/repo.
-
-## Post-create review (independent Codex pass)
-After creating the PR, run an **independent review with Codex CLI** — a different model from Claude Code, for an unbiased, different-perspective check. Review against the applicable coding-standard skills under `~/dotfiles/.ai/skills/` (Laravel coding, Laravel tests, PHP linter/static-analysis/test, email templates), not generic advice.
+## Code review (local, different model)
+This repo does not use PR review bots — do not post any `@`-mention review trigger on the PR. After creating or editing the PR, run the review **locally with the Codex CLI** — a different model from Claude Code, for an unbiased, different-perspective check. Review against the applicable coding-standard skills under `~/dotfiles/.ai/skills/` (Laravel coding, Laravel tests, PHP linter/static-analysis/test, email templates), not generic advice.
 
 Use the `/custom-pr-self-review` command (it loads these standards and includes the Codex step), or invoke Codex directly:
 
