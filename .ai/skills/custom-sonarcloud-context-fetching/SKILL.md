@@ -5,9 +5,7 @@ description: Fetch SonarCloud / SonarQube context from a sonarcloud.io URL (or a
 
 # Custom SonarCloud Context Fetching
 
-Fetch info from SonarCloud using the `sonar` CLI directly. This replaces the old
-`mcp/sonarqube` MCP server (which spawned a ~500 MB+ Docker container per session).
-The CLI runs on demand and exits, so it costs zero idle memory.
+Fetch info from SonarCloud using the `sonar` CLI directly — on demand, no MCP server.
 
 ## Scope
 
@@ -52,8 +50,12 @@ Notes:
 1. Parse the URL → determine page type and keys (above).
 2. Run the matching command (next section). Prefer `--format json` / `sonar api get`
    when you need to parse; use `--format table` when just showing the user a list.
-3. Report back: state the parsed projectKey / issueKey so the user can confirm the match,
-   then summarize (severity, rule, file:line, message, status, quality-gate result).
+   Prefer `sonar list issues` for issue queries; fall back to `sonar api get "/api/issues/search?..."`
+   for a single issue key, since `list issues` filters by project/severity/status, not by issue key.
+   Mirror URL filters in the command — if the URL has `branch=` or `pullRequest=`, pass
+   `--branch` / `--pull-request` (or `&branch=` / `&pullRequest=` for `sonar api`).
+3. Report back: state the parsed projectKey / issueKey so a mismatch is caught,
+   then summarize (severity/impact, rule, `component:line`, message, status, quality-gate result).
 4. For a flagged issue, fetch the rule explanation (`/api/rules/show`) when the user needs
    the "why" or how to fix.
 
@@ -96,10 +98,4 @@ sonar list projects -q <query>      # find a project key by name/key
 sonar list projects --page-size 50
 ```
 
-## Behavior
-
-1. Always confirm the parsed keys back to the user (URL → projectKey / issueKey) so a mismatch is caught.
-2. Prefer `sonar list issues` for issue queries; fall back to `sonar api get "/api/issues/search?..."` for a single issue key, since `list issues` filters by project/severity/status, not by issue key.
-3. Mirror URL filters in the command — if the URL has `branch=` or `pullRequest=`, pass `--branch` / `--pull-request` (or `&branch=` / `&pullRequest=` for `sonar api`).
-4. When summarizing an issue, include: rule, severity/impact, `component:line`, message, status, and (if asked) the rule explanation from `/api/rules/show`.
-5. Stay read-only. If the user wants to scan code or remediate, point them to `sonar analyze` / `sonar remediate` and let them decide.
+If the user wants to scan code or remediate, point them to `sonar analyze` / `sonar remediate` and let them decide.

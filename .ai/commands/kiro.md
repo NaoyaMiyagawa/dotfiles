@@ -13,9 +13,9 @@ Spec-driven development is a development methodology consisting of the following
 - The user communicates the overview of the task they want AI agent tool to execute.
   - if no description is provided, please fetch PR description using GitHub CLI and analyse based on it
 - In this phase, execute `mkdir -p ./.cckiro/specs`
-- Within `./cckiro/specs`, create a directory with an appropriate spec name based on the task overview
+- Within `./.cckiro/specs`, create a directory with an appropriate spec name based on the task overview
     - If it's not on `main` `develop` branch, try to use branch name unless there is a directory with same name already
-    - As fallback naming principle, for example, if the task is "create an article component", create a directory named `./cckiro/specs/create-article-component`
+    - As fallback naming principle, for example, if the task is "create an article component", create a directory named `./.cckiro/specs/create-article-component`
 - When creating the following files, create them within this directory
 
 ### 2. Requirements Phase
@@ -30,7 +30,7 @@ Spec-driven development is a development methodology consisting of the following
 - Creates a "design file" `2_design.md` describing the design that fulfills the requirements listed in the "requirements file"
 - Presents the "design file" to the user and asks if there are any issues
 - The user reviews the "design file" and provides feedback to AI agent if there are problems
-- Repeats revisions to the "requirements file" until the user confirms there are no issues
+- Repeats revisions to the "design file" until the user confirms there are no issues
 
 ### 4. Implementation Planning Phase
 
@@ -38,7 +38,7 @@ Spec-driven development is a development methodology consisting of the following
 - This file will be also used to visually track the progress by the user
 - Presents the "implementation plan file" to the user and asks if there are any issues
 - The user reviews the "implementation plan file" and provides feedback to AI agent if there are problems
-- Repeats revisions to the "requirements file" until the user confirms there are no issues
+- Repeats revisions to the "implementation plan file" until the user confirms there are no issues
 
 ### 5. Implementation Phase
 

@@ -29,7 +29,7 @@ When not to use:
 1. **Baseline preparation**: Fix the target prompt and prepare the following two things.
    - **Evaluation scenarios**, 2 to 3 kinds (1 median + 1 to 2 edge). Realistic tasks that assume actual situations where the target prompt would apply.
    - **Requirements checklist** (for computing accuracy). For each scenario, enumerate 3 to 7 items the deliverable must satisfy. Accuracy % = items satisfied / total items. Fix this in advance (do not move it afterward).
-2. **Bias-free read**: Have a "blank-slate" executor read the instruction. **Dispatch a new subagent** via the Task tool. Do not substitute with a self-reread (it is structurally impossible to view text you just wrote objectively). When running multiple scenarios in parallel, place multiple Agent invocations within a single message. For how to handle environments where dispatch is unavailable, see the "Environment constraints" section.
+2. **Bias-free read**: Have a "blank-slate" executor read the instruction. **Dispatch a new subagent** via the Agent tool. Do not substitute with a self-reread (it is structurally impossible to view text you just wrote objectively). When running multiple scenarios in parallel, place multiple Agent invocations within a single message. For how to handle environments where dispatch is unavailable, see the "Environment constraints" section.
 3. **Execution**: Hand the subagent a prompt that follows the **subagent invocation contract** described below, and have it execute the scenario. The executor produces an implementation or output and returns a self-report at the end.
 4. **Two-sided evaluation**: Record the following from the returned results.
    - **Executor self-report** (extracted from the body of the subagent's report): unclear points / discretionary fill-ins / places where template application got stuck
@@ -38,8 +38,8 @@ When not to use:
    - **Instruction-side measurements** (the judgment rules are defined canonically in this section; refer to it from elsewhere):
      - Success/failure: counts as success (○) only when **all** requirements tagged `[critical]` are ○. If even one is × or partial, it is failure (×). The label is the binary ○ / × only.
      - Accuracy (achievement rate of the requirements checklist, %. ○ = full score, × = 0, partial = 0.5; sum and divide by total items)
-     - Step count (use the `tool_uses` field in the usage meta attached to the Task tool return value as-is. Include Read / Grep, do not exclude them)
-     - Duration (`duration_ms` from the Task tool usage meta)
+     - Step count (use the `tool_uses` field in the usage meta attached to the Agent tool return value as-is. Include Read / Grep, do not exclude them)
+     - Duration (`duration_ms` from the Agent tool usage meta)
      - Retry count (how many times the subagent redid the same decision. Extract from the subagent's self-report; not measurable from the instruction side)
      - **On failure, add a one-line note to the "unclear points" section of the presentation format stating "which [critical] item dropped"** (for root cause tracing)
    - The requirements checklist must include **at least one** `[critical]`-tagged item (if there are zero, the success judgment becomes vacuous). Do not add or remove [critical] tags after the fact.
@@ -128,7 +128,7 @@ The caller extracts the self-report portion from the report and fills the evalua
 
 ## Environment constraints
 
-In environments where dispatching a new subagent is not possible (already running as a subagent, Task tool is disabled, etc.), **do not apply** this skill.
+In environments where dispatching a new subagent is not possible (already running as a subagent, Agent tool is disabled, etc.), **do not apply** this skill.
 - Alternative 1: ask the parent session's user to start a separate Claude Code session and delegate the evaluation there
 - Alternative 2: give up on evaluation and explicitly report to the user "empirical evaluation skipped: dispatch unavailable"
 - **NG**: substitute with a self-reread (bias enters, so you must not trust the evaluation result)
@@ -229,16 +229,5 @@ Record and present to the user with the following form at each iteration:
 | "Metrics are good, so ignore qualitative feedback" | Time reduction can also be a sign of being too thin. Keep qualitative primary. |
 | "Rewriting from scratch is faster" | Correct if unclear points do not decrease across 3+ iterations. Before that stage, it is escape. |
 | "Let's reuse the same subagent" | It has learned the previous improvements. Always dispatch a new one. |
-
-## Common failures
-
-- **Scenario too easy / too hard**: neither produces signal. One at the median of real use, one edge
-- **Only looking at metrics**: chasing only time reduction strips important explanations and makes it fragile
-- **Too many changes per iteration**: you can no longer trace "which fix back then worked". One fix per iteration
-- **Tuning scenarios to match the fix**: making the scenario side easier just to make unclear points look eliminated → putting the cart before the horse
-
-## Related
-
-- `superpowers:writing-skills` — the TDD approach for skill creation. Essentially the same as this skill's "baseline → fix → rerun with a subagent"
-- `retrospective-codify` — fixating learnings after a task. This skill is during prompt development, retrospective-codify is after a task ends; use them differently
-- `superpowers:dispatching-parallel-agents` — conventions for running multiple scenarios in parallel
+| "Any scenario produces signal" | Too easy / too hard both produce none. One at the median of real use, one edge. |
+| "Ease the scenario so the unclear points disappear" | Tuning the scenario to match the fix is the cart before the horse. Fix the prompt, not the exam. |

@@ -29,22 +29,9 @@ Before refactoring a code path that has no direct test coverage, first write a *
    - `use function Pest\Laravel\mock;`
 3. `describe('<method-name>')` must match the subject public method.
 
-## Command
+## Running tests
 
-Run tests using:
-
-```bash
-./vendor/bin/sail test [filepath]
-
-# or use parallel for faster test run
-./vendor/bin/sail test --parallel [filepath]
-```
-
-If sail is not running, sail up only necessary containers for running tests. Most of the time, it's only app and mysql, sometimes minio.
-
-```bash
-./vendor/bin/sail up -d app mysql
-```
+Follow the `custom-php-running-test` skill (`~/dotfiles/.ai/skills/custom-php-running-test/SKILL.md`) — Sail only, minimal containers, `--parallel` for larger scopes.
 
 ## Coding standard
 ### beforeEach
@@ -201,7 +188,7 @@ Use AAA comments:
 
 Use `// Act & Assert` for compact tests only.
 
-#### Feature Test Pattern
+### Feature Test Pattern
 
 1. Use `route('...')` to build request URLs.
 2. Prefer combining request and assertion fluently when clear.
@@ -255,7 +242,7 @@ assert($data)->...
   });
   ```
 
-#### Action/Service class test
+### Action/Service class test
 - If there are certain flows in business logic, use `describe` block to separate them.
   e.g.
   ```php
@@ -345,6 +332,3 @@ No need to write tests for the following classes:
 - Resource
 - DTO
 - Event
-
-### Verify tests
-Refer [~/dotfiles/.ai/skills/custom-php-running-test]

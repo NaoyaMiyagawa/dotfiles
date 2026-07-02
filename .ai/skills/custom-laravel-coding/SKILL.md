@@ -3,40 +3,32 @@ name: custom-laravel-coding
 description: Applies Laravel backend coding conventions for PHP implementation and refactoring. Use when implementing or refactoring Laravel services, controllers, models, actions, or related backend application logic.
 ---
 
-## Scope
-
-Apply this skill only for Laravel backend work.
-
-## Execution Notes
-
-- Keep changes minimal and consistent with existing project patterns unless you are asked to refactor existing codebase.
-- Do not apply this skill to non-PHP or non-Laravel tasks.
-
 ## Rules
+
+Keep changes consistent with existing project patterns unless asked to refactor.
 
 ### PHP
 1. Use `use` imports instead of inline FQNs like `\App\Models\User`.
 2. Prefer calling `__invoke()` for invokable classes to improve IDE support. e.g. `app(Xxx::class)->__invoke()`
 3. Always add line breaks to constructor args
     ```php
-    public function __constructor(
+    public function __construct(
         public readonly string $xxx,
-    )
-    {}
+    ) {}
     ```
 4. Use `final` `readonly` for ValueObject, DTO. For a value holder with no transformation logic, expose data as `public readonly` properties instead of `private` fields plus getter methods — a getter that only returns its backing field adds ceremony without encapsulating anything. Reach for a private field + accessor only when the accessor does real work (validation, derivation, formatting).
 5. Use string interpolation when possible for better readability. (e.g. `"This is {$user->name}"`)
 6. Use named args when method calls goes multiple lines due to line length.
-7. Don't wrap with bracket when instanciating a class. Good: `new Xxx()->...`.
+7. Don't wrap with bracket when instantiating a class. Good: `new Xxx()->...`.
 8. Prefer `$x === null` over `is_null($x)` for null checks.
-8a. **Use strict comparison for membership checks.** Pass `true` as the third arg to `in_array()` / `array_search()` when testing identity-style membership — allowlists, id lists, role/status lists. Loose comparison invites type juggling (`0 == 'foo'`, `'1' == 1`), a correctness and security risk in access checks.
-9. Prefer guard clauses / early returns over wrapping the main path in a positive `if`. Invert the condition and bail out first.
-10. Prefer collection pipelines (`collect($items)->map(...)->filter(...)`) over raw array functions in transformation/serialization code, for readability and chainability.
-11. Use one consistent spelling for identifiers across a file — prefer American English (e.g. `organization`, not `organisation`). Don't mix `-ize`/`-ise`. Comments are exempt.
-12. **Comment workarounds with their removal condition.** When you add a compatibility guard or workaround (e.g. code that only matters outside the standard dev/runtime environment), leave an inline comment stating *why* it exists and *when it can be removed*, so future cleanup is self-evident — don't bury the rationale in the PR description alone.
-13. **Treat a nullable return type as a contract to guard at every call site.** When a method is declared `?T`, dereference its result null-safely (`?->`) or with an explicit null check *everywhere* it's used — don't leave some sites guarded and others bare. A mix of guarded and unguarded dereferences of the same nullable accessor is a latent null crash; the already-guarded site tells you the null case is real. Choose a sensible default for the absent case (often: skip or permit when there is nothing to enforce).
-14. **Compare value objects through an `equals()` method, not their unwrapped values.** Give a value object an `equals(self $other): bool` and call `$a->equals($b)` rather than reaching into both and comparing raw scalars (`$a->value() === $b->value()`). The intent reads at the call site and the comparison rule lives in one place.
-15. **Reach for the framework's first-party helpers over hand-rolled primitives.** For a common operation, prefer a provided helper to a manual loop over language built-ins — e.g. `Illuminate\Filesystem\Filesystem` (`ensureDirectoryExists()`, `deleteDirectory()`) instead of recursive `scandir`/`is_dir`/`unlink`/`rmdir`, and `Str`/`Arr`/collection helpers over ad-hoc string/array fiddling. Less code to get wrong and the intent is explicit. This applies in test setup/teardown too.
+9. **Use strict comparison for membership checks.** Pass `true` as the third arg to `in_array()` / `array_search()` when testing identity-style membership — allowlists, id lists, role/status lists. Loose comparison invites type juggling (`0 == 'foo'`, `'1' == 1`), a correctness and security risk in access checks.
+10. Prefer guard clauses / early returns over wrapping the main path in a positive `if`. Invert the condition and bail out first.
+11. Prefer collection pipelines (`collect($items)->map(...)->filter(...)`) over raw array functions in transformation/serialization code, for readability and chainability.
+12. Use one consistent spelling for identifiers across a file — prefer American English (e.g. `organization`, not `organisation`). Don't mix `-ize`/`-ise`. Comments are exempt.
+13. **Comment workarounds with their removal condition.** When you add a compatibility guard or workaround (e.g. code that only matters outside the standard dev/runtime environment), leave an inline comment stating *why* it exists and *when it can be removed*, so future cleanup is self-evident — don't bury the rationale in the PR description alone.
+14. **Treat a nullable return type as a contract to guard at every call site.** When a method is declared `?T`, dereference its result null-safely (`?->`) or with an explicit null check *everywhere* it's used — don't leave some sites guarded and others bare. A mix of guarded and unguarded dereferences of the same nullable accessor is a latent null crash; the already-guarded site tells you the null case is real. Choose a sensible default for the absent case (often: skip or permit when there is nothing to enforce).
+15. **Compare value objects through an `equals()` method, not their unwrapped values.** Give a value object an `equals(self $other): bool` and call `$a->equals($b)` rather than reaching into both and comparing raw scalars (`$a->value() === $b->value()`). The intent reads at the call site and the comparison rule lives in one place.
+16. **Reach for the framework's first-party helpers over hand-rolled primitives.** For a common operation, prefer a provided helper to a manual loop over language built-ins — e.g. `Illuminate\Filesystem\Filesystem` (`ensureDirectoryExists()`, `deleteDirectory()`) instead of recursive `scandir`/`is_dir`/`unlink`/`rmdir`, and `Str`/`Arr`/collection helpers over ad-hoc string/array fiddling. Less code to get wrong and the intent is explicit. This applies in test setup/teardown too.
 
 ### Class organization
 1. **Put a class in a directory named for its kind, grouped by domain.** Value objects under `ValueObjects/`, DTOs under `DataTransferObjects/`, enums under `Enums/` — each with a domain sub-namespace (`Enums/{Domain}/`) — rather than nesting them inside a service's generic `Data/` (or similar) folder. The kind should be legible from the path, and the domain grouping should reflect where the type is actually used, not where it happened to be written first.
@@ -113,25 +105,25 @@ if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEna
 3. **Prefer route-model binding + policy for resource auth** over receiving an id in the request body and re-resolving it in the controller. `POST /users/{user}/switch` + `->can('switch', 'user')` beats `POST /admin/organisations/switch` with `organization_id` in `FormRequest::authorize()`. Bonus: denials return `403` / unknown ids `404` instead of a silent validation error.
 4. **Use the `->can('ability', 'model')` route helper for model-bound policy enforcement.** Prefer it over `->middleware(['can:ability,model'])` or `Authorize::using(...)` — it reads as a route-level declaration that pairs naturally with model binding.
 
-#### Bulk insert
-When it is expected to create more than 1 record for a same table/model, use bulk insert using `{Model}::query()->insert();` with chunk.
-e.g.
+### Bulk insert
+When creating more than one record for the same table/model, use bulk `{Model}::insert()` with chunking:
 ```php
-      $organization->users()
-            ->chunkById(self::INSERT_CHUNK_SIZE, function (Collection $submissions) use ($user): void {
-                $now = CarbonImmutable::now();
+$organization->users()
+    ->chunkById(self::INSERT_CHUNK_SIZE, function (Collection $users): void {
+        $now = CarbonImmutable::now();
 
-                $notificationsData = $submissions
-                    ->map(function () {
-                        $notification = new UserNotification();
-                        $notification->user()->associate($user);
-                        $notification->sent_at = $now;
-                        $notification->updateTimestamps()
+        $notificationsData = $users
+            ->map(function (User $user) use ($now) {
+                $notification = new UserNotification();
+                $notification->user()->associate($user);
+                $notification->sent_at = $now;
+                $notification->updateTimestamps();
 
-                        return $notificationData->getAttributes();
-                    });
-                Notification::insert($notificationsData->toArray());
+                return $notification->getAttributes();
             });
+
+        UserNotification::insert($notificationsData->toArray());
+    });
 ```
 
 **Bulk `insert()` bypasses model events.** It skips the model's `creating`/`saving` hooks, attribute casts, and automatic timestamp management — so every column those hooks would have populated (UUIDs, timestamps, derived defaults) must be set explicitly in the inserted rows. If you intentionally diverge from a hook's default on this path (e.g. a different UUID strategy for index locality), apply the same change to the model hook too, so no two write paths produce different formats for the same column.

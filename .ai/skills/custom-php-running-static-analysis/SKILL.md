@@ -8,14 +8,14 @@ description: Runs PHP static analysis using PHPStan with project-specific scope 
 ## Command
 
 ### Specific file
-Use this after changing any php code.
+Use this after changing any PHP code.
 
 ```bash
 ./vendor/bin/sail exec app ./vendor/bin/phpstan analyze {filepath}
 ```
 
 ### Run entire app
-This is only when user ask you to run for all and fix phpstan errors entirely because it takes long time to complete.
+Only when the user explicitly asks to analyze and fix PHPStan errors app-wide — it takes a long time to complete.
 
 ```bash
 ./vendor/bin/sail exec app ./vendor/bin/phpstan
