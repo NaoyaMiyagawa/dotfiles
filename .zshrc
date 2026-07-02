@@ -115,13 +115,13 @@ autoload -Uz compinit
 # (audit + dump rebuild) only when the cached dump is missing or >24h old;
 # otherwise load it with -C. compinit dominates zsh startup time.
 () {
-  local zdump=${ZDOTDIR:-$HOME}/.zcompdump
-  local -a stale=( ${zdump}(#qNmh+24) )
-  if [[ -f $zdump && ${#stale} -eq 0 ]]; then
-    compinit -C -d $zdump
-  else
-    compinit -d $zdump
-  fi
+    local zdump=${ZDOTDIR:-$HOME}/.zcompdump
+    local -a stale=(${zdump}(#qNmh+24))
+    if [[ -f $zdump && ${#stale} -eq 0 ]]; then
+        compinit -C -d $zdump
+    else
+        compinit -d $zdump
+    fi
 }
 
 # ----------------------------------------------------------------------------
@@ -152,33 +152,30 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 # Q post block. Keep at the bottom of this file.
 
-# pnpm
-export PNPM_HOME="${HOME}/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end# bun completions
-[ -s "${HOME}/.bun/_bun" ] && source "${HOME}/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
 # Kiro CLI post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
-
 
 # opencode
 export PATH=/Users/miyagawa/.opencode/bin:$PATH
 
 # cmux: clear sidebar state when shell exits so stale Claude info doesn't linger
 _cmux_shell_exit() {
-  [ -n "$CMUX_SURFACE_ID" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook stop 2>/dev/null || true
+    [ -n "$CMUX_SURFACE_ID" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook stop 2>/dev/null || true
 }
 add-zsh-hook zshexit _cmux_shell_exit
 
 # Added by sonarqube-cli installer
 export PATH="$HOME/.local/share/sonarqube-cli/bin:$PATH"
+
+# sentry
+fpath=("$HOME/.local/share/zsh/site-functions" $fpath)
+
+# pnpm
+export PNPM_HOME="${HOME}/.local/share/pnpm"
+case ":$PATH:" in
+    *":$PNPM_HOME/bin:"*) ;;
+    *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+# pnpm end
