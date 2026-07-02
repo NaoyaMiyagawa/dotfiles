@@ -53,6 +53,4 @@ if [[ "$OSTYPE" == darwin* ]]; then
     if [[ -o interactive ]] && type direnv >/dev/null 2>&1; then
         eval "$(direnv hook zsh)"
     fi
-
 fi
-
