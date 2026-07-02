@@ -9,6 +9,8 @@ export EDITOR=vim
 export LS_COLORS="uu=37"
 # bat
 export BAT_THEME="TwoDark"
+# claude
+export CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=true
 
 if is_osx; then
     export HOMEBREW_PREFIX="/usr/local"
