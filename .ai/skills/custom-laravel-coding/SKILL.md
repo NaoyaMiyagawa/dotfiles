@@ -24,7 +24,7 @@ Apply this skill only for Laravel backend work.
     )
     {}
     ```
-4. Use `final` `readonly` for ValueObject, DTO
+4. Use `final` `readonly` for ValueObject, DTO. For a value holder with no transformation logic, expose data as `public readonly` properties instead of `private` fields plus getter methods — a getter that only returns its backing field adds ceremony without encapsulating anything. Reach for a private field + accessor only when the accessor does real work (validation, derivation, formatting).
 5. Use string interpolation when possible for better readability. (e.g. `"This is {$user->name}"`)
 6. Use named args when method calls goes multiple lines due to line length.
 7. Don't wrap with bracket when instanciating a class. Good: `new Xxx()->...`.

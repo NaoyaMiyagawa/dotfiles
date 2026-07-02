@@ -146,6 +146,8 @@ it('xxx', function (
 ### Factory
 
 - **Add a factory class in the same PR as a new Eloquent model.** Without one, tests reach for raw `Model::create([...])` or `DB::insert(...)` and the convention drifts; later contributors then have nothing to copy from. Wire it via the `HasFactory` trait and include at least the columns the model marks as required.
+- **Derive a factory default with the same rule production uses.** When a column's value is computed from another field (e.g. a type/key derived from a path or parent), the factory must apply the *real* derivation, not a convenient shortcut that happens to pass for simple cases. A factory default that diverges from production logic seeds inconsistent data and lets bugs slip past green tests.
+- **States that persist related records go in `afterCreating()`, not `afterMaking()`.** A state should keep `Model::factory()->someState()->make()` database-free: only assign explicitly-provided associations during `make()`/`state()`, and defer creating any default related record to `afterCreating()`. Building a related record in `afterMaking()` makes `make()` silently hit the database, which surprises callers that expected an unsaved instance.
 - Prefer factory state methods when available to reduce hardcoding keys.
   e.g. `withStatus(XxxStatus $status)` when having `status` column.
   If there is no existing state method for a column, you can add it.
