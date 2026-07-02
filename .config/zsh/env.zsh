@@ -11,6 +11,8 @@ export LS_COLORS="uu=37"
 export BAT_THEME="TwoDark"
 # claude
 export CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=true
+# obsidian wiki vault (per-machine location; override if the vault lives elsewhere)
+export OBSIDIAN_VAULT="$HOME/Documents/Obsidian/main"
 
 if is_osx; then
     export HOMEBREW_PREFIX="/usr/local"
