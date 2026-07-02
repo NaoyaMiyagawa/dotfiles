@@ -7,6 +7,14 @@
 # sync: for every workspace with a PR it fetches the title via `gh` (cached in
 # ~/.cache/cmux-pr-titles, refreshed daily) and writes it as the description.
 #
+# It does ONE idempotent pass over ALL workspaces and is cheap to run often
+# (network only on a cache miss). A launchd agent — com.miyagawa.cmux-pr-titles,
+# tracked at ~/.config/cmux/ — runs it every ~2 min so reused workspaces and
+# PRs created while idle self-heal; the Claude Stop hook also fires it for
+# immediacy right after a turn. Because the timer reruns it, convergence no
+# longer depends on catching cmux's PR-probe refresh in a single shot, so the
+# old two-pass/sleep retry is gone.
+#
 # Safe by design: it only overwrites a description that is empty or one it set
 # itself (i.e. matches a cached title), so manual descriptions are never lost.
 set -uo pipefail
