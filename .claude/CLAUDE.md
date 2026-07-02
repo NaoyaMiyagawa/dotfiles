@@ -23,7 +23,7 @@ When work is a good fit for a **subagent** (exploration, research, parallel task
 
 Whichever you pick, give the subagent a **self-contained** task: paths, goal, constraints, and what "done" means.
 
-Codex CLI example (adjust subcommand/flags to your install; `codex --help`):
+### Codex model → task mapping
 
 Run from the repo root: `cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"`. Plain `codex exec "..."` uses the config default (gpt-5.5, medium effort) — a fine middle ground. Override per task:
 
