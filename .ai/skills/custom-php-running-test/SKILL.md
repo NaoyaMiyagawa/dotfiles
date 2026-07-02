@@ -11,7 +11,7 @@ Tests must run inside the Sail stack so PHP extensions, `.env`, DB, and services
 ./vendor/bin/sail artisan test {filepath}
 ```
 
-Omit `{filepath}` to run the full suite, or pass a path, filter, or `--filter=` as needed.
+Omit `{filepath}` to run the full suite, or pass a path or `--filter=` as needed — when the change set is known, prefer passing just those test paths. Add `--parallel` for faster runs on larger scopes.
 
 ## Containers must be running (minimal stack)
 
@@ -40,7 +40,3 @@ Do **not** invoke any of these for this project unless the user explicitly says 
 - `composer test` if it maps to raw Pest/PHPUnit on the host
 
 If `./vendor/bin/sail` is missing or Docker is down, stop and say so—do not substitute a host-side test runner.
-
-## Scoped runs (optional)
-
-When the user only changed specific files, prefer passing those test paths to `sail artisan test` as above.

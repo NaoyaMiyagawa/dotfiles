@@ -16,9 +16,9 @@ Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), th
 - Run scripts/fetch_comments.py which will print out all the comments and review threads on the PR
   - script: `~/dotfiles/.ai/skills/custom-gh-address-comments/scripts/fetch_comments.py`
 
-## 2) Ask the user for clarification
+## 2) Ask the user which comments to address
 
-- Number all the review threads and comments and provide a short summary of what would be required to apply a fix for it. Use the following template:
+- Number all the review threads and comments and give a short summary of what a fix would require. Skip threads that are already resolved or need no fix. Use this template:
   ```md
   #: 1
   File:Line: {filename}:{line numbers}
@@ -29,13 +29,7 @@ Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), th
   ...
   ────────────────────────────────────────
   ```
-- Ask the user which numbered comments should be addressed
-- Don't need to show already resolved ones, or ones that you don't need any fix.
-
-## 3) If user chooses comments
-
-- Apply fixes for the selected comments
-- Give a template for user to answer
+- Then give the user this template to answer with:
 
   ```md
   ────────────────────────────────────────
@@ -48,6 +42,10 @@ Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), th
   Reply threads: {Y/N}
   ────────────────────────────────────────
   ```
+
+## 3) Apply fixes
+
+- Apply fixes for the comments the user selected
 
 ## 4) Commit a fix one by one
 

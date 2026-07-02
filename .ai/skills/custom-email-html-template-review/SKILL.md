@@ -36,18 +36,14 @@ Email HTML is not web HTML. Assume **no flexbox/grid for layout**, **limited `<s
 5. **Map back to the Blade view**
    State what to change in **source** (e.g. remove `@vite`/linked CSS for mail views, move dimensions inline, replace SVG logo with PNG + `width`/`height` + `alt`).
 
-6. **Validate mentally or with tools**
-   Use [Can I email…](https://www.caniemail.com/features/) to double-check borderline properties or elements before calling something safe. If the user can run checks, suggest **Litmus/Email on Acid** or **HTML Email Check** class tools; do not claim pixel parity without client tests.
+6. **Validate**
+   Double-check borderline properties on Can I email before calling something safe. If the user can run checks, suggest **Litmus/Email on Acid** or **HTML Email Check** class tools; do not claim pixel parity without client tests.
 
 ## Blade (non-obvious)
 
 - Avoid **bundled CSS** (`@vite`, `mix()`, global layouts) in mail views; output must not depend on external stylesheets unless the user accepts web-only behavior.
 - **`asset()` / relative URLs**: email requires **absolute** `https://` (or `cid:`) URLs.
 - **Components** that assume a web layout (flex, div grid) need **email-specific partials**.
-
-## Progressive disclosure
-
-- Full constraint list and examples: [references/email-html-constraints.md](references/email-html-constraints.md)
 
 ## References
 

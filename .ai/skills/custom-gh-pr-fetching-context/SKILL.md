@@ -12,9 +12,7 @@ Run this only for PR-related requests. Do not run on every task.
 ## Commands
 
 ```bash
-gh pr view --json title --jq .title
-gh pr view --json body --jq .body
-gh pr view --json comments --jq .comments
+gh pr view --json title,body,comments
 ```
 
 ## Behavior
