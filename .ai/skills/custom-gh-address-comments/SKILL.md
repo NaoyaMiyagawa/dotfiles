@@ -40,10 +40,12 @@ Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), th
   ```md
   ────────────────────────────────────────
   Address comments:
-  #: 1: {Y/N}
+  #: 1 {Y/N}
+  #: 2 {Y/N}
   ...
 
-  Push and reply on PR after fix: yes/no
+  Push: {Y/N}
+  Reply threads: {Y/N}
   ────────────────────────────────────────
   ```
 
@@ -55,7 +57,8 @@ Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), th
 ## 5) Push and reply to comments
 
 - Reply to the original comment with `Fixed: {commit hash}` if it's addressed. Don't close the thread if the comment is not from a bot.
-- If it's a review comment from a bot such as Copilot, Codex, close the thread after replying.
+- Write how you fixed in simple manner
+- If it's a review comment from a bot such as Claude, Codex, close the thread after replying.
 - Give list of your replies to user at the end for reference.
 
 Notes:

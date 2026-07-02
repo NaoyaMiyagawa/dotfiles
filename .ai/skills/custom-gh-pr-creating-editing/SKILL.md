@@ -8,47 +8,31 @@ description: Creating/Editing GitHub pull request with better title and comprehe
 ## Command
 Use GitHub CLI.
 
-## Reviewers (Copilot)
+## Trigger review (Claude bot)
 
-Always **assign GitHub Copilot as a reviewer** on the PR (not only a `@copilot` mention in the description).
+After creating or editing the PR, trigger a review from the **Claude GitHub bot** by posting a single PR comment whose body is **`@claude review once`**. The `once` keyword requests a **one-time** review so the timing stays under your control — the bot won't keep re-reviewing on every subsequent push.
 
-### `gh` version gate (required)
+### Comment exactly once (strict)
 
-Before using Copilot reviewer flags on `gh pr create` or `gh pr edit`:
-
-1. Run `gh version` and confirm the CLI version is **≥ 2.88**.
-2. If `gh` is older than 2.88, **do not** pass `--reviewer` / `--add-reviewer` for Copilot. Create or edit the PR without those flags, then tell the user to add Copilot in the GitHub PR UI (**Reviewers** → **Copilot**).
-
-### Exact reviewer handle (strict)
-
-Use **only** the quoted literal **`'@copilot'`** in `gh` flags:
-
-- `--reviewer '@copilot'`
-- `--add-reviewer '@copilot'`
-
-**Never** use unquoted `@copilot`, bare `copilot`, `github-copilot`, `copilot-pull-request-reviewer`, or any other invented bot login. Wrong handles cause API failures and pointless agent retries.
+- Post the mention **once**. Repeating it re-triggers the bot and spams the thread.
+- Before commenting, check for an existing request (`gh pr view --json comments`) and **skip** if a `@claude review once` comment is already present.
 
 ```bash
-gh pr create ... --reviewer '@copilot'
-gh pr edit --add-reviewer '@copilot'
-gh pr edit <number> --add-reviewer '@copilot'
+# On the PR's branch:
+gh pr comment --body "@claude review once"
+# Or by PR number:
+gh pr comment <number> --body "@claude review once"
 ```
-
-### Workflow
-
-- **Creating a PR:** pass `--reviewer '@copilot'` on `gh pr create` (combine with other `--reviewer` values if needed).
-- **Editing an existing PR:** if Copilot is not already listed under reviewers, run `gh pr edit --add-reviewer '@copilot'` (with the PR number if not on that branch: `gh pr edit <number> --add-reviewer '@copilot'`).
-- Before adding, you may confirm with `gh pr view --json reviewRequests` to avoid duplicate requests when the API rejects duplicates.
 
 ### On failure
 
-If `gh pr create` or `gh pr edit` fails when adding the Copilot reviewer:
+If `gh pr comment` fails, or the bot doesn't respond:
 
-- **Do not** guess alternate bot usernames or retry with invented logins.
-- Finish PR create/edit without the Copilot reviewer flag if needed.
-- Tell the user explicitly: open the PR on GitHub → **Reviewers** → add **Copilot** in the UI.
+- **Do not** guess alternate handles or spam repeated mentions.
+- Finish PR create/edit regardless.
+- Tell the user explicitly: comment **`@claude review once`** on the PR yourself, and confirm the Claude GitHub app is installed on the org/repo.
 
-Requires [GitHub Copilot code review](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/request-a-code-review/use-code-review) on the org/repo.
+Requires the [Claude GitHub app](https://docs.claude.com/en/docs/claude-code/github-actions) installed on the org/repo.
 
 ## Post-create review (independent Codex pass)
 After creating the PR, run an **independent review with Codex CLI** — a different model from Claude Code, for an unbiased, different-perspective check.
@@ -93,7 +77,7 @@ If you only have the key, fetch Summary from Jira (CLI or UI) before `gh pr crea
 Long PR descriptions hurt review more than they help. The diff and commit messages already say *what* changed; the description's job is **why** and the small handful of non-obvious notes a reviewer needs.
 
 - Lead with the motivation in 1–3 sentences. Skip a "Background" preamble if the title already conveys it.
-- List concrete changes as short bullets, not paragraphs. One bullet per behavioural change is enough — don't enumerate every touched file (Copilot's reviewed-files table covers that).
+- List concrete changes as short bullets, not paragraphs. One bullet per behavioural change is enough — don't enumerate every touched file (the diff's file list already covers that).
 - Move per-line rationale to inline PR review comments on your own diff (single-PR self-review), not into the description.
 - Cut "Notes" / "Behavioural notes" / "Further comments" sections unless they carry information not derivable from the diff (e.g. an out-of-scope decision, a follow-up PR, a non-obvious test gap).
 - Validation logs go inside the `<details>` block (see below) so they don't dominate the visible body.
