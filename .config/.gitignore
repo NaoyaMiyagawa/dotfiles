@@ -37,6 +37,7 @@ cmux/*
 !cmux/cmux.json
 !cmux/sidebars/
 !cmux/sidebars/**
+!cmux/com.miyagawa.cmux-pr-titles.plist
 
 # vscode
 !vscode/
