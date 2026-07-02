@@ -125,6 +125,15 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/nexus-wiki-reminder.sh",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "SessionEnd": [
@@ -216,13 +225,20 @@
     "php-lsp@claude-plugins-official": false,
     "figma@claude-plugins-official": true,
     "codex@openai-codex": true,
-    "swift-lsp@claude-plugins-official": true
+    "swift-lsp@claude-plugins-official": true,
+    "qmd@qmd": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
       "source": {
         "source": "github",
         "repo": "openai/codex-plugin-cc"
+      }
+    },
+    "qmd": {
+      "source": {
+        "source": "github",
+        "repo": "tobi/qmd"
       }
     }
   },
