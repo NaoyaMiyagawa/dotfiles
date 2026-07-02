@@ -1,0 +1,30 @@
+[
+    {
+        "label": "sail pest test $ZED_SYMBOL",
+        "command": "./vendor/bin/sail",
+        "args": ["artisan", "test", "--filter", "\"$ZED_SYMBOL\"", "$ZED_RELATIVE_FILE"],
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "tags": ["pest-test"],
+    },
+    {
+        "label": "sail pest test $ZED_FILENAME",
+        "command": "./vendor/bin/sail",
+        "args": ["artisan", "test", "$ZED_RELATIVE_FILE"],
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "tags": ["pest-test"],
+    },
+    {
+        "label": "sail phpunit test $ZED_SYMBOL",
+        "command": "./vendor/bin/sail",
+        "args": ["artisan", "test", "--filter", "\"$ZED_SYMBOL\"", "$ZED_RELATIVE_FILE"],
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "tags": ["phpunit-test"],
+    },
+    {
+        "label": "sail phpunit test $ZED_FILENAME",
+        "command": "./vendor/bin/sail",
+        "args": ["artisan", "test", "$ZED_RELATIVE_FILE"],
+        "cwd": "$ZED_WORKTREE_ROOT",
+        "tags": ["phpunit-test"],
+    },
+]

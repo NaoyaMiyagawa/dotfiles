@@ -43,6 +43,12 @@ cmux/*
 !vscode/
 !vscode/**
 
+# zed (config only — not caches/embeddings/conversations)
+!zed/
+!zed/settings.json
+!zed/keymap.json
+!zed/tasks.json
+
 # zsh
 !zsh/
 !zsh/**
