@@ -92,11 +92,14 @@ export ZSH_PLUGINS_ALIAS_TIPS_TEXT='----- alias-tips: '
 if is_osx; then
     # AWS CLI v2の補完。
     # 要 AWS CLI v2
-    # この順序で記述しないと `complete:13: command not found: compdef` のようなエラーになるので注意
-    autoload bashcompinit && bashcompinit
-    source ~/.zinit/plugins/drgr33n---oh-my-zsh_aws2-plugin/aws2_zsh_completer.sh
-    complete -C '/usr/local/bin/aws_completer' aws
-    zinit light drgr33n/oh-my-zsh_aws2-plugin
+    # Turbo-deferred: bashcompinit must run before the completer script loads
+    # (atinit), and the aws registration after it (atload) — same order as the
+    # old synchronous block, which errored with `command not found: compdef`
+    # when reordered.
+    zinit wait lucid light-mode \
+        atinit'autoload -Uz bashcompinit && bashcompinit' \
+        atload'complete -C /usr/local/bin/aws_completer aws' \
+        for @'drgr33n/oh-my-zsh_aws2-plugin'
 fi
 
 # ----------------------------------------------------------------------------

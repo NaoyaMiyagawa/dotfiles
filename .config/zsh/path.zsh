@@ -9,6 +9,13 @@ typeset -gU FPATH fpath
 # asdf (0.16+) uses a binary; keep data dir explicit for shim path.
 export ASDF_DATA_DIR="${ASDF_DATA_DIR:-$HOME/.asdf}"
 
+# pnpm global installs land directly in $PNPM_HOME (its bin/ stays empty).
+export PNPM_HOME="${PNPM_HOME:-$HOME/.local/share/pnpm}"
+
+# Completions installed by tools (e.g. sentry-cli); must be on fpath before
+# compinit runs in .zshrc.
+fpath=("$HOME/.local/share/zsh/site-functions"(N-/) $fpath)
+
 path=(
     '/usr/local/bin'(N-/)
     '/usr/local/sbin'(N-/)
@@ -38,6 +45,10 @@ path=(
     "$HOME/.console-ninja/.bin"(N-/)
     # opencode
     "$HOME/.opencode/bin"(N-/)
+    # pnpm
+    "$PNPM_HOME"(N-/)
+    # sonarqube-cli
+    "$HOME/.local/share/sonarqube-cli/bin"(N-/)
     # cursor agent
     "$HOME/.local/bin"(N-/)
     # ?

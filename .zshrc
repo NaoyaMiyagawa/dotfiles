@@ -1,8 +1,10 @@
+
+# Kiro CLI pre block. Keep at the top of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
+
 # ##############################################################################
 # .zshrc
 ##############################################################################
-# Kiro CLI pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
 
 # ----------------------------------------------------------------------------
 # Load zsh settings
@@ -77,19 +79,16 @@ setopt numeric_glob_sort  # Sort numbers numerically
 
 # History | Various settings
 # setopt append_history          # Append to the history file instead of overwriting it, useful when using multiple zsh sessions
-setopt EXTENDED_HISTORY       # Record start and end times
 setopt auto_pushd             # Run pushd automatically when using cd
-setopt extended_history       # Also record timestamps in $HISTFILE
+setopt extended_history       # Record timestamps and durations in $HISTFILE
 setopt hist_expand            # Automatically expand history during completion
 setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
-setopt hist_ignore_all_dups   # Do not keep duplicate commands in history
-setopt hist_ignore_dups       # Do not record duplicates
+setopt hist_ignore_all_dups   # Do not keep duplicate commands in history (covers hist_ignore_dups)
 setopt hist_ignore_space      # Exclude command lines starting with a space from history
 setopt hist_no_store          # Do not store the history command itself in history
 setopt hist_reduce_blanks     # Compress extra spaces before saving
 setopt hist_save_no_dups      # Remove older duplicates when saving duplicate commands
 setopt hist_verify            # Allow editing after recalling a history entry and before execution
-setopt histignorealldups      # Do not show duplicates in history
 setopt inc_append_history     # Append history incrementally
 setopt interactive_comments   # Treat text after # as a comment even on the command line
 setopt no_beep                # Disable the beep sound
@@ -111,16 +110,29 @@ zstyle ":plugin:history-search-multi-word" active "bg=blue"          # Style for
 # ----------------------------------------------------------------------------
 
 autoload -Uz compinit
-# Skip the slow compaudit security scan on most startups: run the full compinit
-# (audit + dump rebuild) only when the cached dump is missing or >24h old;
-# otherwise load it with -C. compinit dominates zsh startup time.
+# Skip the slow compaudit security scan on every startup: always load the
+# cached dump with -C, and when it is >24h old rebuild + byte-compile it in a
+# detached background job so no shell pays the ~1s rebuild in the foreground.
+# compinit dominates zsh startup time.
 () {
     local zdump=${ZDOTDIR:-$HOME}/.zcompdump
-    local -a stale=(${zdump}(#qNmh+24))
-    if [[ -f $zdump && ${#stale} -eq 0 ]]; then
+    if [[ -f $zdump ]]; then
         compinit -C -d $zdump
+        local -a stale=(${zdump}(#qNmh+24))
+        if ((${#stale})); then
+            (
+                zmodload zsh/system
+                local tmp=${zdump}.new.$sysparams[pid]
+                autoload -Uz compinit &&
+                    compinit -i -d $tmp &&
+                    mv -f $tmp $zdump &&
+                    zcompile $zdump
+            ) &>/dev/null &!
+        fi
     else
+        # First run ever: no dump to fall back on, build it in the foreground.
         compinit -d $zdump
+        zcompile $zdump
     fi
 }
 
@@ -154,11 +166,6 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
-# Kiro CLI post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
-
-# opencode
-export PATH=/Users/miyagawa/.opencode/bin:$PATH
 
 # cmux: clear sidebar state when shell exits so stale Claude info doesn't linger
 _cmux_shell_exit() {
@@ -166,16 +173,6 @@ _cmux_shell_exit() {
 }
 add-zsh-hook zshexit _cmux_shell_exit
 
-# Added by sonarqube-cli installer
-export PATH="$HOME/.local/share/sonarqube-cli/bin:$PATH"
 
-# sentry
-fpath=("$HOME/.local/share/zsh/site-functions" $fpath)
-
-# pnpm
-export PNPM_HOME="${HOME}/.local/share/pnpm"
-case ":$PATH:" in
-    *":$PNPM_HOME/bin:"*) ;;
-    *) export PATH="$PNPM_HOME/bin:$PATH" ;;
-esac
-# pnpm end
+# Kiro CLI post block. Keep at the bottom of this file.
+[[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
