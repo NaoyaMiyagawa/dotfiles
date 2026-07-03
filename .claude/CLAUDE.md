@@ -1,6 +1,10 @@
 ## Baseline
 @~/dotfiles/.ai/AGENTS.md
 
+## Branching
+
+- When asked to create a new branch, always create it from `origin/develop`. If that branch doesn't exist in the repo, create it from `origin/main` instead.
+
 ## Orchestrator Model Strategy (capable models)
 
 When the session runs on a **smart orchestrator-tier model** — Fable 5, or Opus 4.8 at `high`/`xhigh` reasoning — treat it as the **orchestrator brain**, not the workhorse. The goal is fewer tokens and faster results by pushing execution down to cheaper, parallel workers.
