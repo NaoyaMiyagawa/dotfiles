@@ -22,8 +22,8 @@ export XDG_CACHE_HOME="$HOME/.cache"
 
 # zsh
 export HISTFILE="$XDG_STATE_HOME/zsh_history"
-# - in memory
-export HISTSIZE=3000
+# - in memory; match SAVEHIST so shared history recall reaches the whole file
+export HISTSIZE=30000
 # - in file
 export SAVEHIST=30000
 
