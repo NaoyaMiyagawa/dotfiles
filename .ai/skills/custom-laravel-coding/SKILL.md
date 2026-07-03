@@ -17,7 +17,7 @@ Keep changes consistent with existing project patterns unless asked to refactor.
     ) {}
     ```
 4. Use `final` `readonly` for ValueObject, DTO. For a value holder with no transformation logic, expose data as `public readonly` properties instead of `private` fields plus getter methods — a getter that only returns its backing field adds ceremony without encapsulating anything. Reach for a private field + accessor only when the accessor does real work (validation, derivation, formatting).
-5. Use string interpolation when possible for better readability. (e.g. `"This is {$user->name}"`)
+5. Use string interpolation when possible for better readability. (e.g. `"This is {$user->name}"`) When interpolation isn't feasible (e.g. a reusable format string or positional args), prefer `vsprintf` over `sprintf`.
 6. Use named args when method calls goes multiple lines due to line length.
 7. Don't wrap with bracket when instantiating a class. Good: `new Xxx()->...`.
 8. Prefer `$x === null` over `is_null($x)` for null checks.
@@ -104,6 +104,8 @@ if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEna
 2. Controller class name and directory should match the route resource (e.g. `Http/Controllers/Documents/ResendDocumentEmailController`).
 3. **Prefer route-model binding + policy for resource auth** over receiving an id in the request body and re-resolving it in the controller. `POST /users/{user}/switch` + `->can('switch', 'user')` beats `POST /admin/organisations/switch` with `organization_id` in `FormRequest::authorize()`. Bonus: denials return `403` / unknown ids `404` instead of a silent validation error.
 4. **Use the `->can('ability', 'model')` route helper for model-bound policy enforcement.** Prefer it over `->middleware(['can:ability,model'])` or `Authorize::using(...)` — it reads as a route-level declaration that pairs naturally with model binding.
+5. **Name a controller for the specific operation it performs, not a generic resource.** A controller that resends an invoice email is `ResendInvoiceEmailController`, not a catch-all `InvoiceController`; the class name should tell a reader what the endpoint does. Keep the route, controller, and directory names in sync (rule 2).
+6. **Match the action method to the endpoint's shape.** When an endpoint maps to a CRUD operation, use the resourceful method name (`index`, `show`, `store`, `update`, `destroy`) on the controller rather than `__invoke`. Reserve a single-action `__invoke` controller for operations that are genuinely not resourceful. Don't default every controller to `__invoke`.
 
 ### Bulk insert
 When creating more than one record for the same table/model, use bulk `{Model}::insert()` with chunking:
