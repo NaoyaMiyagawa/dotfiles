@@ -55,7 +55,7 @@ if builtin command -v eza >/dev/null; then
     alias et='eza -T -L 1'
     alias eta='eza -aT -L 1'
 
-    # alias ls="eza"
+    alias ls="eza"
 fi
 
 # ----------------------------------------------------------------------------
@@ -107,8 +107,8 @@ alias tm='tmux'
 # multipass
 alias mp='multipass'
 
-# cursor
-alias c.='cursor .'
+# vscode
+alias c.='code .'
 
 # xxenv で brew doctor の warning対策
 # alias brew="PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin brew"
