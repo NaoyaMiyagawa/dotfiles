@@ -16,7 +16,6 @@
 # ----------------------------------------------------------------------------
 
 # dotfile installer
-!/install.sh
 !/Makefile
 !/Brewfile
 
@@ -38,9 +37,6 @@
 !/.zshrc
 !/.zprofile
 !/.zshenv
-!/.zsh/
-!/.zsh/**
-!/.zsh/**/*.zsh
 
 # .claude
 !/.claude/
@@ -57,22 +53,12 @@
 !/.config
 /.config/zsh/secrets.local.zsh
 
-# .cursor
-!/.cursor/
-!/.cursor/.gitignore
-!/.cursor/rules/
-!/.cursor/rules/**
-
 # vim
 !/.vimrc
 !/.vim
 /.vim/**
 !/.vim/colors
 !/.vim/colors/*
-
-# vscode
-!/vscode
-!/vscode/**
 
 # linter
 !/.stylelintrc.js
