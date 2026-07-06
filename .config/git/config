@@ -1,6 +1,13 @@
 # Reference
 # - https://github.com/NagayamaRyoga/dotfiles/tree/main/config/git
 
+# Default (personal) identity; ~/dev/work/ repos override it via includeIf below.
+# Must live here, not ~/.gitconfig — git reads ~/.gitconfig AFTER this file, so a
+# [user] there would always win over the includeIf.
+[user]
+    name = Naoya Miyagawa
+    email = 38244632+NaoyaMiyagawa@users.noreply.github.com
+
 [init]
     defaultBranch = main
 [pull]
@@ -9,9 +16,19 @@
     ignorecase = false
 [push]
     autoSetupRemote = true
-[safe]
-    directory = /var/www/html
+[rerere]
+    enabled = true
+[rebase]
+    autosquash = true
+    autostash = true
+[branch]
+    sort = -committerdate
 
 [include]
     path = conf.d/alias.conf
     path = conf.d/delta.conf
+
+# Work repos get the work identity; the default (personal) identity is the
+# [user] block at the top of this file.
+[includeIf "gitdir:~/dev/work/"]
+    path = conf.d/work.conf
