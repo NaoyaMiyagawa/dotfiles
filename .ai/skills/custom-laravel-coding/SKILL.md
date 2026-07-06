@@ -20,15 +20,26 @@ Keep changes consistent with existing project patterns unless asked to refactor.
 5. Use string interpolation when possible for better readability. (e.g. `"This is {$user->name}"`) When interpolation isn't feasible (e.g. a reusable format string or positional args), prefer `vsprintf` over `sprintf`.
 6. Use named args when method calls goes multiple lines due to line length.
 7. Don't wrap with bracket when instantiating a class. Good: `new Xxx()->...`.
-8. Prefer `$x === null` over `is_null($x)` for null checks.
+8. Prefer `is_null($x)` over `$x === null` for null checks.
 9. **Use strict comparison for membership checks.** Pass `true` as the third arg to `in_array()` / `array_search()` when testing identity-style membership — allowlists, id lists, role/status lists. Loose comparison invites type juggling (`0 == 'foo'`, `'1' == 1`), a correctness and security risk in access checks.
 10. Prefer guard clauses / early returns over wrapping the main path in a positive `if`. Invert the condition and bail out first.
 11. Prefer collection pipelines (`collect($items)->map(...)->filter(...)`) over raw array functions in transformation/serialization code, for readability and chainability.
-12. Use one consistent spelling for identifiers across a file — prefer American English (e.g. `organization`, not `organisation`). Don't mix `-ize`/`-ise`. Comments are exempt.
+12. Use one consistent spelling for identifiers across a file — prefer American English (e.g. `organization`, not `organisation`). Don't mix `-ize`/`-ise`. Comments are exempt. Preserve the conventional casing of acronyms and mixed-case terms in identifiers (`OAuth`, `ID`, `URL`, `HTTP` — not `Oauth`/`Id`/`Url`).
 13. **Comment workarounds with their removal condition.** When you add a compatibility guard or workaround (e.g. code that only matters outside the standard dev/runtime environment), leave an inline comment stating *why* it exists and *when it can be removed*, so future cleanup is self-evident — don't bury the rationale in the PR description alone.
 14. **Treat a nullable return type as a contract to guard at every call site.** When a method is declared `?T`, dereference its result null-safely (`?->`) or with an explicit null check *everywhere* it's used — don't leave some sites guarded and others bare. A mix of guarded and unguarded dereferences of the same nullable accessor is a latent null crash; the already-guarded site tells you the null case is real. Choose a sensible default for the absent case (often: skip or permit when there is nothing to enforce).
 15. **Compare value objects through an `equals()` method, not their unwrapped values.** Give a value object an `equals(self $other): bool` and call `$a->equals($b)` rather than reaching into both and comparing raw scalars (`$a->value() === $b->value()`). The intent reads at the call site and the comparison rule lives in one place.
 16. **Reach for the framework's first-party helpers over hand-rolled primitives.** For a common operation, prefer a provided helper to a manual loop over language built-ins — e.g. `Illuminate\Filesystem\Filesystem` (`ensureDirectoryExists()`, `deleteDirectory()`) instead of recursive `scandir`/`is_dir`/`unlink`/`rmdir`, and `Str`/`Arr`/collection helpers over ad-hoc string/array fiddling. Less code to get wrong and the intent is explicit. This applies in test setup/teardown too.
+17. **Initialize derived state in the constructor, not lazily.** When a property can be computed from the constructor's inputs, set it in the constructor rather than behind a lazy getter or a separate setter. And don't add a named constructor/factory (`fromConfig()`, `make()`) that only wraps `new` with a config read — construct directly at the call site. Reserve a static named constructor for when it encapsulates real logic (see Exceptions).
+18. **Resolve from the container with `app()`.** Prefer `app(X::class)` over injecting a `Container` and calling `$this->container->make(X::class)`. Don't register a binding in a service provider solely to call one method — call the method directly.
+
+### Abstraction
+- **Prefer a direct `match` (or a small map) over a registry / service-provider registration pattern for dispatch you fully own.** A registry that entries register themselves into earns its complexity only when something *external* (a plugin, a separate package) must extend the set. When you own every case, a `match` that returns the right handler keeps the wiring in one readable place. Don't add indirection (an interface, a registry, a factory) for a single in-house caller until a second caller or a real extensibility need appears.
+
+### Exceptions
+- **Encapsulate error keys and status codes in static named constructors on the exception class.** Call sites should `throw DomainException::invalidRequest()` rather than passing a message key and HTTP status at each `throw`. The mapping lives in one place and call sites stay declarative.
+
+### Validation
+- **Put request validation in a `FormRequest`, not inline in the controller.** Rules, authorization, and messages belong in the dedicated request class; the controller receives already-validated input.
 
 ### Class organization
 1. **Put a class in a directory named for its kind, grouped by domain.** Value objects under `ValueObjects/`, DTOs under `DataTransferObjects/`, enums under `Enums/` — each with a domain sub-namespace (`Enums/{Domain}/`) — rather than nesting them inside a service's generic `Data/` (or similar) folder. The kind should be legible from the path, and the domain grouping should reflect where the type is actually used, not where it happened to be written first.
@@ -98,6 +109,7 @@ if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEna
     // Bad — couples the migration to future model state
     Model::query()->create([...]);
     ```
+2. **Fix a not-yet-merged migration in place; don't stack a corrective one.** While a migration is still on an unmerged branch (or a spike), edit the original file to fix a schema/column mistake rather than adding a second "fix" migration on top. Reserve additive corrective migrations for schema that is already merged or released.
 
 ### Routing
 1. **Place a single-resource action under that resource's route group**, not under whatever parent happened to surface it. A "resend email for this document" action belongs at `/documents/{document}/resend-email`, not `/runs/{run}/documents/{document}/resend-email`, even if the UI entry point is the run page.
