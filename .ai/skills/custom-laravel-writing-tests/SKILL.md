@@ -21,6 +21,10 @@ When an existing test encodes the intended behaviour, change the implementation 
 
 Before refactoring a code path that has no direct test coverage, first write a **characterisation test** that pins the current observable behaviour and get it green against the *existing* implementation. Then refactor while keeping it green. This proves the change is behaviour-preserving rather than asserting it after the fact.
 
+## Don't leak tests into production code
+
+Don't add constructor parameters, setters, or config flags to production classes whose only purpose is to make them testable (e.g. an `$overrides` array a test passes in). Use the framework's fakes and the container instead — `Http::fake()`, `Storage::fake()`, `Queue::fake()`, or binding a test double in the container. Production signatures should reflect production needs only.
+
 ## Pest Rules
 
 1. Write tests in Pest style.
