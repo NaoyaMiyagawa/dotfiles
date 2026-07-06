@@ -16,15 +16,15 @@ export PNPM_HOME="${PNPM_HOME:-$HOME/.local/share/pnpm}"
 # compinit runs in .zshrc.
 fpath=("$HOME/.local/share/zsh/site-functions"(N-/) $fpath)
 
-path=(
-    '/usr/local/bin'(N-/)
-    '/usr/local/sbin'(N-/)
-    '/usr/bin'(N-/)
-    '/usr/sbin'(N-/)
-    '/bin'(N-/)
-    '/sbin'(N-/)
-)
+# brew shellenv MUST run before the custom path arrays below: recent Homebrew
+# versions invoke /usr/libexec/path_helper, which rebuilds PATH and silently
+# drops any custom entries added before it.
+if [[ "$OSTYPE" == darwin* ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
+# Custom entries first, whatever brew shellenv/the environment provided next,
+# system dirs last as a fallback (typeset -U dedupes, keeping first occurrence).
 path=(
     # asdf
     "$ASDF_DATA_DIR/shims"(N-/)
@@ -37,31 +37,25 @@ path=(
     "/opt/homebrew/opt/icu4c/sbin"(N-/)
     # cargo
     "$HOME/.cargo/bin"(N-/)
-    # online-judge-tool 用 ｜ `time` を gtimeではなくtimeとして動かす
-    "/usr/local/opt/gnu-time/libexec/gnubin"(N-/)
-    # tfenv
-    "$HOME/.anyenv/envs/tfenv/bin"(N-/)
     # console-ninja
     "$HOME/.console-ninja/.bin"(N-/)
-    # opencode
-    "$HOME/.opencode/bin"(N-/)
     # pnpm
     "$PNPM_HOME"(N-/)
     # sonarqube-cli
     "$HOME/.local/share/sonarqube-cli/bin"(N-/)
-    # cursor agent
     "$HOME/.local/bin"(N-/)
-    # ?
-    "/usr/local/opt/libxml2/bin"(N-/)
+    # dotfiles helper scripts (git-sweep, cmux-pr-titles, ...)
+    "${DOTFILES_PATH:-$HOME/dotfiles}/bin"(N-/)
     "$path[@]"
+    '/usr/local/bin'(N-/)
+    '/usr/local/sbin'(N-/)
+    '/usr/bin'(N-/)
+    '/usr/sbin'(N-/)
+    '/bin'(N-/)
+    '/sbin'(N-/)
 )
 
-if [[ "$OSTYPE" == darwin* ]]; then
-    # homebrew
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-
-    # direnv
-    if [[ -o interactive ]] && type direnv >/dev/null 2>&1; then
-        eval "$(direnv hook zsh)"
-    fi
+# direnv
+if [[ -o interactive ]] && type direnv >/dev/null 2>&1; then
+    eval "$(direnv hook zsh)"
 fi

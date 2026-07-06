@@ -16,7 +16,6 @@ alias cp='cp -i'
 alias mv='mv -i'
 # alias rm='rm -i'
 
-alias ls='ls'
 alias l='ls'
 alias ll='ls -l'
 alias lla='ls -la'

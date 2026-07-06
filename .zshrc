@@ -24,7 +24,6 @@ source $DOTFILES_PATH/.config/zsh/alias.zsh
 bindkey -e
 bindkey "[D" backward-word
 bindkey "[C" forward-word
-bindkey '^u' peco-cdr
 # # Enable Alt+Left/Right to navigate through words
 # bindkey "\e\e[D" backward-word
 # bindkey "\e\e[C" forward-word
