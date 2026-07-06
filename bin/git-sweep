@@ -31,6 +31,40 @@ fi
 
 set -uo pipefail
 
+usage() {
+  cat <<'EOF'
+git-sweep — classify and delete "done" local branches, protecting unpushed spikes.
+
+A smarter replacement for `git vacuum`. Where `git branch --merged` misses
+squash/rebase-merged PRs (the common GitHub case), git-sweep cross-checks GitHub
+PR state via `gh` AND git's own merged-into-base test, so branches left over from
+code reviews or merged PRs get swept — while local-only spikes (work never
+pushed, not merged anywhere) are protected and never offered for deletion.
+
+Buckets:
+  safe    — merged into a base branch OR its PR is merged, no unpushed commits
+  review  — remote branch gone (likely squash-merged), or merged-but-ahead
+  keep    — local-only spike (unmerged, no upstream) or active/open work
+
+Usage: git sweep [options]     (or: git-sweep [options])
+
+Options:
+  -n, --dry-run   classify & print only; delete nothing
+  -y, --yes       delete the "safe" bucket without prompting
+      --all       include the "review" bucket (with -y, or in the fzf picker)
+      --no-gh     skip the GitHub PR lookup (offline / non-GitHub repo)
+      --no-fetch  skip the `git fetch --prune` refresh
+  -h, --help      show this help and exit
+
+With no options: classify, print the buckets, then open an fzf multi-select
+(TAB toggle · Ctrl-A all · ENTER delete · ESC cancel) over the safe + review
+branches. Nothing is deleted until you confirm a selection.
+
+Note: `git sweep --help` is intercepted by git (it prints the alias); use
+`git sweep -h`, `git help sweep`, or `git-sweep --help` to reach this text.
+EOF
+}
+
 # ---- options -------------------------------------------------------------
 DRY_RUN=0 ASSUME_YES=0 INCLUDE_REVIEW=0 DO_FETCH=1 USE_GH=1
 while [[ $# -gt 0 ]]; do
@@ -40,10 +74,8 @@ while [[ $# -gt 0 ]]; do
     --all)        INCLUDE_REVIEW=1 ;;
     --no-fetch)   DO_FETCH=0 ;;
     --no-gh)      USE_GH=0 ;;
-    -h|--help)
-      sed -n '2,26p' "$0" | sed 's/^# \{0,1\}//'
-      exit 0 ;;
-    *) echo "git-sweep: unknown option: $1" >&2; exit 2 ;;
+    -h|--help)    usage; exit 0 ;;
+    *) echo "git-sweep: unknown option: $1" >&2; echo "try: git sweep -h" >&2; exit 2 ;;
   esac
   shift
 done
