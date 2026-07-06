@@ -23,6 +23,11 @@ brew "sd"        # sed replacement for simple find/replace
 brew "jq"        # JSON processor
 brew "yq"        # YAML/JSON/TOML processor
 
+# --- Shell / terminal ---
+brew "starship"  # prompt (eval'd in prompt_theme.zsh)
+brew "direnv"    # per-directory env (hooked in path.zsh)
+brew "tmux"      # terminal multiplexer
+
 # --- Git / dev workflow ---
 brew "gh"        # GitHub CLI
 brew "lazygit"   # git TUI
