@@ -49,6 +49,9 @@
 !/.claude/settings.json
 !/.claude/themes/
 !/.claude/themes/my-theme.json
+!/.claude/scheduled-tasks/
+!/.claude/scheduled-tasks/daily-skills-retro/
+!/.claude/scheduled-tasks/daily-skills-retro/SKILL.md
 
 # .config
 !/.config
