@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Keeps cmux workspace descriptions in sync with GitHub PR titles.
+         Source of truth: ~/dotfiles/bin/cmux-pr-titles
+         Install: symlinked into ~/Library/LaunchAgents/ then
+           launchctl bootstrap gui/$(id -u) <that symlink>
+         cmux lives in /usr/local/bin and gh in /opt/homebrew/bin, neither of
+         which is on launchd's default PATH, so PATH is set explicitly. -->
+    <key>Label</key>
+    <string>com.miyagawa.cmux-pr-titles</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/miyagawa/dotfiles/bin/cmux-pr-titles</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+
+    <key>StartInterval</key>
+    <integer>120</integer>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>ProcessType</key>
+    <string>Background</string>
+
+    <key>StandardOutPath</key>
+    <string>/dev/null</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/cmux-pr-titles.err</string>
+</dict>
+</plist>

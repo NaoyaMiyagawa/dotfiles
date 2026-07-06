@@ -1,7 +1,8 @@
 DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 CANDIDATES := $(wildcard .??*)
-EXCLUSIONS := .DS_Store .git .gitmodules .travis.yml
+EXCLUSIONS := .DS_Store .git .gitmodules .travis.yml .gitignore
 DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
+PLISTS     := $(notdir $(wildcard $(DOTPATH)/.config/cmux/*.plist))
 
 .DEFAULT_GOAL := help
 
@@ -19,10 +20,13 @@ brew: ## Install CLI tools from the Brewfile
 	@echo '==> Installing CLI tools via brew bundle.'
 	brew bundle --file=$(DOTPATH)/Brewfile
 
-clean: ## Remove the dot files and this repo
+launchagents: ## Symlink launchd plists into ~/Library/LaunchAgents and load them
+	@$(foreach val, $(PLISTS), ln -sfnv $(DOTPATH)/.config/cmux/$(val) $(HOME)/Library/LaunchAgents/$(val);)
+	@$(foreach val, $(PLISTS), launchctl bootstrap gui/$$(id -u) $(HOME)/Library/LaunchAgents/$(val) 2>/dev/null || true;)
+
+clean: ## Remove the dotfile symlinks from the home directory (keeps this repo)
 	@echo 'Remove dot files in your home directory...'
-	@-$(foreach val, $(DOTFILES), rm -vrf $(HOME)/$(val);)
-	-rm -rf $(DOTPATH)
+	@-$(foreach val, $(DOTFILES), rm -v $(HOME)/$(val);)
 
 help: ## Self-documented Makefile
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
