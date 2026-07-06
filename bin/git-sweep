@@ -1,0 +1,242 @@
+#!/usr/bin/env bash
+# git-sweep — classify and delete "done" local branches, protecting unpushed spikes.
+#
+# A smarter replacement for `git vacuum`. Where `git branch --merged` misses
+# squash/rebase-merged PRs (the common GitHub case), this cross-checks GitHub PR
+# state via `gh` AND git's own merged-into-base test, so branches left over from
+# code reviews or merged PRs get swept — while local-only spikes (work never
+# pushed, not merged anywhere) are protected and never offered for deletion.
+#
+# Buckets:
+#   safe    — merged into a base branch OR its PR is merged, no unpushed commits
+#   review  — remote branch gone (likely squash-merged), or merged-but-ahead
+#   keep    — local-only spike (unmerged, no upstream) or active/open work
+#
+# Usage:
+#   git sweep                # classify, print, then fzf-pick what to delete
+#   git sweep --dry-run      # classify & print only, delete nothing
+#   git sweep --yes          # delete the "safe" bucket, no prompt
+#   git sweep --yes --all    # delete "safe" + "review" buckets, no prompt
+#   git sweep --no-gh        # skip GitHub PR lookup (offline / non-GitHub repo)
+#   git sweep --no-fetch     # skip the `git fetch --prune` refresh
+
+# macOS ships bash 3.2 (no `declare -A`/`mapfile`); re-exec under a modern bash.
+if [ -z "${BASH_VERSINFO:-}" ] || [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+  for alt in /opt/homebrew/bin/bash /usr/local/bin/bash; do
+    [ -x "$alt" ] && exec "$alt" "$0" "$@"
+  done
+  echo "git-sweep: requires bash >= 4 (try: brew install bash)" >&2
+  exit 1
+fi
+
+set -uo pipefail
+
+# ---- options -------------------------------------------------------------
+DRY_RUN=0 ASSUME_YES=0 INCLUDE_REVIEW=0 DO_FETCH=1 USE_GH=1
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -n|--dry-run) DRY_RUN=1 ;;
+    -y|--yes)     ASSUME_YES=1 ;;
+    --all)        INCLUDE_REVIEW=1 ;;
+    --no-fetch)   DO_FETCH=0 ;;
+    --no-gh)      USE_GH=0 ;;
+    -h|--help)
+      sed -n '2,26p' "$0" | sed 's/^# \{0,1\}//'
+      exit 0 ;;
+    *) echo "git-sweep: unknown option: $1" >&2; exit 2 ;;
+  esac
+  shift
+done
+
+# ---- colors --------------------------------------------------------------
+if [[ -t 1 && -z "${NO_COLOR:-}" ]]; then
+  BOLD=$'\e[1m'; DIM=$'\e[2m'; RED=$'\e[31m'; GRN=$'\e[32m'
+  YLW=$'\e[33m'; BLU=$'\e[34m'; RST=$'\e[0m'
+else
+  BOLD='' DIM='' RED='' GRN='' YLW='' BLU='' RST=''
+fi
+
+# ---- preconditions -------------------------------------------------------
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+  echo "git-sweep: not inside a git repository" >&2; exit 1; }
+
+current=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || echo "")
+
+if (( DO_FETCH )); then
+  echo "${DIM}Fetching & pruning remote-tracking refs…${RST}" >&2
+  git fetch --prune --quiet 2>/dev/null || \
+    echo "${YLW}warning: git fetch failed; proceeding with local state${RST}" >&2
+fi
+
+# ---- base branches (origin/develop, origin/main, origin/master) ----------
+bases=()
+for b in develop main master; do
+  git show-ref --verify --quiet "refs/remotes/origin/$b" && bases+=("origin/$b")
+done
+# fall back to local base branches if no origin remotes matched
+if [[ ${#bases[@]} -eq 0 ]]; then
+  for b in develop main master; do
+    git show-ref --verify --quiet "refs/heads/$b" && bases+=("$b")
+  done
+fi
+# names to always protect from deletion
+declare -A protected=()
+[[ -n "$current" ]] && protected["$current"]=1
+for b in develop main master; do protected["$b"]=1; done
+
+# ---- merged PR head refs from GitHub -------------------------------------
+declare -A merged_pr=()
+gh_note=""
+if (( USE_GH )); then
+  if command -v gh >/dev/null 2>&1 && \
+     gh auth status >/dev/null 2>&1 && \
+     git remote get-url origin 2>/dev/null | grep -qi github; then
+    while IFS= read -r h; do
+      [[ -n "$h" ]] && merged_pr["$h"]=1
+    done < <(gh pr list --state merged --limit 500 --json headRefName \
+               -q '.[].headRefName' 2>/dev/null)
+  else
+    gh_note="${DIM}(gh unavailable/unauthed or non-GitHub repo — PR check skipped)${RST}"
+  fi
+fi
+
+# ---- classify ------------------------------------------------------------
+# arrays of "branch<TAB>reason"
+safe=() review=() keep=()
+
+is_ancestor_of_base() {
+  local br="$1" base
+  for base in "${bases[@]}"; do
+    git merge-base --is-ancestor "refs/heads/$br" "$base" 2>/dev/null && return 0
+  done
+  return 1
+}
+
+while IFS='|' read -r br upstream track; do
+  [[ -z "$br" ]] && continue
+  [[ -n "${protected[$br]:-}" ]] && continue
+
+  gone=0; ahead=0; has_up=0
+  [[ -n "$upstream" ]] && has_up=1
+  [[ "$track" == *"gone"* ]] && gone=1
+  [[ "$track" == *"ahead"* ]] && ahead=1
+
+  merged_base=0; pr=0
+  is_ancestor_of_base "$br" && merged_base=1
+  [[ -n "${merged_pr[$br]:-}" ]] && pr=1
+
+  if (( merged_base || pr )); then
+    if (( ahead )); then
+      review+=("$br"$'\t'"merged but has local commits ahead — review before deleting")
+    elif (( pr && merged_base )); then
+      safe+=("$br"$'\t'"PR merged + merged into base")
+    elif (( pr )); then
+      safe+=("$br"$'\t'"PR merged on GitHub")
+    else
+      safe+=("$br"$'\t'"merged into base branch")
+    fi
+  elif (( gone )); then
+    review+=("$br"$'\t'"upstream gone (likely squash/rebase-merged & deleted)")
+  elif (( has_up == 0 )); then
+    keep+=("$br"$'\t'"local-only, unmerged — spike (protected)")
+  else
+    keep+=("$br"$'\t'"active / open work")
+  fi
+done < <(git for-each-ref refs/heads \
+           --format='%(refname:short)|%(upstream:short)|%(upstream:track)')
+
+# ---- print classification ------------------------------------------------
+print_bucket() {
+  local color="$1" title="$2"; shift 2
+  local rows=("$@")
+  echo "${BOLD}${color}${title}${RST} ${DIM}(${#rows[@]})${RST}"
+  if [[ ${#rows[@]} -eq 0 ]]; then
+    echo "  ${DIM}—${RST}"
+  else
+    local row br reason
+    for row in "${rows[@]}"; do
+      br=${row%%$'\t'*}; reason=${row#*$'\t'}
+      printf '  %s%-40s%s %s%s%s\n' "$color" "$br" "$RST" "$DIM" "$reason" "$RST"
+    done
+  fi
+}
+
+echo
+[[ -n "$current" ]] && echo "${DIM}repo: $(basename "$(git rev-parse --show-toplevel)") · on ${current} · bases: ${bases[*]:-none}${RST}"
+[[ -n "$gh_note" ]] && echo "$gh_note"
+echo
+print_bucket "$GRN" "safe to delete"      "${safe[@]}"
+echo
+print_bucket "$YLW" "review (deletable with --all)" "${review[@]}"
+echo
+print_bucket "$BLU" "keep"                 "${keep[@]}"
+echo
+
+# ---- candidate set -------------------------------------------------------
+candidates=("${safe[@]}")
+(( INCLUDE_REVIEW )) && candidates+=("${review[@]}")
+
+if [[ ${#safe[@]} -eq 0 && ${#review[@]} -eq 0 ]]; then
+  echo "${GRN}Nothing to sweep — no done/stale branches.${RST}"
+  exit 0
+fi
+
+(( DRY_RUN )) && { echo "${DIM}--dry-run: nothing deleted.${RST}"; exit 0; }
+
+# ---- choose branches to delete -------------------------------------------
+to_delete=()
+
+if (( ASSUME_YES )); then
+  for row in "${candidates[@]}"; do to_delete+=("${row%%$'\t'*}"); done
+elif [[ -t 0 && -t 1 ]] && command -v fzf >/dev/null 2>&1; then
+  # interactive picker over safe + review (regardless of --all)
+  picker=("${safe[@]}" "${review[@]}")
+  [[ ${#picker[@]} -eq 0 ]] && exit 0
+  mapfile -t chosen < <(
+    for row in "${picker[@]}"; do
+      br=${row%%$'\t'*}; reason=${row#*$'\t'}
+      printf '%s\t%s\n' "$br" "$reason"
+    done | fzf --multi --with-nth=1,2 --delimiter='\t' \
+               --header=$'TAB toggle · Ctrl-A all · ENTER delete selected · ESC cancel' \
+               --bind 'ctrl-a:select-all,ctrl-d:deselect-all' \
+               --prompt='delete> ' \
+               --preview 'git log --oneline -12 --color=always {1}' \
+               --preview-window=right,55%,border-left
+  )
+  for line in "${chosen[@]}"; do
+    [[ -n "$line" ]] && to_delete+=("${line%%$'\t'*}")
+  done
+else
+  echo "${YLW}Not an interactive terminal (or fzf missing).${RST}"
+  echo "Re-run with ${BOLD}--yes${RST} to delete the safe bucket, or ${BOLD}--yes --all${RST} to include review."
+  exit 0
+fi
+
+if [[ ${#to_delete[@]} -eq 0 ]]; then
+  echo "${DIM}No branches selected — nothing deleted.${RST}"
+  exit 0
+fi
+
+# ---- delete --------------------------------------------------------------
+echo
+deleted=0 failed=0
+for br in "${to_delete[@]}"; do
+  [[ -n "${protected[$br]:-}" ]] && { echo "${YLW}skip protected: $br${RST}"; continue; }
+  if git branch -d "$br" 2>/dev/null; then
+    echo "${GRN}deleted${RST} $br"
+    ((deleted++))
+  elif git branch -D "$br" 2>/dev/null; then
+    echo "${GRN}deleted${RST} $br ${DIM}(forced -D; not fast-forward merged locally)${RST}"
+    ((deleted++))
+  else
+    echo "${RED}failed${RST}  $br"
+    ((failed++))
+  fi
+done
+
+echo
+if (( failed )); then
+  echo "${BOLD}Swept ${deleted} branch(es)${RST}, ${RED}${failed} failed${RST}."
+else
+  echo "${BOLD}Swept ${deleted} branch(es).${RST}"
+fi
