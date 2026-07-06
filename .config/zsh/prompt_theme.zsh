@@ -1,11 +1,6 @@
-if ! command -v starship &>/dev/null; then
-    if is_osx; then
-        brew install starship
-    else
-        command curl -sS https://starship.rs/install.sh | sh -s -- -y
-    fi
-fi
-
 if command -v starship &>/dev/null; then
     eval "$(starship init zsh)"
+else
+    # Never install as a shell-startup side effect; starship is in the Brewfile.
+    print -u2 "prompt_theme: starship not found — run 'make brew' in ~/dotfiles"
 fi
