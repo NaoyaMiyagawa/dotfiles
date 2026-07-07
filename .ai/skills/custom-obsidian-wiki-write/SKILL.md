@@ -21,6 +21,7 @@ conventions and workflows.
 - Project wikis: `projects/<name>/wiki/` (pages live here); spine: `projects/<name>/index.md`, `log.md`; raw inputs: `projects/<name>/sources/`
 - Templates: `templates/topic.md`, `templates/source-summary.md`
 - The vault is outside your repo — to write, run `/add-dir "$OBSIDIAN_VAULT"` first.
+- The vault is indexed as the **qmd collection `obsidian`**; anything you write must be re-indexed (step 8) before it's searchable.
 
 ## Workflow
 
@@ -31,6 +32,13 @@ conventions and workflows.
 5. **Update the spine.** Add/refresh the entry in `index.md` (correct category), and bump the page's `updated:` to today's date.
 6. **Log it.** Append one line to `log.md`: `## [YYYY-MM-DD] ingest | <what changed; link the pages>` (use today's date).
 7. **Raw sources.** Drop raw files into `sources/` (immutable — never edit them), then summarize each as a `type: source` page from `templates/source-summary.md`.
+8. **Re-index qmd.** After the files are written, refresh the search index so the new/changed pages are findable:
+
+   ```bash
+   qmd update -c obsidian && qmd embed   # re-index changed files, then refresh vectors for the semantic query mode
+   ```
+
+   `qmd update` alone makes pages findable via `qmd search` (lexical); `qmd embed` is what lets `qmd query`'s semantic/hybrid mode see them. Run both after any write. If embedding fails (models/GPU unavailable), the lexical index is still updated.
 
 ## Provenance (code-derived pages)
 
