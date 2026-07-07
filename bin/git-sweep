@@ -122,6 +122,7 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
   echo "git-sweep: not inside a git repository" >&2; exit 1; }
 
 current=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || echo "")
+local_count=$(git for-each-ref --format=x refs/heads | grep -c x)
 
 if (( DO_FETCH )); then
   echo "${DIM}Fetching & pruning remote-tracking refs…${RST}" >&2
@@ -190,6 +191,7 @@ if (( USE_GH )); then
   if command -v gh >/dev/null 2>&1 && \
      gh auth status >/dev/null 2>&1 && \
      git remote get-url origin 2>/dev/null | grep -qi github; then
+    echo "${DIM}Checking ${local_count} local branch(es) against merged PRs on GitHub…${RST}" >&2
     while IFS= read -r h; do
       [[ -n "$h" ]] && merged_pr["$h"]=1
     done < <(gh pr list --state merged --limit 500 --json headRefName \
