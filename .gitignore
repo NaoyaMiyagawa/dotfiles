@@ -43,6 +43,8 @@
 /.claude/**
 !/.claude/CLAUDE.md
 !/.claude/settings.json
+!/.claude/hooks/
+!/.claude/hooks/no-poll-loops.sh
 !/.claude/themes/
 !/.claude/themes/my-theme.json
 !/.claude/scheduled-tasks/
