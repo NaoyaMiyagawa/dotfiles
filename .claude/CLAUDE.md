@@ -5,6 +5,11 @@
 
 - When asked to create a new branch, always create it from `origin/develop`. If that branch doesn't exist in the repo, create it from `origin/main` instead.
 
+## Long-running commands
+
+- Never wait with polling loops in Bash (`until/while ...; do sleep N; done`) — they block the turn with no output and look like a hang. A PreToolUse hook denies them.
+- Launch long-running work with `run_in_background: true` and end the turn; you are re-invoked when it completes. To check progress once, use a single bounded read (`tail -n 50 <file>`), never a loop.
+
 ## Orchestrator Model Strategy (capable models)
 
 When the session runs on a **smart orchestrator-tier model** — Fable 5, or Opus 4.8 at `high`/`xhigh` reasoning — treat it as the **orchestrator brain**, not the workhorse. The goal is fewer tokens and faster results by pushing execution down to cheaper, parallel workers.

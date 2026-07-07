@@ -201,6 +201,10 @@
           },
           {
             "type": "command",
+            "command": "~/.claude/hooks/no-poll-loops.sh"
+          },
+          {
+            "type": "command",
             "command": "~/.claude/hooks/rtk-rewrite.sh"
           }
         ]
