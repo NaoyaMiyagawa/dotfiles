@@ -3,7 +3,7 @@
 ##############################################################################
 
 # ----------------------------------------------------------------------------
-# dotfilesのOS条件分岐用
+# OS branching for dotfiles
 # ----------------------------------------------------------------------------
 # ostype returns the lowercase OS name
 ostype() {
@@ -19,7 +19,7 @@ os_detect() {
         *)          PLATFORM='unknown' ;;
     esac
 
-    # 参考 ： [ディストリビューションによって処理を替える - Qiita](https://qiita.com/taishin/items/a7e0c3e25616325a02a6)
+    # Reference: [Switching behavior by distribution - Qiita](https://qiita.com/taishin/items/a7e0c3e25616325a02a6)
     if [ "$PLATFORM" = "linux" ]; then
         RELEASE_FILE=/etc/os-release
         if grep -e '^NAME="CentOS' $RELEASE_FILE >/dev/null; then
@@ -105,9 +105,9 @@ zshaddhistory() {
 }
 
 # ----------------------------------------------------------------------------
-# fuzzy-cd ： 曖昧検索を使ったディレクトリ移動
+# fuzzy-cd : change directory using fuzzy search
 # ----------------------------------------------------------------------------
-# -o -path の箇所は除外パス
+# the -o -path entries are exclusion paths
 # NOTE: named `fuzzy-cd` (not `fd`) to avoid shadowing the sharkdp/fd binary
 fuzzy-cd() {
     local dir
@@ -125,7 +125,7 @@ fuzzy-cd() {
 }
 
 # ----------------------------------------------------------------------------
-# fssh ： 曖昧検索を使ったssh接続
+# fssh : ssh connection using fuzzy search
 # ----------------------------------------------------------------------------
 fssh() {
     local sshLoginHost
@@ -140,9 +140,9 @@ fssh() {
 }
 
 # ----------------------------------------------------------------------------
-# peco-cdr [Ctrl + U] ： 直近移動したディレクトリの曖昧検索
+# peco-cdr [Ctrl + U] : fuzzy search of recently visited directories
 # ----------------------------------------------------------------------------
-# 必要なshell関数を読み込み
+# load the required shell functions
 autoload -Uz add-zsh-hook
 autoload -Uz cdr
 autoload -Uz chpwd_recent_dirs
@@ -165,10 +165,30 @@ function peco-cdr () {
     fi
 }
 zle -N peco-cdr
-bindkey '^u' peco-cdr
+# NOTE: the `bindkey '^U' peco-cdr` lives in .zshrc *after* `bindkey -e`.
+# `bindkey -e` re-selects the emacs keymap and resets ^U to kill-whole-line,
+# so binding it here (function.zsh runs earlier) would be clobbered.
 
 # ----------------------------------------------------------------------------
-# fbr ： Git ローカルブランチの曖昧検索 + git switch
+# ..  : fuzzy-pick an ancestor of $PWD and cd into it
+# ----------------------------------------------------------------------------
+# Replaces the old `alias ..='cd ..'`. The nearest parent is listed first, so
+# `..`<Enter> == cd .. (feels instant); scroll down to jump further up.
+function ..() {
+    local dir="$PWD"
+    local -a parents
+    while [[ "$dir" != "/" ]]; do
+        dir="${dir:h}"
+        parents+=("$dir")
+    done
+    (( ${#parents} )) || return 0  # already at /
+    local selected
+    selected="$(print -l -- "${parents[@]}" | peco --prompt='cd ↑ >')"
+    [[ -n "$selected" ]] && cd -- "$selected"
+}
+
+# ----------------------------------------------------------------------------
+# fbr : fuzzy search of local Git branches + git switch
 # ----------------------------------------------------------------------------
 fbr() {
     local branches branch
@@ -178,7 +198,7 @@ fbr() {
 }
 
 # ----------------------------------------------------------------------------
-# fbrm ： Git ローカル＋リモートブランチの曖昧検索 + git switch
+# fbrm : fuzzy search of local + remote Git branches + git switch
 # ----------------------------------------------------------------------------
 fbrm() {
     local branches branch
@@ -188,7 +208,7 @@ fbrm() {
 }
 
 # ----------------------------------------------------------------------------
-# fbr ： Git コミットブラウザ
+# fshow : Git commit browser
 # ----------------------------------------------------------------------------
 fshow() {
     git log --graph --color=always \

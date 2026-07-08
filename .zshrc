@@ -24,6 +24,9 @@ source $DOTFILES_PATH/.config/zsh/alias.zsh
 bindkey -e
 bindkey "[D" backward-word
 bindkey "[C" forward-word
+# Ctrl-U: fuzzy search of recently-visited dirs (peco-cdr, defined in function.zsh).
+# Must come after `bindkey -e`, which otherwise resets ^U to kill-whole-line.
+bindkey '^U' peco-cdr
 # # Enable Alt+Left/Right to navigate through words
 # bindkey "\e\e[D" backward-word
 # bindkey "\e\e[C" forward-word

@@ -3,7 +3,7 @@
 ##############################################################################
 
 # ----------------------------------------------------------------------------
-# General (Global -gオプション付きで定義するとコマンドの途中でも展開される)
+# General (defining with the global -g option expands even in the middle of a command)
 # ----------------------------------------------------------------------------
 alias -g C='| pbcopy' # copy
 alias -g G='| grep'   # grep
@@ -11,7 +11,7 @@ alias -g G='| grep'   # grep
 # ----------------------------------------------------------------------------
 # General
 # ----------------------------------------------------------------------------
-# 上書きの際にinteractiveになる
+# become interactive when overwriting
 alias cp='cp -i'
 alias mv='mv -i'
 # alias rm='rm -i'
@@ -21,7 +21,8 @@ alias ll='ls -l'
 alias lla='ls -la'
 alias cd-='fuzzy-cd'
 alias v-='vim `fzf`'
-alias ..='cd ..'
+# `..` is a fuzzy parent-dir picker defined in function.zsh (nearest parent
+# first, so `..`<Enter> still == cd ..). `...`/`....` stay as instant jumps.
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias cdb='cd-bookmark'
@@ -78,7 +79,7 @@ fi
 # docker
 # ----------------------------------------------------------------------------
 alias d='docker'
-alias de='docker exec -it $(docker ps | peco | cut -d " " -f 1) /bin/bash' # dockerコンテナに入る
+alias de='docker exec -it $(docker ps | peco | cut -d " " -f 1) /bin/bash' # enter a docker container
 alias dc='docker compose'
 
 # ----------------------------------------------------------------------------
@@ -109,10 +110,10 @@ alias mp='multipass'
 # vscode
 alias c.='code .'
 
-# xxenv で brew doctor の warning対策
+# workaround for brew doctor warnings caused by xxenv
 # alias brew="PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin brew"
 
-# atcoder-cli で pypy として提出するためのsubmitコマンド
+# submit command for submitting as pypy with atcoder-cli
 alias accs='acc s --skip-filename -- --guess-python-interpreter pypy'
 
 # zsh-benchmark
