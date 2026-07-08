@@ -44,7 +44,7 @@ path=(
     # sonarqube-cli
     "$HOME/.local/share/sonarqube-cli/bin"(N-/)
     "$HOME/.local/bin"(N-/)
-    # dotfiles helper scripts (git-sweep, cmux-pr-titles, ...)
+    # dotfiles helper scripts (cmux-pr-titles, ...)
     "${DOTFILES_PATH:-$HOME/dotfiles}/bin"(N-/)
     "$path[@]"
     '/usr/local/bin'(N-/)

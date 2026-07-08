@@ -10,6 +10,8 @@ export BAT_THEME="TwoDark"
 export CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=true
 # obsidian wiki vault (per-machine location; override if the vault lives elsewhere)
 export OBSIDIAN_VAULT="$HOME/Documents/Obsidian/main"
+# git-branch-sweep: protect my worktree-home branches from being swept
+export GIT_BRANCH_SWEEP_PROTECT='local/*'
 
 if is_osx; then
     export LDFLAGS="-L/opt/homebrew/opt/php@8.3/lib -L/opt/homebrew/opt/icu4c/lib"
