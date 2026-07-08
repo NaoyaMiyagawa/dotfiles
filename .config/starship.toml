@@ -1,13 +1,13 @@
 ##############################################################################
-# Starship 設定
+# Starship settings
 #
 # https://starship.rs/config/
 ##############################################################################
 
-# starshipが現在のディレクトリ下のファイルをチェックするまで10ミリ秒待ちます
+# wait 10 milliseconds for starship to check files under the current directory
 scan_timeout = 10
 command_timeout = 250
-# プロンプトの先頭での改行を有効にする
+# enable a newline at the start of the prompt
 add_newline = true
 
 [hostname]
@@ -15,7 +15,7 @@ ssh_only = true
 format = "[$hostname:](bold blue) "
 disabled = false
 
-# パス名 ｜ 省略表示にされないようにする
+# path name | prevent truncated display
 [directory]
 truncation_length = 100
 truncate_to_repo = false
@@ -25,17 +25,17 @@ truncation_symbol = ".../"
 format = "[$symbol$branch]($style) "
 
 [git_status]
-# docker開発環境で応答が遅すぎるときに true にすると速くなる
+# set to true to speed things up when responses are too slow in a docker dev environment
 # disabled = true
 format = '([\[$all_status $ahead_behind\]]($style) )'
 style = "blue"
 
-# status系
+# status
 staged = '[+${count}](green)'
 modified = '[!${count}](yellow)'
 deleted = "[✘${count}](red)"
 
-# ahead_behind系
+# ahead_behind
 ahead = "⇡${count}"
 diverged = "⇕⇡${ahead_count}⇣${behind_count}"
 behind = "⇣${count}"
@@ -48,7 +48,7 @@ behind = "⇣${count}"
 success_symbol = "[❯](bold blue)"
 
 # ----------------------------------------------------------------------------
-# バージョン周り
+# Version-related
 # ----------------------------------------------------------------------------
 
 [docker_context]
