@@ -1,25 +1,25 @@
-"#####表示設定#####
-set number          "行番号を表示する
-set expandtab       "タブに空白を使う
-set laststatus=2    "最下ウィンドウにいつステータス行が表示されるかを設定する
-set title           "編集中のファイル名を表示
+"##### Display settings #####
+set number          "show line numbers
+set expandtab       "use spaces for tabs
+set laststatus=2    "set when the status line is shown in the bottom window
+set title           "show the name of the file being edited
 set ambiwidth=double
-set showmatch       "括弧入力時の対応する括弧を表示
-syntax on           "コードの色分け
-set tabstop=4       "インデントをスペース4つ分に設定
-set autoindent      "オートインデント
+set showmatch       "show the matching bracket when one is typed
+syntax on           "syntax highlighting
+set tabstop=4       "set indent to 4 spaces
+set autoindent      "auto indent
 set wildmenu
 set cursorline
 set ruler
 
-"#####検索設定#####
-set hlsearch    "前回の検索パターンが存在するとき、それにマッチするテキストを全て強調表示する。
-set incsearch   "インクリメンタルサーチ
-set ignorecase  "大文字/小文字の区別なく検索する
-set smartcase   "検索文字列に大文字が含まれている場合は区別して検索する
-set wrapscan    "検索時に最後まで行ったら最初に戻る
+"##### Search settings #####
+set hlsearch    "highlight all text matching the previous search pattern when one exists
+set incsearch   "incremental search
+set ignorecase  "search case-insensitively
+set smartcase   "search case-sensitively when the search string contains uppercase letters
+set wrapscan    "wrap around to the start when the search reaches the end
 
-"#####vim-hybrid設定#####
+"##### vim-hybrid settings #####
 set background=dark
 let g:hybrid_custom_term_colors = 1
 let g:hybrid_reduced_contrast = 1 " Remove this line if using the default palette.
@@ -28,12 +28,12 @@ let g:hybrid_use_iTerm_colors = 2
 " let g:hybrid_reduced_contrast = 1 " Remove this line if using the default palette.
 colorscheme hybrid
 
-"viとの互換性を無効にする(INSERT中にカーソルキーが有効になる)
+"disable vi compatibility (arrow keys work while in INSERT mode)
 set nocompatible
-"カーソルを行頭，行末で止まらないようにする
+"don't stop the cursor at the start/end of a line
 set whichwrap=b,s,h,l,<,>,[,]
-"BSで削除できるものを指定する
-" indent  : 行頭の空白
-" eol     : 改行
-" start   : 挿入モード開始位置より手前の文字
+"specify what backspace can delete
+" indent  : leading whitespace at the start of a line
+" eol     : line break
+" start   : characters before where insert mode started
 set backspace=indent,eol,start

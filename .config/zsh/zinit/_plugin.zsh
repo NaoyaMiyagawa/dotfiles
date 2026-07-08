@@ -3,7 +3,7 @@
 ##############################################################################
 
 # Articles
-# - [zinit をしっかりと理解する](https://zenn.dev/xeres/articles/2021-05-05-understanding-zinit-syntax)
+# - [Understanding zinit thoroughly](https://zenn.dev/xeres/articles/2021-05-05-understanding-zinit-syntax)
 
 # Modifiers
 # - wait : lazy load. it's called 'Turbo mode'. wait = wait"0"
@@ -90,8 +90,8 @@ export ZSH_PLUGINS_ALIAS_TIPS_TEXT='----- alias-tips: '
 # prompt renders, leaving them invisible to those shells.
 
 if is_osx; then
-    # AWS CLI v2の補完。
-    # 要 AWS CLI v2
+    # AWS CLI v2 completion.
+    # requires AWS CLI v2
     # Turbo-deferred: bashcompinit must run before the completer script loads
     # (atinit), and the aws registration after it (atload) — same order as the
     # old synchronous block, which errored with `command not found: compdef`
