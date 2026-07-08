@@ -19,7 +19,11 @@
 // - no .primary/.secondary tokens: render too dark
 // - no .background { } block form: the shape also renders as a sibling
 //   ABOVE the row, wasting ~50px per row; use .background("#hex"/"clear")
-// - Reorderable adds a leading gutter + row chrome; ForEach is compact
+// - Reorderable(data, move: "workspace.reorder") gives persisted drag-reorder
+//   with NO extra chrome as of v0.64.17 (plain VStack rows; the old gutter is
+//   gone). The exact name + move: arg are required — `ReorderableList` (the
+//   internal view name) parses but renders nothing. No drop-position indicator
+//   is possible: the host ignores isTargeted and exposes no drag state.
 // - the host already pads content (12 h / 8 top), keep own padding minimal
 // - ONLY uniform .padding(n) works; edge forms like .padding(.vertical, 5)
 //   silently apply DEFAULT ~16px padding on ALL edges (RenderNodeView.swift)
@@ -63,8 +67,9 @@ VStack(alignment: .leading, spacing: 5) {
     }
     .padding(2)
 
-    // Workspace list. Tap to select.
-    ForEach(workspaces) { w in
+    // Workspace list. Tap to select, drag to reorder (persisted by the host
+    // via workspace.reorder with workspace_id + index).
+    Reorderable(workspaces, move: "workspace.reorder") { w in
         let sel = w.selected == true
         let lbl = w.progress.label
         let isWaiting = (lbl == "waiting")
