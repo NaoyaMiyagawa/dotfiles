@@ -28,6 +28,7 @@ Long PR descriptions hurt review more than they help. The diff and commit messag
 - List concrete changes as short bullets, not paragraphs. One bullet per behavioural change is enough — don't enumerate every touched file (the diff's file list already covers that).
 - Move per-line rationale to inline PR review comments on your own diff (single-PR self-review), not into the description.
 - Cut "Notes" / "Behavioural notes" / "Further comments" sections unless they carry information not derivable from the diff (e.g. an out-of-scope decision, a follow-up PR, a non-obvious test gap).
+- **Link, don't duplicate.** When a detail already lives in a committed doc, issue, or ticket, link to it instead of pasting its content into the description — a second copy drifts from the source the moment either side changes. Keep the canonical version in one place and point the PR at it.
 - Validation logs go inside the `<details>` block (see below) so they don't dominate the visible body.
 
 If the resulting body feels short, that's the goal. A reviewer should be able to read it in under 30 seconds.
