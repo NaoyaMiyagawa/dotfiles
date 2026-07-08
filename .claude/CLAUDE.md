@@ -3,7 +3,7 @@
 
 ## Branching
 
-- When asked to create a new branch, always create it from `origin/develop`. If that branch doesn't exist in the repo, create it from `origin/main` instead.
+- When asked to create a new branch, run `git fetch --all` first so the base is current, then always create it from `origin/develop`. If that branch doesn't exist in the repo, create it from `origin/main` instead.
 
 ## Long-running commands
 
