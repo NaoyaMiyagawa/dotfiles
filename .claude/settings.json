@@ -193,6 +193,15 @@
     ],
     "PreToolUse": [
       {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux set-progress 0.5 --label working >/dev/null 2>&1 || true",
+            "timeout": 10
+          }
+        ]
+      },
+      {
         "matcher": "Bash",
         "hooks": [
           {
