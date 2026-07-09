@@ -20,7 +20,7 @@ Keep changes consistent with existing project patterns unless asked to refactor.
 5. Use string interpolation when possible for better readability. (e.g. `"This is {$user->name}"`) When interpolation isn't feasible (e.g. a reusable format string or positional args), prefer `vsprintf` over `sprintf`.
 6. Use named args when method calls goes multiple lines due to line length.
 7. Don't wrap with bracket when instantiating a class. Good: `new Xxx()->...`.
-8. Prefer `is_null($x)` over `$x === null` for null checks.
+8. Prefer `$x === null` over `is_null($x)` for null checks.
 9. **Use strict comparison for membership checks.** Pass `true` as the third arg to `in_array()` / `array_search()` when testing identity-style membership — allowlists, id lists, role/status lists. Loose comparison invites type juggling (`0 == 'foo'`, `'1' == 1`), a correctness and security risk in access checks.
 10. Prefer guard clauses / early returns over wrapping the main path in a positive `if`. Invert the condition and bail out first.
 11. Prefer collection pipelines (`collect($items)->map(...)->filter(...)`) over raw array functions in transformation/serialization code, for readability and chainability.
@@ -31,6 +31,7 @@ Keep changes consistent with existing project patterns unless asked to refactor.
 16. **Reach for the framework's first-party helpers over hand-rolled primitives.** For a common operation, prefer a provided helper to a manual loop over language built-ins — e.g. `Illuminate\Filesystem\Filesystem` (`ensureDirectoryExists()`, `deleteDirectory()`) instead of recursive `scandir`/`is_dir`/`unlink`/`rmdir`, and `Str`/`Arr`/collection helpers over ad-hoc string/array fiddling. Less code to get wrong and the intent is explicit. This applies in test setup/teardown too.
 17. **Initialize derived state in the constructor, not lazily.** When a property can be computed from the constructor's inputs, set it in the constructor rather than behind a lazy getter or a separate setter. And don't add a named constructor/factory (`fromConfig()`, `make()`) that only wraps `new` with a config read — construct directly at the call site. Reserve a static named constructor for when it encapsulates real logic (see Exceptions).
 18. **Resolve from the container with `app()`.** Prefer `app(X::class)` over injecting a `Container` and calling `$this->container->make(X::class)`. Don't register a binding in a service provider solely to call one method — call the method directly.
+19. **Build URLs with `route()`, never hardcoded path/URL string literals.** Pass `absolute: true` when an absolute URL is required. Don't concatenate a base/`app_url` with a literal path — a named route survives path changes and keeps the URL in one place.
 
 ### Abstraction
 - **Prefer a direct `match` (or a small map) over a registry / service-provider registration pattern for dispatch you fully own.** A registry that entries register themselves into earns its complexity only when something *external* (a plugin, a separate package) must extend the set. When you own every case, a `match` that returns the right handler keeps the wiring in one readable place. Don't add indirection (an interface, a registry, a factory) for a single in-house caller until a second caller or a real extensibility need appears.
@@ -72,6 +73,11 @@ if ($user?->organization_id === Organization::INTERNAL_ID && $user->organization
 // Good — reuse domain helpers
 if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEnableSsoLogin()) { ... }
 ```
+
+### Models
+1. **Cast datetime/timestamp columns with `immutable_datetime` by default.** Reach for the mutable `datetime` cast only when a column genuinely needs in-place mutation.
+2. **No `$fillable` / mass assignment.** Set attributes explicitly. When creating a record by copying an existing one, use `->replicate()` rather than re-listing fields.
+3. **Define query scopes with the `#[Scope]` attribute, not the legacy `scopeXxx()` method.**
 
 ### Eloquent
 1. Always start from `::query()` for better IDE support.
