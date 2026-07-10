@@ -188,6 +188,9 @@
         },
     },
     "languages": {
+        "JSON": {
+            "tab_size": 2
+        },
         "PHP": {
             "colorize_brackets": true,
             "show_whitespaces": "all",
