@@ -98,12 +98,6 @@
   },
   {
     "context": "Editor",
-    "bindings": {
-      "cmd-shift-l": "editor::Rename"
-    }
-  },
-  {
-    "context": "Editor",
     "unbind": {
       "f2": "editor::Rename"
     }
@@ -148,6 +142,30 @@
     "context": "Workspace",
     "unbind": {
       "alt-cmd-b": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "Editor && mode == full",
+    "unbind": {
+      "cmd-shift-l": "agent::AddSelectionToThread"
+    }
+  },
+  {
+    "context": "Workspace",
+    "unbind": {
+      "cmd-shift-l": "agent::ToggleFocus"
+    }
+  },
+  {
+    "context": "AgentPanel || MessageEditor > Editor",
+    "unbind": {
+      "cmd-shift-l": "workspace::ToggleRightDock"
+    }
+  },
+  {
+    "context": "AgentPanel || MessageEditor > Editor",
+    "unbind": {
+      "cmd-shift-l": "workspace::ToggleRightDock"
     }
   }
 ]
