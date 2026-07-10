@@ -97,14 +97,11 @@
       "TodoWrite(**)",
       "Write(**)"
     ],
-    "deny": [
-      "Bash(rm -rf :*)",
-      "Bash(git clone:*)",
-      "Bash(python *)",
-      "Bash(vendor/bin/phpstan *)"
-    ],
+    "deny": ["Bash(rm -rf :*)", "Bash(git clone:*)", "Bash(python *)", "Bash(vendor/bin/phpstan *)"],
     "defaultMode": "auto"
   },
+  "model": "opus[1m]",
+  "advisorModel": "fable",
   "hooks": {
     "SessionStart": [
       {
@@ -259,6 +256,5 @@
   "tui": "fullscreen",
   "theme": "custom:my-theme",
   "preferredNotifChannel": "terminal_bell",
-  "skipAutoPermissionPrompt": true,
-  "model": "opus[1m]"
+  "skipAutoPermissionPrompt": true
 }
