@@ -97,11 +97,14 @@
       "TodoWrite(**)",
       "Write(**)"
     ],
-    "deny": ["Bash(rm -rf :*)", "Bash(git clone:*)", "Bash(python *)", "Bash(vendor/bin/phpstan *)"],
+    "deny": [
+      "Bash(rm -rf :*)",
+      "Bash(git clone:*)",
+      "Bash(python *)",
+      "Bash(vendor/bin/phpstan *)"
+    ],
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
-  "advisorModel": "fable",
   "hooks": {
     "SessionStart": [
       {
@@ -236,7 +239,8 @@
     "figma@claude-plugins-official": true,
     "codex@openai-codex": true,
     "swift-lsp@claude-plugins-official": true,
-    "qmd@qmd": true
+    "qmd@qmd": true,
+    "frontend-design@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
@@ -253,6 +257,7 @@
     }
   },
   "effortLevel": "high",
+  "advisorModel": "fable",
   "tui": "fullscreen",
   "theme": "custom:my-theme",
   "preferredNotifChannel": "terminal_bell",
