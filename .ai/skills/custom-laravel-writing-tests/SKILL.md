@@ -17,6 +17,10 @@ Follow t_wada TDD:
 
 When an existing test encodes the intended behaviour, change the implementation to satisfy the test — don't rewrite the test to match new (possibly wrong) implementation behaviour. Only edit a test when the specification itself changed.
 
+## Leave pre-existing passing tests alone
+
+Apply the current conventions (AAA, naming, dataset style, assertion rules) to the test cases you add or change — not to unrelated cases that already pass. Don't restyle, rename, or rewrite pre-existing tests to match today's conventions as part of a feature/fix PR: that churn buries the real diff in review and risks breaking a working guard. Bring an old test in line only when its behaviour is genuinely part of the change.
+
 ## Refactoring untested code
 
 Before refactoring a code path that has no direct test coverage, first write a **characterisation test** that pins the current observable behaviour and get it green against the _existing_ implementation. Then refactor while keeping it green. This proves the change is behaviour-preserving rather than asserting it after the fact.
