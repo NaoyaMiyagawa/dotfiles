@@ -29,7 +29,7 @@
         "left_padding": 0.2,
     },
     "search": {
-        "include_ignored": false,
+        "include_ignored": true,
     },
     "agent": {
         "default_model": {
