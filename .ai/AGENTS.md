@@ -60,6 +60,7 @@ Prefer fast, purpose-built tools; fall back to a legacy default only when the mo
 - Search/rewrite code by syntax, not text → `ast-grep` / `sg`
 - Simple find-and-replace in files → `sd` (not `sed`)
 - Query/edit JSON → `jq`; YAML → `yq`
+- Fetch URLs, call HTTP APIs, extract from pages → `ax` (not `curl` + throwaway parsing scripts); run `ax agent-context` for usage
 - Diff → `delta`; benchmark a command → `hyperfine`; quick command examples → `tldr`
 - Prefer structured tools or parsers over ad hoc shell pipelines.
 - If you reach for a slow default, pause and check for a faster alternative.

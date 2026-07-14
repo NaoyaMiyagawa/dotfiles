@@ -46,6 +46,7 @@ Keep changes consistent with existing project patterns unless asked to refactor.
 
 - **Encapsulate error keys and status codes in static named constructors on the exception class.** Call sites should `throw DomainException::invalidRequest()` rather than passing a message key and HTTP status at each `throw`. The mapping lives in one place and call sites stay declarative.
 - **Handle expected error paths at the boundary.** Map a known domain failure to its response-contract shape at the controller (or edge) — a `try`/`catch` that returns the spec'd error response — rather than letting an anticipated failure surface as an unhandled 500.
+- **Scope a `try`/`catch` to the call that can actually throw.** Wrap only the statement whose failure you've traced to a real, reachable cause — don't add a defensive `catch` around a code path where the exception can't originate. When two call sites hit the same operation but only one can trigger the failure (e.g. a concurrent-write race that deletes a resource one path then reads), guard that one and leave the other bare. Prove the failure path before adding the handler, rather than blanketing every caller "just in case" — an unreachable `catch` is dead code that misleads the next reader about where the risk lives.
 
 ### Validation
 
