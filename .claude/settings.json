@@ -84,18 +84,13 @@
       "Bash(vendor/bin/pint *)",
       "Bash(rtk *)",
       "Edit(**)",
-      "Glob(**)",
       "Grep(**)",
-      "LS(**)",
       "mcp__serena",
-      "MultiEdit(**)",
       "Read(**)",
       "Read(~/.claude/*)",
       "Read(~/.zshrc)",
       "Read(~/dotfiles/.ai/skills/**)",
-      "Task(**)",
-      "TodoWrite(**)",
-      "Write(**)"
+      "TodoWrite(**)"
     ],
     "deny": [
       "Bash(rm -rf :*)",
