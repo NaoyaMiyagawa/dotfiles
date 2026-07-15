@@ -52,6 +52,7 @@
 - **Simplicity First**: Make every change as simple as possible. Impact minimal code.
 - **No Laziness**: Find root causes. No temporary fixes. Senior developer standards.
 - **Minimal Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
+- **Verify Before Removing**: Before deleting or replacing code, search the codebase for remaining callers, routes, or references. Never infer something is dead from local context alone — a component can look unused where you're editing yet still power an active flow elsewhere.
 
 ## CLI Tool Calling
 Prefer fast, purpose-built tools; fall back to a legacy default only when the modern tool genuinely can't do the job.
