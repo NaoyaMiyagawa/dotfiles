@@ -26,4 +26,8 @@ which rtk             # Verify correct binary
 All other commands are automatically rewritten by the Claude Code hook.
 Example: `git status` → `rtk git status` (transparent, 0 tokens overhead)
 
+## Known trap: output filtering
+
+rtk summarizes command output and can drop details you need (e.g. `rtk ls` strips timestamps). If output is missing expected detail, re-run the exact command as `rtk proxy <cmd>` to see raw output before changing approach. Empty results from `fd`/`rg` are usually NOT rtk — check ignore rules first (see CLI Tool Calling in AGENTS.md).
+
 Refer to CLAUDE.md for full command reference.
