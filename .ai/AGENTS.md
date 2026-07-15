@@ -65,5 +65,6 @@ Prefer fast, purpose-built tools; fall back to a legacy default only when the mo
 - Diff → `delta`; benchmark a command → `hyperfine`; quick command examples → `tldr`
 - Prefer structured tools or parsers over ad hoc shell pipelines.
 - If you reach for a slow default, pause and check for a faster alternative.
+- `fd`/`rg` honor gitignore: `~/.claude` symlinks into the dotfiles repo whose .gitignore covers `/.claude/**`, so searches there silently return nothing — add `--no-ignore` (fd) / `-u` (rg). Diagnose empty results as ignore rules before blaming the filesystem.
 
 @docs/RTK.md
