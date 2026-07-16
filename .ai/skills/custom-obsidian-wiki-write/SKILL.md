@@ -26,7 +26,7 @@ conventions and workflows.
 ## Workflow
 
 1. **Scope the project.** Use the one the user names, else infer from CWD (Nexus repo → `projects/nexus`), else ask.
-2. **Pick the target.** Read `index.md` and Grep `wiki/` to find an existing page to update; otherwise create a new page from the matching template. One concept per page — split rather than sprawl. When one concept grows to own multiple pages, freely create a sub-directory for it under `wiki/` and group them there.
+2. **Pick the target.** Read `index.md` and Grep `wiki/` to find an existing page to update; otherwise create a new page from the matching template. One concept per page — split rather than sprawl. When one concept grows to own multiple pages, freely create a sub-directory for it under `wiki/` and group them there — keep per-module/domain pages under `wiki/modules/` so they're classified apart from cross-cutting notes.
 3. **Write at the right altitude.** Requirements/specs/why. Use frontmatter (`type`, `tags`, `updated`), `[[wikilinks]]` for internal links, and callouts. Cite where it came from in a `## Sources` section (repo paths, source pages, PR/ticket). For pages that document code, also stamp **provenance frontmatter** (see below) so drift can be detected later.
 4. **Keep the graph healthy.** Create pages for referenced concepts that lack one; update cross-references on related pages; flag conflicts with the existing wiki using `> [!warning]` instead of silently overwriting. Resolve any `> [!question] Open questions` the new knowledge answers.
 5. **Update the spine.** Add/refresh the entry in `index.md` (correct category), and bump the page's `updated:` to today's date.
