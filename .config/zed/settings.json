@@ -199,8 +199,9 @@
             "wrap_guides": [80],
             "preferred_line_length": 120,
             "language_servers": ["phpantom_lsp", "!intelephense", "!phpactor", "!phptools", "..."],
-            "soft_wrap": "none",
             "formatter": { "language_server": { "name": "phpantom_lsp" } },
+            // "language_servers": ["intelephense", "!phpantom_lsp", "!phpactor", "!phptools", "..."],
+            "soft_wrap": "none",
             "format_on_save": "on",
         },
         "Blade": {
