@@ -36,6 +36,7 @@ Keep changes consistent with existing project patterns unless asked to refactor.
 20. **Break a long type declaration across multiple lines.** When a union/intersection type or long generic makes a signature hard to scan on one line, wrap it — the same readability rule as multi-line constructor args (rule 3).
 21. **Don't leave comments narrating a previous implementation.** Drop "was X before", "in the old version…", version-history asides once the code changes — git holds that history and the stale note only misleads. Keep comments about _why the current code is the way it is_, not what it used to be.
 22. **Order fields/array keys to mirror their source of truth** (the spec, API contract, or referenced document) rather than an arbitrary order, so a reader can diff code against the reference. When a block has inline `//` comments, separate the commented groups with blank lines so each comment's scope is unambiguous.
+23. **Add the `#[\Override]` attribute to a method that overrides a parent's.** It documents the intent at a glance and makes the analyzer fail if the parent signature changes or the method stops overriding anything.
 
 ### Abstraction
 
@@ -53,6 +54,7 @@ Keep changes consistent with existing project patterns unless asked to refactor.
 - **Put request validation in a `FormRequest`, not inline in the controller.** Rules, authorization, and messages belong in the dedicated request class; the controller receives already-validated input.
 - **Name a `FormRequest` for the action it validates**, mirroring the REST verb: `Store{X}Request`, `Update{X}Request` — consistent with controller/route naming.
 - **Don't scaffold optional hooks you won't use.** Add a `FormRequest::authorize()` (or any optional framework hook) only when it does real work; omit it by default instead of generating an empty `return true` stub.
+- **Extract non-trivial or reusable validation into a dedicated `Rule` class**, named for what it checks (e.g. `Base64EncodedImage`), rather than inlining a closure or piling built-in rules at the call site. Reserve inline rules for the simple built-in cases; once a rule carries custom logic or is applied in more than one request, give it its own class so the check reads by name and lives in one place.
 
 ### Class organization
 
@@ -101,6 +103,7 @@ if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEna
 1. **Cast datetime/timestamp columns with `immutable_datetime` by default.** Reach for the mutable `datetime` cast only when a column genuinely needs in-place mutation.
 2. **No `$fillable` / mass assignment.** Set attributes explicitly. When creating a record by copying an existing one, use `->replicate()` rather than re-listing fields.
 3. **Define query scopes with the `#[Scope]` attribute, not the legacy `scopeXxx()` method.**
+4. **Dispatch domain events from the caller, not inside a model method.** A model method should mutate or return state; fire the event from the calling service/action so the side effect is visible at the orchestration layer rather than hidden in a data holder.
 
 ### Eloquent
 
@@ -130,7 +133,8 @@ if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEna
 
 9. **Link related models with `->associate()`, not by setting the foreign-key attribute by hand.** `$child->parent()->associate($parent)` reads as the relationship it establishes; assigning `$child->parent_id = $parent->id` scatters the FK convention across call sites.
 10. **Prefer time-ordered UUIDs for generated identifiers.** When a model uses a UUID key, generate it with the ordered/sequential variant (`Str::orderedUuid()`) rather than a random UUID, for better DB index locality. Prefer a trait/hook that populates the value automatically (e.g. a `HasUuid` trait) over assigning it by hand on each record, and keep the model hook and any bulk-insert path on the same strategy so no two write paths produce different formats.
-11. **Removing a redundant cast: make the type explicit, don't silently drop it.** When a cast becomes obsolete, prefer replacing it with the plain primitive cast (e.g. `'string'`) over deleting the line — a missing cast is ambiguous between "deliberately default" and "forgotten", especially for id / primary-key columns. Only drop the line entirely when the default is unmistakable. If removing the cast also makes a conditional unreachable (e.g. a null guard that can no longer be true once the value is always a string), delete that dead branch in the same change, and confirm against the column's real DB nullability rather than assuming.
+11. **Use `firstOrFail()` / `findOrFail()` when a record's existence is an expected invariant.** When the code assumes a row must exist, fail loudly at the fetch rather than calling `first()` and null-guarding afterwards.
+12. **Removing a redundant cast: make the type explicit, don't silently drop it.** When a cast becomes obsolete, prefer replacing it with the plain primitive cast (e.g. `'string'`) over deleting the line — a missing cast is ambiguous between "deliberately default" and "forgotten", especially for id / primary-key columns. Only drop the line entirely when the default is unmistakable. If removing the cast also makes a conditional unreachable (e.g. a null guard that can no longer be true once the value is always a string), delete that dead branch in the same change, and confirm against the column's real DB nullability rather than assuming.
 
 ### Migrations
 
@@ -177,7 +181,7 @@ $organization->users()
                 return $notification->getAttributes();
             });
 
-        UserNotification::insert($notificationsData->toArray());
+        UserNotification::query()->insert($notificationsData->toArray());
     });
 ```
 

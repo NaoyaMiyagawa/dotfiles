@@ -29,13 +29,18 @@ Before refactoring a code path that has no direct test coverage, first write a *
 
 Don't add constructor parameters, setters, or config flags to production classes whose only purpose is to make them testable (e.g. an `$overrides` array a test passes in). Use the framework's fakes and the container instead — `Http::fake()`, `Storage::fake()`, `Queue::fake()`, or binding a test double in the container. Production signatures should reflect production needs only.
 
+## Only create fixtures the code under test depends on
+
+When the logic under test doesn't read a related record, don't create one to satisfy a foreign key — pass a plain scalar id instead (`verifier_id => 1`). Creating unused rows blurs the test's boundary and slows it down; reach for a factory only when the behaviour actually depends on that record existing.
+
 ## Pest Rules
 
 1. Write tests in Pest style.
 2. Import Pest Laravel functions when used:
     - `use function Pest\Laravel\actingAs;`
     - `use function Pest\Laravel\mock;`
-3. `describe('<method-name>')` must match the subject public method.
+3. `describe('<method-name>')` must match the subject public method — one `describe` per method; merge cases into the existing block instead of duplicating a method's `describe`.
+4. Name cases without a leading "it": `it('creates the record')`, not `it('it creates the record')`.
 
 ## Running tests
 
@@ -354,6 +359,10 @@ A controller test should cover only:
 4. **Authorization cases** — policy / middleware behavior owned by the controller layer.
 
 Domain branching, error variants, and side-effects belong in the Action / Service / Job test, not duplicated in the controller test.
+
+### Event listener test
+
+For an event-listener class, add one case between `beforeEach()` and the `handle()`-focused cases that asserts the listener is actually registered for its event (`Event::assertListening(SomeEvent::class, SomeListener::class)`). The remaining cases can then call `->handle(...)` directly instead of firing the real event, which would also trigger unrelated listeners.
 
 ### Regression tests
 
