@@ -43,6 +43,10 @@ cmux/*
 !vscode/
 !vscode/**
 
+# phpantom_lsp (PHP language server global config)
+!phpantom_lsp/
+!phpantom_lsp/.phpantom.toml
+
 # zed (config only — not caches/embeddings/conversations)
 !zed/
 !zed/settings.json

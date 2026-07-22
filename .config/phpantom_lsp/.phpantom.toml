@@ -1,0 +1,12 @@
+#:schema https://github.com/PHPantom-dev/phpantom_lsp/raw/main/config-schema.json
+
+# Global PHPantom config — applies to every project unless a project-level
+# .phpantom.toml overrides it. Path: ~/.config/phpantom_lsp/.phpantom.toml
+#
+# Whole-workspace diagnostics fully type-resolve the entire project (app +
+# vendor) and hold it in memory — a known upstream issue that grows resident
+# memory to tens of GB on large Laravel repos. Repo-wide errors are caught in
+# CI (PHPStan + Pint) instead, so only per-open-file diagnostics run here.
+[diagnostics]
+workspace = false
+workspace-external = false
