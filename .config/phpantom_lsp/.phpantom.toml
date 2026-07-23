@@ -10,3 +10,10 @@
 [diagnostics]
 workspace = false
 workspace-external = false
+
+# "composer" loads Composer's classmap as a skip set and self-scans only what
+# it misses — same coverage as "full" scanning, faster ready state on large
+# repos (~28K files in MyRepo). The default "full" additionally background-
+# parses every user file for symbol/reference indexes, which "composer" skips.
+[indexing]
+strategy = "composer"
