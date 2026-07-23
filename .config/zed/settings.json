@@ -46,9 +46,6 @@
         "tree_view": true,
         "dock": "left",
     },
-    "auto_update_extensions": {
-        "php": false,
-    },
     "outline_panel": {
         "dock": "right",
     },
@@ -169,16 +166,16 @@
         "dark": "One Dark",
     },
     "lsp": {
-        // "phpantom_lsp": {
-        //     // To avoid GitHub rate-limit errors:
-        //     // - https://github.com/zed-industries/zed/issues/6767#issuecomment-2329294517
-        //     // - https://github.com/zed-industries/zed/issues/9483
-        //     // Stable location decoupled from the dev checkout; re-create on a new
-        //     // machine with: ln -sfn <phpantom checkout>/bin/phpantom_lsp ~/.local/bin/
-        //     "binary": {
-        //         "path": "~/.local/bin/phpantom_lsp",
-        //     },
-        // },
+        "phpantom": {
+            // PHPantom ships via Zed's official PHP extension (the bespoke
+            // extension was removed upstream); server id is "phpantom".
+            // Explicit path to the `cargo install`ed binary — the extension
+            // would also find `phpantom_lsp` on PATH, but Zed launched from
+            // the GUI doesn't always inherit the full shell PATH.
+            "binary": {
+                "path": "~/.cargo/bin/phpantom_lsp",
+            },
+        },
         "tailwindcss-language-server": {
             "settings": {
                 "includeLanguages": {
@@ -189,7 +186,7 @@
     },
     "languages": {
         "JSON": {
-            "tab_size": 2
+            "tab_size": 2,
         },
         "PHP": {
             "colorize_brackets": true,
@@ -198,9 +195,11 @@
             "ensure_final_newline_on_save": true,
             "wrap_guides": [80],
             "preferred_line_length": 120,
-            "language_servers": ["phpantom_lsp", "!intelephense", "!phpactor", "!phptools", "..."],
-            "formatter": { "language_server": { "name": "phpantom_lsp" } },
-            // "language_servers": ["intelephense", "!phpantom_lsp", "!phpactor", "!phptools", "..."],
+            "language_servers": ["phpantom", "!intelephense", "!phpactor", "!phptools", "..."],
+            "formatter": {
+                "language_server": { "name": "phpantom" },
+            },
+            // "language_servers": ["intelephense", "!phpantom", "!phpactor", "!phptools", "..."],
             "soft_wrap": "none",
             "format_on_save": "on",
         },
