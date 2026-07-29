@@ -1,0 +1,209 @@
+<!-- Drop-in EN/JA switcher for a research report page.
+
+     Three regions below: fold the style rules into the page's own style block,
+     put the markup at the top of the content wrapper, and the script at the end
+     of the page. Everything the switch controls must sit inside a wrapper div
+     carrying class="doc" and data-lang="en".
+
+     Every translated string ships as a real lang="en" / lang="ja" pair of the same
+     tag and CSS hides one side. Nothing is translated at view time.
+
+     Colours read the page's own tokens where they exist and fall back to sane
+     literals where they do not, so the snippet renders correctly as pasted.
+
+     Tag names are spelled out in prose here on purpose: a literal tag inside a
+     comment derails the regex-based report checker. -->
+
+<style>
+  /* ---- language switching ---- */
+
+  .doc[data-lang="en"] [lang="ja"] { display: none; }
+  .doc[data-lang="ja"] [lang="en"] { display: none; }
+
+  /* Both languages share one type scale, one leading and one column width — and
+     that width is in rem, never ch or em, because a font-relative measure would
+     resize the column as soon as the font stack resolves to a different face,
+     moving the passage out from under the reader on every switch. */
+
+  .lang-bar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0;
+    /* Veil plus blur so body text passing under the bar reads as behind it; the
+       rule is what makes that legible rather than looking like broken text. */
+    background: var(--veil, rgba(255, 255, 255, 0.92));
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule, #d7dcdb);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .lang-bar { background: var(--veil, rgba(16, 20, 21, 0.92)); }
+  }
+
+  .lang {
+    display: inline-flex;
+    border: 1px solid var(--rule, #d7dcdb);
+    background: var(--paper, #fff);
+  }
+
+  .lbtn {
+    font-family: var(--data, ui-monospace, SFMono-Regular, Menlo, monospace);
+    font-size: 0.7rem;
+    letter-spacing: 0.09em;
+    background: none;
+    border: none;
+    color: var(--ink-faint, #6f7d80);
+    padding: 0.3rem 0.62rem;
+    cursor: pointer;
+  }
+
+  .lbtn + .lbtn { border-left: 1px solid var(--rule, #d7dcdb); }
+  .lbtn:hover { color: var(--ink, #111a1b); }
+  .lbtn[aria-pressed="true"] { background: var(--ink, #111a1b); color: var(--paper, #fff); }
+
+  .key-hint {
+    font-family: var(--data, ui-monospace, SFMono-Regular, Menlo, monospace);
+    font-size: 0.58rem;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint, #6f7d80);
+    border: 1px solid var(--rule, #d7dcdb);
+    border-bottom-width: 2px;
+    padding: 0.22rem 0.3rem 0.18rem;
+    user-select: none;
+  }
+
+  @media (max-width: 26rem) {
+    .key-hint { display: none; }
+  }
+
+  :focus-visible { outline: 2px solid var(--accent, #0e6b66); outline-offset: 2px; }
+</style>
+
+<div class="lang-bar">
+  <div class="lang" role="group" aria-label="Language / 言語" aria-keyshortcuts="s">
+    <button type="button" class="lbtn" data-lang="en" aria-pressed="true">EN</button>
+    <button type="button" class="lbtn" data-lang="ja" aria-pressed="false">日本語</button>
+  </div>
+  <kbd class="key-hint" aria-hidden="true">S</kbd>
+</div>
+
+<script>
+  (function () {
+    var LANGS = ["en", "ja"];
+
+    // Language is a person's preference rather than a property of one page, so
+    // every research report shares this key on purpose.
+    var LANG_KEY = "research-report-lang";
+
+    // Needed only because the page title element cannot carry both languages at
+    // once, the way paired markup can.
+    var TITLES = { en: "{{TITLE}}", ja: "{{TITLE_JA}}" };
+
+    var doc = document.querySelector(".doc");
+    var langButtons = Array.prototype.slice.call(document.querySelectorAll(".lbtn"));
+
+    var lang = "en";
+    try {
+      var saved = localStorage.getItem(LANG_KEY);
+      if (LANGS.indexOf(saved) >= 0) lang = saved;
+    } catch (e) {
+      /* storage unavailable — in-page switching still works */
+    }
+
+    function applyLang() {
+      doc.dataset.lang = lang;
+      document.documentElement.lang = lang;
+      document.title = TITLES[lang] || TITLES.en;
+
+      langButtons.forEach(function (btn) {
+        btn.setAttribute("aria-pressed", btn.dataset.lang === lang ? "true" : "false");
+      });
+
+      // Strings this page builds in JS rather than in markup — tab captions,
+      // diagram or chart labels, generated summaries — belong here; markup pairs
+      // are handled by CSS and need nothing.
+
+      try {
+        localStorage.setItem(LANG_KEY, lang);
+      } catch (e) {
+        /* storage unavailable */
+      }
+    }
+
+    /**
+     * The two languages never occupy exactly the same height, so switching would
+     * otherwise slide the passage being read out from under the reader. Pin the
+     * block nearest the top of the viewport and restore its offset after the
+     * swap, so a switch reads as a re-typeset rather than a jump.
+     */
+    var ANCHOR_SELECTOR = "section, figure, table, .diagram, h2, h3";
+    var BAR_CLEARANCE = 56;
+
+    function pickAnchor() {
+      var blocks = document.querySelectorAll(ANCHOR_SELECTOR);
+      var chosen = null;
+      var chosenTop = -Infinity;
+
+      for (var i = 0; i < blocks.length; i++) {
+        var top = blocks[i].getBoundingClientRect().top;
+        // the last block whose top has already passed under the bar
+        if (top <= BAR_CLEARANCE && top > chosenTop) {
+          chosenTop = top;
+          chosen = blocks[i];
+        }
+      }
+
+      // null means the viewport sits above the first block — nothing to correct
+      return chosen ? { el: chosen, top: chosenTop } : null;
+    }
+
+    function restoreAnchor(anchor) {
+      if (!anchor) return;
+      // reading the rect after the swap forces the reflow we need to measure
+      var drift = anchor.el.getBoundingClientRect().top - anchor.top;
+      if (drift) window.scrollBy(0, drift);
+    }
+
+    function switchLang(next) {
+      if (next === lang || LANGS.indexOf(next) < 0) return;
+      var anchor = pickAnchor();
+      lang = next;
+      applyLang();
+      restoreAnchor(anchor);
+    }
+
+    langButtons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        switchLang(btn.dataset.lang);
+      });
+    });
+
+    function isTypingTarget(node) {
+      if (!node) return false;
+      if (node.isContentEditable) return true;
+      return /^(input|textarea|select)$/i.test(node.tagName || "");
+    }
+
+    // "s" toggles the language. Skipped while a modifier is held, so Cmd/Ctrl+S
+    // still belongs to the browser, and while text is being typed or composed —
+    // with a romaji IME the letter lands in ordinary Japanese input constantly.
+    document.addEventListener("keydown", function (event) {
+      if (!event.key || event.key.toLowerCase() !== "s") return;
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.isComposing || event.keyCode === 229) return;
+      if (isTypingTarget(event.target)) return;
+
+      event.preventDefault();
+      switchLang(lang === "en" ? "ja" : "en");
+    });
+
+    applyLang();
+  })();
+</script>

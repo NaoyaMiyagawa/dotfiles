@@ -23,3 +23,17 @@ Research lands better as one styled HTML page than a 100-line markdown wall: rea
 - **Readable defaults:** ~900px max-width centered, system font stack, generous spacing, `prefers-color-scheme` dark support, code in `<pre>` with horizontal scroll.
 - **Interactivity only when it earns it** — tabs to compare alternatives, a toggle between overview/detail — in vanilla JS. No frameworks.
 - **Distinguish fact from inference:** claims carry source links; your own synthesis is visually marked (e.g. an "analysis" callout), not blended in.
+
+## Bilingual pages
+
+Only when the user wants a second language. Both languages ship as real `lang="en"` / `lang="ja"` markup with one side hidden by CSS — never machine-translated at view time. Paste in `assets/lang-switch.html` rather than rebuilding it: it carries the switch markup, the CSS, the persisted preference, the `s` shortcut and the scroll anchoring.
+
+The whole risk is **layout drift**: if the column or the type metrics change with the language, the passage under the reader's eye moves, and switching becomes unpleasant enough that they stop doing it. Three rules prevent it:
+
+- **Widths in `rem`, never `ch` or `em`.** A font-relative measure resizes the entire column when the font stack changes.
+- **One type scale for both.** Per-language `font-size` and `line-height` overrides *are* the drift. If the display face lacks the second script's glyphs, extend the font stack to cover both scripts — fallback resolves per character — rather than switching family by language.
+- **Anchor the scroll across the switch.** The snippet handles this; keep its `ANCHOR_SELECTOR` in step with the page's actual block elements.
+
+Translate prose, headings, captions and UI labels. Leave code, identifiers, file paths and URLs untranslated on both sides. Diagrams stay single-copy: keep SVG labels to identifiers so one diagram serves both languages, and where a label has to be prose, pair the `<text>` elements by `lang` — SVG text sits at fixed coordinates, so it cannot drift.
+
+Before publishing, check that every `lang="en"` element has a `lang="ja"` counterpart of the same tag. An unpaired block silently vanishes in one language, and that is invisible until someone switches.
