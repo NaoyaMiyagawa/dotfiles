@@ -22,9 +22,6 @@
 # commands
 !/commands/
 
-# tasks (lessons/todo written by agents per AGENTS.md self-improvement loop)
-!/tasks/
-!/tasks/lessons.md
 
 # skills
 !/skills/

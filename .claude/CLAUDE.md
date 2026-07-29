@@ -12,7 +12,7 @@
 
 ## Orchestrator Model Strategy (capable models)
 
-When the session runs on a **smart orchestrator-tier model** — Fable 5, or Opus 4.8 at `high`/`xhigh` reasoning — treat it as the **orchestrator brain**, not the workhorse. The goal is fewer tokens and faster results by pushing execution down to cheaper, parallel workers.
+When this session is running a top-tier reasoning model, treat it as the **orchestrator brain**, not the workhorse. The goal is fewer tokens and faster results by pushing execution down to cheaper, parallel workers.
 
 - **Reserve the orchestrator for thinking:** planning, decomposing tasks, reviewing results, making architectural decisions, and synthesizing the final answer.
 - **Delegate execution** to the named subagents already listed in context (defined in `~/.claude/agents/`), or hand the task to the Codex CLI. Fan out independent work in parallel; use `model: "haiku"` for trivial lookups.
@@ -23,4 +23,4 @@ When the session runs on a **smart orchestrator-tier model** — Fable 5, or Opu
 
 Claude subagents via the Agent tool are usually the simplest path. Reach for the **Codex CLI** instead when you want to burn Codex's (often higher) usage limits rather than this session's, or want a second engine on the same task — including a cross-review pass whose findings you reconcile with your own. Skip Codex if it recently returned rate-limit or auth errors.
 
-Whichever you pick, give the subagent a **self-contained** task: paths, goal, constraints, and what "done" means. For Codex model selection and invocation flags, see the `codex` skill.
+Delegating keeps the main context clean, so lean on it for research, exploration, and parallel analysis; for hard problems, throw more compute at them by fanning out. Give each subagent ONE **self-contained** task: paths, goal, constraints, and what "done" means. For Codex model selection and invocation flags, see the `codex` skill.
