@@ -7,6 +7,9 @@
 // custom settings, run `zed: open default settings` from the
 // command palette
 {
+    "scrollbar": {
+        "git_diff": true
+    },
     "show_completions_on_input": true,
     "show_signature_help_after_edits": true,
     "completion_detail_alignment": "left",
