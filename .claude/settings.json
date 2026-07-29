@@ -235,7 +235,8 @@
     "codex@openai-codex": true,
     "swift-lsp@claude-plugins-official": true,
     "qmd@qmd": true,
-    "frontend-design@claude-plugins-official": true
+    "frontend-design@claude-plugins-official": true,
+    "crit@crit": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
@@ -248,6 +249,12 @@
       "source": {
         "source": "github",
         "repo": "tobi/qmd"
+      }
+    },
+    "crit": {
+      "source": {
+        "source": "github",
+        "repo": "tomasz-tomczyk/crit"
       }
     }
   },
