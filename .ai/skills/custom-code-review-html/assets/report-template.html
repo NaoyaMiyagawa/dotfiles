@@ -1,0 +1,1263 @@
+<title>{{TITLE}}</title>
+
+<style>
+  :root {
+    --paper: #f2f5f4;
+    --surface: #e8edec;
+    --sunken: #dde5e3;
+    --ink: #10191a;
+    --ink-soft: #47575a;
+    --ink-faint: #75868a;
+    --rule: #cbd6d4;
+    --accent: #0e6b66;
+    --critical: #a4231c;
+    --warn: #7d5a06;
+    --note: #47616a;
+    --good: #1f6b45;
+    --veil: rgba(242, 245, 244, 0.88);
+
+    /* One stack per role, covering both scripts. The browser resolves fonts
+       per character, so Latin lands on Iowan/Palatino and kana-kanji falls
+       through to a mincho — which means headings can share a single
+       font-size and line-height instead of needing per-language overrides. */
+    --display: "Iowan Old Style", Palatino, "Book Antiqua", Georgia,
+      "Hiragino Mincho ProN", "Yu Mincho", YuMincho, "Songti SC", serif;
+    --body: system-ui, -apple-system, "Segoe UI", "Hiragino Sans",
+      "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, Roboto, sans-serif;
+    --data: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+
+    --measure: 46rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0d1415;
+      --surface: #151f20;
+      --sunken: #1b2627;
+      --ink: #dee6e4;
+      --ink-soft: #9db0b2;
+      --ink-faint: #6f8385;
+      --rule: #263435;
+      --accent: #4fb3ab;
+      --critical: #e0685f;
+      --warn: #cfa143;
+      --note: #8fa8b0;
+      --good: #58b183;
+      --veil: rgba(13, 20, 21, 0.88);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #0d1415;
+    --surface: #151f20;
+    --sunken: #1b2627;
+    --ink: #dee6e4;
+    --ink-soft: #9db0b2;
+    --ink-faint: #6f8385;
+    --rule: #263435;
+    --accent: #4fb3ab;
+    --critical: #e0685f;
+    --warn: #cfa143;
+    --note: #8fa8b0;
+    --good: #58b183;
+    --veil: rgba(13, 20, 21, 0.88);
+  }
+
+  :root[data-theme="light"] {
+    --paper: #f2f5f4;
+    --surface: #e8edec;
+    --sunken: #dde5e3;
+    --ink: #10191a;
+    --ink-soft: #47575a;
+    --ink-faint: #75868a;
+    --rule: #cbd6d4;
+    --accent: #0e6b66;
+    --critical: #a4231c;
+    --warn: #7d5a06;
+    --note: #47616a;
+    --good: #1f6b45;
+    --veil: rgba(242, 245, 244, 0.88);
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    /* Leading is a compromise value that suits both scripts, applied once, so
+       switching language cannot change it. Japanese wants ~1.8, Latin ~1.6. */
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4.5rem) clamp(1.1rem, 5vw, 2rem) 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  /* ---- language switching ---- */
+
+  .doc[data-lang="en"] [lang="ja"] { display: none; }
+  .doc[data-lang="ja"] [lang="en"] { display: none; }
+
+  /* Both languages share one type scale, one leading and one column width —
+     the width in rem, not ch, since a font-relative measure would resize the
+     page on switch. Nothing about the layout is language-dependent, so the
+     only thing that changes on switch is which glyphs are on screen. */
+
+  /* ---- sticky navbar ---- */
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--veil);
+    -webkit-backdrop-filter: blur(10px) saturate(1.4);
+    backdrop-filter: blur(10px) saturate(1.4);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .topbar-inner {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0.5rem clamp(1.1rem, 5vw, 2rem);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .topbar-id,
+  .topbar-progress {
+    font-family: var(--data);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .topbar-progress {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .topbar-progress.is-done { color: var(--good); }
+
+  @media (max-width: 30rem) {
+    .topbar-id { display: none; }
+    .topbar-inner { grid-template-columns: 1fr auto 1fr; }
+  }
+
+  .lang-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .lang {
+    display: inline-flex;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+
+  .key-hint {
+    font-family: var(--data);
+    font-size: 0.58rem;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    padding: 0.22rem 0.3rem 0.18rem;
+    user-select: none;
+  }
+
+  @media (max-width: 26rem) {
+    .key-hint { display: none; }
+  }
+
+  .lbtn {
+    font-family: var(--data);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    background: none;
+    border: none;
+    color: var(--ink-faint);
+    padding: 0.3rem 0.62rem;
+    cursor: pointer;
+  }
+
+  .lbtn + .lbtn { border-left: 1px solid var(--rule); }
+  .lbtn:hover { color: var(--ink); }
+  .lbtn[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+  /* ---- shared type ---- */
+
+  .eyebrow {
+    font-family: var(--data);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(1.9rem, 5.5vw, 2.7rem);
+    line-height: 1.2;
+    font-weight: 600;
+    text-wrap: balance;
+    margin-top: 0.5rem;
+  }
+
+  h2 {
+    font-family: var(--display);
+    font-size: 1.45rem;
+    font-weight: 600;
+    line-height: 1.32;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-family: var(--display);
+    font-size: 1.16rem;
+    font-weight: 600;
+    line-height: 1.42;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  p { max-width: 38rem; }
+
+  code {
+    font-family: var(--data);
+    font-size: 0.86em;
+    background: var(--surface);
+    padding: 0.1em 0.34em;
+    color: var(--ink);
+  }
+
+  pre {
+    font-family: var(--data);
+    font-size: 0.78rem;
+    line-height: 1.55;
+    background: var(--surface);
+    border-left: 2px solid var(--rule);
+    padding: 0.85rem 1rem;
+    overflow-x: auto;
+  }
+
+  pre code { background: none; padding: 0; font-size: 1em; }
+
+  em { color: var(--ink-soft); font-style: italic; }
+  strong { font-weight: 650; }
+
+  /* ---- masthead ---- */
+
+  .masthead { display: flex; flex-direction: column; gap: 1.4rem; }
+
+  .masthead-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .lede {
+    font-family: var(--display);
+    font-size: 1.14rem;
+    line-height: 1.68;
+    color: var(--ink-soft);
+    max-width: 35rem;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-top: 0.4rem;
+  }
+
+  .fact {
+    background: var(--paper);
+    padding: 0.7rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .fact-key {
+    font-family: var(--data);
+    font-size: 0.62rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .fact-val {
+    font-family: var(--data);
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fact-val.pass { color: var(--good); }
+  .fact-val.flag { color: var(--critical); }
+
+  /* ---- generic section ---- */
+
+  section { display: flex; flex-direction: column; gap: 1rem; }
+
+  .section-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* ---- diagram ---- */
+
+  .diagram {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 1.2rem 0.8rem;
+    overflow-x: auto;
+  }
+
+  .diagram pre.mermaid {
+    background: none;
+    border: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .caption {
+    font-size: 0.83rem;
+    color: var(--ink-faint);
+    max-width: 35rem;
+  }
+
+  /* ---- tally bar ---- */
+
+  .tally {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.5rem;
+    font-family: var(--data);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    border: 1px solid var(--rule);
+    padding: 0.3rem 0.6rem;
+    color: var(--ink-faint);
+  }
+
+  .chip b { font-variant-numeric: tabular-nums; font-weight: 650; color: var(--ink); }
+  .chip.is-accept { border-color: var(--good); color: var(--good); }
+  .chip.is-accept b { color: var(--good); }
+  .chip.is-reject { border-color: var(--critical); color: var(--critical); }
+  .chip.is-reject b { color: var(--critical); }
+  .chip.is-open { border-color: var(--warn); color: var(--warn); }
+  .chip.is-open b { color: var(--warn); }
+
+  .tally .spacer { flex: 1 1 1rem; }
+
+  .ghost-btn {
+    font-family: var(--data);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+    background: none;
+    border: 1px solid var(--rule);
+    padding: 0.32rem 0.7rem;
+    cursor: pointer;
+  }
+
+  .ghost-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .solid-btn {
+    font-family: var(--data);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: var(--paper);
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 0.32rem 0.7rem;
+    cursor: pointer;
+  }
+
+  .solid-btn:hover { opacity: 0.85; }
+
+  /* ---- findings ---- */
+
+  .findings { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .finding {
+    --sev: var(--note);
+    border-top: 2px solid var(--sev);
+    padding-top: 0.85rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1rem;
+    align-items: start;
+    transition: opacity 0.18s ease;
+  }
+
+  .finding[data-sev="critical"] { --sev: var(--critical); }
+  .finding[data-sev="high"] { --sev: var(--critical); }
+  .finding[data-sev="medium"] { --sev: var(--warn); }
+  .finding[data-sev="low"] { --sev: var(--note); }
+
+  .finding > details { grid-column: 1; grid-row: 1; min-width: 0; }
+  .finding > .triage { grid-column: 2; grid-row: 1; }
+
+  .finding[data-verdict="reject"] { opacity: 0.4; }
+  .finding[data-verdict="reject"]:hover { opacity: 0.78; }
+
+  /* triage control */
+
+  .triage { display: flex; gap: 0.3rem; padding-top: 0.05rem; }
+
+  .vbtn {
+    font-family: var(--data);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--ink-faint);
+    padding: 0.28rem 0.5rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .vbtn:hover { border-color: var(--ink-faint); color: var(--ink); }
+
+  .finding[data-verdict="accept"] .vbtn[data-verdict="accept"] {
+    background: var(--good);
+    border-color: var(--good);
+    color: var(--paper);
+  }
+
+  .finding[data-verdict="reject"] .vbtn[data-verdict="reject"] {
+    background: var(--critical);
+    border-color: var(--critical);
+    color: var(--paper);
+  }
+
+  /* disclosure */
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+  summary::marker { content: ""; }
+
+  .finding-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-family: var(--data);
+    font-size: 0.7rem;
+    letter-spacing: 0.09em;
+  }
+
+  .rank { color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+  .sev { color: var(--sev); font-weight: 600; }
+  .axis { color: var(--ink-faint); letter-spacing: 0.06em; }
+
+  .noted { display: none; color: var(--accent); letter-spacing: 0.06em; }
+  .finding.has-note .noted { display: inline; }
+
+  .summary-title { display: flex; align-items: flex-start; gap: 0.6rem; }
+
+  .chev {
+    flex: none;
+    width: 0;
+    height: 0;
+    border-left: 5px solid var(--sev);
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    margin-top: 0.5rem;
+    transition: transform 0.18s ease;
+  }
+
+  details[open] .chev { transform: rotate(90deg); }
+
+  summary:hover h3 { color: var(--accent); }
+
+  .where {
+    font-family: var(--data);
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+    word-break: break-word;
+  }
+
+  .finding-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding-top: 0.9rem;
+  }
+
+  .label {
+    font-family: var(--data);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .block { display: flex; flex-direction: column; }
+
+  /* before / after comparison */
+
+  .compare { display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .pane { display: flex; flex-direction: column; min-width: 0; }
+  .pane.now pre { border-left-color: var(--critical); }
+  .pane.now .label { color: var(--critical); }
+  .pane.next pre { border-left-color: var(--good); }
+  .pane.next .label { color: var(--good); }
+
+  .verified {
+    border-left: 2px solid var(--good);
+    padding: 0.15rem 0 0.15rem 0.85rem;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    max-width: 36rem;
+  }
+
+  /* reviewer note */
+
+  .note-field { display: flex; flex-direction: column; }
+
+  textarea {
+    font-family: var(--body);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--sunken);
+    border: 1px solid var(--rule);
+    padding: 0.6rem 0.7rem;
+    resize: vertical;
+    min-height: 3.4rem;
+    width: 100%;
+  }
+
+  textarea:focus { border-color: var(--accent); }
+
+  /* ---- feedback assembly ---- */
+
+  .assembly {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .assembly-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+
+  #feedback-out {
+    font-family: var(--data);
+    font-size: 0.74rem;
+    line-height: 1.6;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    min-height: 12rem;
+    color: var(--ink);
+  }
+
+  .copy-state {
+    font-family: var(--data);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    color: var(--good);
+  }
+
+  /* ---- lists ---- */
+
+  ul { display: flex; flex-direction: column; gap: 0.7rem; padding-left: 1.15rem; }
+  li { max-width: 37rem; }
+  li::marker { color: var(--accent); }
+
+  .footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1rem;
+    font-family: var(--data);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    line-height: 1.7;
+  }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  @media (max-width: 36rem) {
+    .finding { grid-template-columns: minmax(0, 1fr); row-gap: 0.6rem; }
+    .finding > details { grid-row: 2; }
+    .finding > .triage { grid-column: 1; grid-row: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="doc" data-lang="en">
+
+<nav class="topbar">
+  <div class="topbar-inner">
+    <span class="topbar-id">{{SHORT_ID}}</span>
+    <div class="lang-group">
+      <div class="lang" role="group" aria-label="Language / 言語" aria-keyshortcuts="s">
+        <button type="button" class="lbtn" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" class="lbtn" data-lang="ja" aria-pressed="false">日本語</button>
+      </div>
+      <kbd class="key-hint" aria-hidden="true">S</kbd>
+    </div>
+    <span class="topbar-progress" id="nav-progress"></span>
+  </div>
+</nav>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="masthead-top">
+      <div class="eyebrow">
+        <span lang="en">{{EYEBROW}}</span>
+        <span lang="ja">{{EYEBROW_JA}}</span>
+      </div>
+    </div>
+
+    <h1 lang="en">{{TITLE}}</h1>
+    <h1 lang="ja">{{TITLE_JA}}</h1>
+
+    <!-- The verdict in 3-4 sentences: is it sound, and what is the one thing
+         that matters most? Never a summary of the diff. -->
+    <p class="lede" lang="en">{{VERDICT}}</p>
+    <p class="lede" lang="ja">{{VERDICT_JA}}</p>
+
+    <!-- Facts only; drop cells that do not apply. Values must be measured. -->
+    <div class="facts">
+      <div class="fact">
+        <span class="fact-key"><span lang="en">Base</span><span lang="ja">ベース</span></span>
+        <span class="fact-val">{{BASE}}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-key"><span lang="en">Files</span><span lang="ja">ファイル</span></span>
+        <span class="fact-val">{{FILES}}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-key"><span lang="en">Diff</span><span lang="ja">差分</span></span>
+        <span class="fact-val">{{DIFF}}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-key"><span lang="en">Types</span><span lang="ja">型</span></span>
+        <span class="fact-val pass">{{TYPECHECK}}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-key"><span lang="en">Tests</span><span lang="ja">テスト</span></span>
+        <span class="fact-val pass">{{TESTS}}</span>
+      </div>
+      <div class="fact">
+        <span class="fact-key"><span lang="en">Findings</span><span lang="ja">指摘</span></span>
+        <span class="fact-val flag">{{FINDING_COUNT}}</span>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="section-head">
+      <div class="eyebrow">
+        <span lang="en">What it does</span><span lang="ja">変更の内容</span>
+      </div>
+      <h2 lang="en">{{WHAT_HEADING}}</h2>
+      <h2 lang="ja">{{WHAT_HEADING_JA}}</h2>
+    </div>
+
+    <p lang="en">{{WHAT_BODY}}</p>
+    <p lang="ja">{{WHAT_BODY_JA}}</p>
+
+    <!-- One diagram, only if the change has a control flow worth seeing.
+         Keep node labels to identifiers so a single diagram serves both
+         languages — a hidden second copy renders at zero width and breaks. -->
+    <div class="diagram">
+      <pre class="mermaid">
+flowchart TD
+  A["entry point"] --> B{"decision"}
+  B -->|yes| C["path taken"]
+  B -->|no| D["other path"]
+      </pre>
+    </div>
+
+    <p class="caption" lang="en">{{DIAGRAM_NOTE}}</p>
+    <p class="caption" lang="ja">{{DIAGRAM_NOTE_JA}}</p>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <div class="eyebrow">
+        <span lang="en">Review points · ranked by how much logic rests on them</span>
+        <span lang="ja">レビュー観点・ロジックへの影響度が大きい順</span>
+      </div>
+      <h2 lang="en">Findings</h2>
+      <h2 lang="ja">指摘事項</h2>
+    </div>
+
+    <div class="tally">
+      <span class="chip is-accept">
+        <span lang="en">Accepted</span><span lang="ja">採用</span> <b id="n-accept">0</b>
+      </span>
+      <span class="chip is-reject">
+        <span lang="en">Rejected</span><span lang="ja">却下</span> <b id="n-reject">0</b>
+      </span>
+      <span class="chip is-open">
+        <span lang="en">Undecided</span><span lang="ja">未判定</span> <b id="n-open">0</b>
+      </span>
+      <span class="chip">
+        <span lang="en">Notes</span><span lang="ja">コメント</span> <b id="n-note">0</b>
+      </span>
+      <span class="spacer"></span>
+      <button type="button" id="reset-triage" class="ghost-btn">
+        <span lang="en">Reset</span><span lang="ja">リセット</span>
+      </button>
+    </div>
+
+    <div class="findings">
+
+      <!-- ===== CLONE THIS ARTICLE PER FINDING =====================
+        data-sev drives the colour: critical | high | medium | low
+        data-rank is the display number and the storage key — keep unique
+        The data-* pairs feed the markdown hand-off, so they must read as
+        standalone prose: the implementer sees only those, not the page.
+        Only the first finding gets `open`.
+      ============================================================ -->
+      <article
+        class="finding"
+        data-sev="critical"
+        data-rank="01"
+        data-severity="Critical"
+        data-severity-ja="重大"
+        data-title="{{F1_TITLE}}"
+        data-title-ja="{{F1_TITLE_JA}}"
+        data-where="{{F1_WHERE}}"
+        data-claim="{{F1_CLAIM}}"
+        data-claim-ja="{{F1_CLAIM_JA}}"
+        data-fix="{{F1_FIX}}"
+        data-fix-ja="{{F1_FIX_JA}}"
+      >
+        <details open>
+          <summary>
+            <div class="finding-meta">
+              <span class="rank">01</span>
+              <span class="sev"><span lang="en">Critical</span><span lang="ja">重大</span></span>
+              <span class="axis">
+                <span lang="en">{{F1_AXIS}}</span><span lang="ja">{{F1_AXIS_JA}}</span>
+              </span>
+              <span class="noted"><span lang="en">note</span><span lang="ja">コメント</span></span>
+            </div>
+            <div class="summary-title">
+              <span class="chev" aria-hidden="true"></span>
+              <h3 lang="en">{{F1_TITLE}}</h3>
+              <h3 lang="ja">{{F1_TITLE_JA}}</h3>
+            </div>
+            <div class="where">{{F1_WHERE}}</div>
+          </summary>
+          <div class="finding-detail">
+            <p lang="en">{{F1_BODY}}</p>
+            <p lang="ja">{{F1_BODY_JA}}</p>
+
+            <!-- Before/after. The `now` pane is copied verbatim from the
+                 branch — never retyped. Code and code comments stay in the
+                 source language in both, so the fix is paste-ready. Drop the
+                 whole block for findings with no code change. -->
+            <div class="compare">
+              <div class="pane now">
+                <span class="label">
+                  <span lang="en">Current — {{F1_LOC}}</span>
+                  <span lang="ja">現在 — {{F1_LOC}}</span>
+                </span>
+                <pre><code>{{F1_CODE_NOW}}</code></pre>
+              </div>
+              <div class="pane next">
+                <span class="label">
+                  <span lang="en">Suggested</span><span lang="ja">提案</span>
+                </span>
+                <pre><code>{{F1_CODE_NEXT}}</code></pre>
+              </div>
+            </div>
+
+            <!-- Only for findings proved by running something. Say what you ran
+                 and what it returned. Delete if the finding is reasoned, not run. -->
+            <div class="verified" lang="en">{{F1_EVIDENCE}}</div>
+            <div class="verified" lang="ja">{{F1_EVIDENCE_JA}}</div>
+
+            <div class="note-field">
+              <span class="label">
+                <span lang="en">Your comment</span><span lang="ja">コメント</span>
+              </span>
+              <textarea rows="2"></textarea>
+            </div>
+          </div>
+        </details>
+        <div class="triage">
+          <button type="button" class="vbtn" data-verdict="accept">
+            <span lang="en">Accept</span><span lang="ja">採用</span>
+          </button>
+          <button type="button" class="vbtn" data-verdict="reject">
+            <span lang="en">Reject</span><span lang="ja">却下</span>
+          </button>
+        </div>
+      </article>
+      <!-- ===== END CLONE ===== -->
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <div class="eyebrow">
+        <span lang="en">Hand-off</span><span lang="ja">引き継ぎ</span>
+      </div>
+      <h2 lang="en">Assemble feedback</h2>
+      <h2 lang="ja">フィードバックを組み立てる</h2>
+    </div>
+
+    <p class="caption" lang="en">
+      Collects the findings you accepted, plus anything you commented on, into markdown you can
+      paste straight back into the implementing session. Generated in the language selected above.
+      Verdicts and comments are kept in this browser only.
+    </p>
+    <p class="caption" lang="ja">
+      採用した指摘と、コメントを付けたものをまとめて、実装セッションにそのまま貼り込める markdown を
+      作ります。出力は上で選んだ言語になります。判定とコメントはこのブラウザ内にのみ保存されます。
+    </p>
+
+    <div class="assembly">
+      <div class="assembly-actions">
+        <button type="button" id="gen-feedback" class="solid-btn">
+          <span lang="en">Generate feedback</span><span lang="ja">フィードバックを生成</span>
+        </button>
+        <button type="button" id="copy-feedback" class="ghost-btn">
+          <span lang="en">Copy to clipboard</span><span lang="ja">クリップボードにコピー</span>
+        </button>
+        <span class="copy-state" id="copy-state" role="status" aria-live="polite"></span>
+      </div>
+      <textarea id="feedback-out" rows="16" spellcheck="false"></textarea>
+    </div>
+  </section>
+
+  <!-- Nits: real but not worth a triage row. Delete the section if empty. -->
+  <section>
+    <div class="section-head">
+      <div class="eyebrow">
+        <span lang="en">Style and structure</span><span lang="ja">スタイルと構成</span>
+      </div>
+      <h2 lang="en">Nits</h2>
+      <h2 lang="ja">細かい点</h2>
+    </div>
+    <ul lang="en"><li>{{NIT_1}}</li></ul>
+    <ul lang="ja"><li>{{NIT_1_JA}}</li></ul>
+  </section>
+
+  <!-- Specific things done well, so the author can keep doing them.
+       Cut it rather than pad it — generic praise reads as filler. -->
+  <section>
+    <div class="section-head">
+      <div class="eyebrow">
+        <span lang="en">Worth keeping</span><span lang="ja">良い点</span>
+      </div>
+      <h2 lang="en">What the change gets right</h2>
+      <h2 lang="ja">この変更がうまくやれていること</h2>
+    </div>
+    <ul lang="en"><li>{{GOOD_1}}</li></ul>
+    <ul lang="ja"><li>{{GOOD_1_JA}}</li></ul>
+  </section>
+
+  <div class="footer">
+    <span lang="en">{{FOOTER}}</span>
+    <span lang="ja">{{FOOTER_JA}}</span>
+  </div>
+
+</div>
+</div>
+
+<script>
+  (function () {
+    // Triage is per-review, so this slug MUST be unique per report or a new
+    // review inherits the last one's verdicts. Language is a person's
+    // preference, so it stays shared across reports on purpose.
+    var TRIAGE_KEY = "review-triage:{{STORAGE_SLUG}}";
+    var LANG_KEY = "code-review-report-lang";
+
+    var doc = document.querySelector(".doc");
+    var findings = Array.prototype.slice.call(document.querySelectorAll(".finding"));
+    var langButtons = Array.prototype.slice.call(document.querySelectorAll(".lbtn"));
+
+    var els = {
+      navProgress: document.getElementById("nav-progress"),
+      accept: document.getElementById("n-accept"),
+      reject: document.getElementById("n-reject"),
+      open: document.getElementById("n-open"),
+      note: document.getElementById("n-note"),
+      reset: document.getElementById("reset-triage"),
+      gen: document.getElementById("gen-feedback"),
+      copy: document.getElementById("copy-feedback"),
+      out: document.getElementById("feedback-out"),
+      state: document.getElementById("copy-state")
+    };
+
+    var COPY = {
+      en: {
+        notePlaceholder: "Anything to pass back to the implementer…",
+        outPlaceholder: "Triage the findings above, then press Generate feedback.",
+        generated: "generated",
+        copied: "copied",
+        manual: "select and copy manually",
+        empty:
+          "Nothing accepted or commented on yet — accept at least one finding, or leave a comment, then generate again.",
+        head: [
+          "# Review feedback — {{REVIEW_TITLE}}",
+          "",
+          "## How to use this",
+          "",
+          "- Scrutinise each point on its merits. Push back on anything you think is wrong rather than agreeing by default.",
+          "- Where the fix direction is unclear, confirm before implementing.",
+          "",
+          "## Points",
+          ""
+        ],
+        location: "Location",
+        finding: "Finding",
+        fix: "Suggested fix",
+        rejected: "Reviewer verdict: rejected — see the note below before acting.",
+        note: "Reviewer note",
+        reviewedLabel: "reviewed",
+        footer:
+          "{{VERIFY_LINE}}"
+      },
+      ja: {
+        notePlaceholder: "実装者に渡したいことがあれば…",
+        outPlaceholder: "上の指摘を判定してから「フィードバックを生成」を押してください。",
+        generated: "生成しました",
+        copied: "コピーしました",
+        manual: "選択して手動でコピーしてください",
+        empty:
+          "まだ採用もコメントもありません — 指摘を1件以上採用するか、コメントを書いてから、もう一度生成してください。",
+        head: [
+          "# レビューフィードバック — {{REVIEW_TITLE}}",
+          "",
+          "## 進め方",
+          "",
+          "- 各指摘を鵜呑みにせず、妥当かどうか精査してください。誤っていると思うものは指摘し返してください。",
+          "- 対応方針に迷う点があれば、実装前に確認してください。",
+          "",
+          "## 指摘",
+          ""
+        ],
+        location: "場所",
+        finding: "指摘",
+        fix: "改善案",
+        rejected: "レビュアーの判定: 却下 — 着手前に下のコメントを確認してください。",
+        note: "レビュアーのコメント",
+        reviewedLabel: "判定済み",
+        footer:
+          "{{VERIFY_LINE_JA}}"
+      }
+    };
+
+    var lang = "en";
+    try {
+      var savedLang = localStorage.getItem(LANG_KEY);
+      if (savedLang === "ja" || savedLang === "en") lang = savedLang;
+    } catch (e) {
+      /* storage unavailable */
+    }
+
+    var store = {};
+    try {
+      store = JSON.parse(localStorage.getItem(TRIAGE_KEY) || "{}") || {};
+    } catch (e) {
+      store = {};
+    }
+
+    function persist() {
+      try {
+        localStorage.setItem(TRIAGE_KEY, JSON.stringify(store));
+      } catch (e) {
+        /* storage unavailable — in-page state still works */
+      }
+    }
+
+    function entry(rank) {
+      if (!store[rank]) store[rank] = { verdict: "", note: "" };
+      return store[rank];
+    }
+
+    function noteBox(finding) {
+      return finding.querySelector(".note-field textarea");
+    }
+
+    function applyLang() {
+      var t = COPY[lang];
+      doc.dataset.lang = lang;
+      document.documentElement.lang = lang;
+
+      langButtons.forEach(function (btn) {
+        btn.setAttribute("aria-pressed", btn.dataset.lang === lang ? "true" : "false");
+      });
+
+      findings.forEach(function (finding) {
+        noteBox(finding).placeholder = t.notePlaceholder;
+      });
+
+      els.out.placeholder = t.outPlaceholder;
+      els.state.textContent = "";
+
+      try {
+        localStorage.setItem(LANG_KEY, lang);
+      } catch (e) {
+        /* storage unavailable */
+      }
+
+      render();
+    }
+
+    function render() {
+      var accepted = 0;
+      var rejected = 0;
+      var noted = 0;
+
+      findings.forEach(function (finding) {
+        var rec = entry(finding.dataset.rank);
+        if (rec.verdict === "accept") accepted++;
+        if (rec.verdict === "reject") rejected++;
+        if (rec.note && rec.note.trim()) {
+          noted++;
+          finding.classList.add("has-note");
+        } else {
+          finding.classList.remove("has-note");
+        }
+      });
+
+      els.accept.textContent = String(accepted);
+      els.reject.textContent = String(rejected);
+      els.open.textContent = String(findings.length - accepted - rejected);
+      els.note.textContent = String(noted);
+
+      var decided = accepted + rejected;
+      els.navProgress.textContent =
+        decided + " / " + findings.length + " " + COPY[lang].reviewedLabel;
+      els.navProgress.classList.toggle("is-done", decided === findings.length);
+    }
+
+    /**
+     * The two languages never occupy exactly the same height, so switching
+     * would otherwise slide the passage you were reading out from under you.
+     * Pin the block nearest the top of the viewport and restore its offset
+     * after the swap, so the switch feels like a re-typeset rather than a jump.
+     */
+    var ANCHOR_SELECTOR = ".finding, .section-head, .masthead, .assembly";
+    var NAV_CLEARANCE = 64;
+
+    function pickAnchor() {
+      var blocks = document.querySelectorAll(ANCHOR_SELECTOR);
+      var chosen = null;
+      var chosenTop = -Infinity;
+
+      for (var i = 0; i < blocks.length; i++) {
+        var top = blocks[i].getBoundingClientRect().top;
+        // the last block whose top has already passed the navbar
+        if (top <= NAV_CLEARANCE && top > chosenTop) {
+          chosenTop = top;
+          chosen = blocks[i];
+        }
+      }
+
+      // above the first block — nothing to correct for
+      if (!chosen) return null;
+      return { el: chosen, top: chosenTop };
+    }
+
+    function restoreAnchor(anchor) {
+      if (!anchor) return;
+      // reading the rect after the swap forces the reflow we need to measure
+      var drift = anchor.el.getBoundingClientRect().top - anchor.top;
+      if (drift) window.scrollBy(0, drift);
+    }
+
+    function switchLang(next) {
+      if (next === lang || !COPY[next]) return;
+      var anchor = pickAnchor();
+      lang = next;
+      applyLang();
+      restoreAnchor(anchor);
+    }
+
+    langButtons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        switchLang(btn.dataset.lang);
+      });
+    });
+
+    function isTypingTarget(node) {
+      if (!node) return false;
+      if (node.isContentEditable) return true;
+      return /^(input|textarea|select)$/i.test(node.tagName || "");
+    }
+
+    // "s" toggles the language. Skipped while typing a comment — which for a
+    // romaji IME means almost every keystroke — and while a modifier is held,
+    // so Cmd/Ctrl+S still belongs to the browser.
+    document.addEventListener("keydown", function (event) {
+      if (!event.key || event.key.toLowerCase() !== "s") return;
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.isComposing || event.keyCode === 229) return;
+      if (isTypingTarget(event.target)) return;
+
+      event.preventDefault();
+      switchLang(lang === "en" ? "ja" : "en");
+    });
+
+    findings.forEach(function (finding) {
+      var rec = entry(finding.dataset.rank);
+      var box = noteBox(finding);
+
+      if (rec.verdict) finding.dataset.verdict = rec.verdict;
+      if (rec.note) box.value = rec.note;
+
+      finding.querySelectorAll(".vbtn").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var picked = btn.dataset.verdict;
+          var next = rec.verdict === picked ? "" : picked;
+          rec.verdict = next;
+
+          if (next) {
+            finding.dataset.verdict = next;
+            var panel = finding.querySelector("details");
+            if (panel) panel.open = false;
+          } else {
+            delete finding.dataset.verdict;
+          }
+
+          persist();
+          render();
+        });
+      });
+
+      box.addEventListener("input", function () {
+        rec.note = box.value;
+        persist();
+        render();
+      });
+    });
+
+    els.reset.addEventListener("click", function () {
+      findings.forEach(function (finding) {
+        var rec = entry(finding.dataset.rank);
+        rec.verdict = "";
+        rec.note = "";
+        delete finding.dataset.verdict;
+        noteBox(finding).value = "";
+      });
+      persist();
+      render();
+      els.out.value = "";
+      els.state.textContent = "";
+    });
+
+    function pick(finding, key) {
+      if (lang === "ja") {
+        var ja = finding.dataset[key + "Ja"];
+        if (ja) return ja;
+      }
+      return finding.dataset[key];
+    }
+
+    function buildFeedback() {
+      var t = COPY[lang];
+      var lines = t.head.slice();
+      var included = 0;
+
+      findings.forEach(function (finding) {
+        var rec = entry(finding.dataset.rank);
+        var note = (rec.note || "").trim();
+        if (rec.verdict !== "accept" && !note) return;
+
+        included++;
+        lines.push(
+          "### " + included + ". [" + pick(finding, "severity") + "] " + pick(finding, "title"),
+          "",
+          "- " + t.location + ": " + finding.dataset.where,
+          "- " + t.finding + ": " + pick(finding, "claim"),
+          "- " + t.fix + ": " + pick(finding, "fix")
+        );
+        if (rec.verdict === "reject") lines.push("- " + t.rejected);
+        if (note) lines.push("- " + t.note + ": " + note);
+        lines.push("");
+      });
+
+      if (!included) return t.empty;
+
+      lines.push("---", "", t.footer);
+      return lines.join("\n");
+    }
+
+    els.gen.addEventListener("click", function () {
+      els.out.value = buildFeedback();
+      els.state.textContent = COPY[lang].generated;
+    });
+
+    els.copy.addEventListener("click", function () {
+      var t = COPY[lang];
+      if (!els.out.value) els.out.value = buildFeedback();
+      var text = els.out.value;
+
+      function fallbackCopy() {
+        els.out.focus();
+        els.out.select();
+        try {
+          document.execCommand("copy");
+          els.state.textContent = t.copied;
+        } catch (e) {
+          els.state.textContent = t.manual;
+        }
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          els.state.textContent = t.copied;
+        }, fallbackCopy);
+      } else {
+        fallbackCopy();
+      }
+    });
+
+    applyLang();
+    render();
+  })();
+</script>
