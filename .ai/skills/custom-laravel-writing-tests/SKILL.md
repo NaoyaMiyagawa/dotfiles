@@ -323,6 +323,20 @@ mock(Xxx::class)
     expect($model->verified_at)->toEqual($expected);
     ```
 
+- **Scope deep assertion paths with a `has()` callback instead of repeating the full dotted key.** Once a chain of `->where('a.b.c.d.…')` calls shares a long prefix, the prefix drowns out the value being asserted. Nest a callback so each level is named once and the leaf assertions read as the shape they describe.
+
+    ```php
+    // Good — prefix named once per level
+    ->has('editor.version', fn (AssertableJson $version) => $version
+        ->where('version', 1)
+        ->where('name', 'Course Completion')
+        ->etc())
+
+    // Bad — the prefix is most of every line
+    ->where('editor.version.version', 1)
+    ->where('editor.version.name', 'Course Completion')
+    ```
+
 - Add a line break when test target entity changes.
   e.g.)
 
@@ -337,6 +351,8 @@ mock(Xxx::class)
     ```
 
 ### Test file naming
+
+Every production class under test gets its **own** test file mirroring its name — don't append a new class's cases to a collaborator's existing test file just because the flow passes through it (e.g. a job's cases belong in `{Job}Test.php`, not in the controller test that dispatches it).
 
 Test file name must mirror the production class name verbatim, including suffixes like `Job`, `Service`, `Action`, `Controller`.
 

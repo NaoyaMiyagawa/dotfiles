@@ -17,14 +17,14 @@ Keep changes consistent with existing project patterns unless asked to refactor.
         public readonly string $xxx,
     ) {}
     ```
-4. Use `final` `readonly` for ValueObject, DTO. For a value holder with no transformation logic, expose data as `public readonly` properties instead of `private` fields plus getter methods — a getter that only returns its backing field adds ceremony without encapsulating anything. Reach for a private field + accessor only when the accessor does real work (validation, derivation, formatting).
+4. Use `final` `readonly` for ValueObject, DTO — and reserve `final` for those; don't blanket-apply `final` to services or other classes by default. For a value holder with no transformation logic, expose data as `public readonly` properties instead of `private` fields plus getter methods — a getter that only returns its backing field adds ceremony without encapsulating anything. Reach for a private field + accessor only when the accessor does real work (validation, derivation, formatting).
 5. Use string interpolation when possible for better readability. (e.g. `"This is {$user->name}"`) When interpolation isn't feasible (e.g. a reusable format string or positional args), prefer `vsprintf` over `sprintf`.
 6. Use named args when method calls goes multiple lines due to line length.
 7. Don't wrap with bracket when instantiating a class. Good: `new Xxx()->...`.
 8. Prefer `$x === null` over `is_null($x)` for null checks.
 9. **Use strict comparison for membership checks.** Pass `true` as the third arg to `in_array()` / `array_search()` when testing identity-style membership — allowlists, id lists, role/status lists. Loose comparison invites type juggling (`0 == 'foo'`, `'1' == 1`), a correctness and security risk in access checks.
 10. Prefer guard clauses / early returns over wrapping the main path in a positive `if`. Invert the condition and bail out first.
-11. Prefer collection pipelines (`collect($items)->map(...)->filter(...)`) over raw array functions in transformation/serialization code, for readability and chainability.
+11. **Prefer `collect()` pipelines over `array_*` functions.** Wrap an array in `collect($items)->map(...)->filter(...)` rather than nesting `array_map`/`array_filter`/`array_reduce` calls. Collection methods read in execution order and are named for what they do, so the cognitive load is far lower than a nested `array_*` expression you have to unwind inside-out. Reach for a raw `array_*` call only when there is no collection equivalent.
 12. Use one consistent spelling for identifiers across a file — prefer American English (e.g. `organization`, not `organisation`). Don't mix `-ize`/`-ise`. Comments are exempt. Preserve the conventional casing of acronyms and mixed-case terms in identifiers (`OAuth`, `ID`, `URL`, `HTTP` — not `Oauth`/`Id`/`Url`).
 13. **Comment workarounds with their removal condition.** When you add a compatibility guard or workaround (e.g. code that only matters outside the standard dev/runtime environment), leave an inline comment stating _why_ it exists and _when it can be removed_, so future cleanup is self-evident — don't bury the rationale in the PR description alone.
 14. **Treat a nullable return type as a contract to guard at every call site.** When a method is declared `?T`, dereference its result null-safely (`?->`) or with an explicit null check _everywhere_ it's used — don't leave some sites guarded and others bare. A mix of guarded and unguarded dereferences of the same nullable accessor is a latent null crash; the already-guarded site tells you the null case is real. Choose a sensible default for the absent case (often: skip or permit when there is nothing to enforce).
@@ -47,7 +47,7 @@ Keep changes consistent with existing project patterns unless asked to refactor.
 
 - **Encapsulate error keys and status codes in static named constructors on the exception class.** Call sites should `throw DomainException::invalidRequest()` rather than passing a message key and HTTP status at each `throw`. The mapping lives in one place and call sites stay declarative.
 - **Handle expected error paths at the boundary.** Map a known domain failure to its response-contract shape at the controller (or edge) — a `try`/`catch` that returns the spec'd error response — rather than letting an anticipated failure surface as an unhandled 500.
-- **Scope a `try`/`catch` to the call that can actually throw.** Wrap only the statement whose failure you've traced to a real, reachable cause — don't add a defensive `catch` around a code path where the exception can't originate. When two call sites hit the same operation but only one can trigger the failure (e.g. a concurrent-write race that deletes a resource one path then reads), guard that one and leave the other bare. Prove the failure path before adding the handler, rather than blanketing every caller "just in case" — an unreachable `catch` is dead code that misleads the next reader about where the risk lives.
+- **Scope a `try`/`catch` to the call that can actually throw.** Wrap only the statement whose failure you've traced to a real, reachable cause — don't add a defensive `catch` around a code path where the exception can't originate. When two call sites hit the same operation but only one can trigger the failure (e.g. a concurrent-write race that deletes a resource one path then reads), guard that one and leave the other bare.
 
 ### Validation
 
@@ -84,6 +84,7 @@ Keep changes consistent with existing project patterns unless asked to refactor.
 
 ### API Resources
 
+- **Shape a nested list with a dedicated `JsonResource` + `::collection()`, not an inline `array_map`/`map` closure.** When a payload contains a repeated sub-object, give that sub-object its own resource class and compose it in — one resource per distinct shape the frontend consumes. The closure form buries the contract inside the parent resource and can't be reused or typed.
 - When a `JsonResource` field stops being consumed by the frontend, remove it from the resource, the FE TypeScript types, mocks, and any selectors in the same PR. Don't leave dead serialized fields behind "just in case" — they mislead future readers about the contract.
 
 ### Domain language
@@ -135,7 +136,8 @@ if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEna
 10. **Prefer time-ordered UUIDs for generated identifiers.** When a model uses a UUID key, generate it with the ordered/sequential variant (`Str::orderedUuid()`) rather than a random UUID, for better DB index locality. Prefer a trait/hook that populates the value automatically (e.g. a `HasUuid` trait) over assigning it by hand on each record, and keep the model hook and any bulk-insert path on the same strategy so no two write paths produce different formats.
 11. **Use `firstOrFail()` / `findOrFail()` when a record's existence is an expected invariant.** When the code assumes a row must exist, fail loudly at the fetch rather than calling `first()` and null-guarding afterwards.
 12. **Removing a redundant cast: make the type explicit, don't silently drop it.** When a cast becomes obsolete, prefer replacing it with the plain primitive cast (e.g. `'string'`) over deleting the line — a missing cast is ambiguous between "deliberately default" and "forgotten", especially for id / primary-key columns. Only drop the line entirely when the default is unmistakable. If removing the cast also makes a conditional unreachable (e.g. a null guard that can no longer be true once the value is always a string), delete that dead branch in the same change, and confirm against the column's real DB nullability rather than assuming.
-13. **Don't span module boundaries with Eloquent relationships or `withCount()`.** When two models live in separate modules, don't declare a relationship (or reach for `withCount`) that crosses the seam — query each side independently and pass the needed data (e.g. counts) explicitly. Keeping cross-module coupling out of the ORM preserves the module boundary.
+13. **Return the collection type the consumer actually needs.** When a method builds a set of models, return `Illuminate\Database\Eloquent\Collection` rather than a base `Support\Collection` that every caller then has to convert back. Push the conversion into the producer — or drop it entirely by keeping the Eloquent collection intact through the pipeline — instead of leaving each call site to re-wrap it.
+14. **Don't span module boundaries with Eloquent relationships or `withCount()`.** When two models live in separate modules, don't declare a relationship (or reach for `withCount`) that crosses the seam — query each side independently and pass the needed data (e.g. counts) explicitly. Keeping cross-module coupling out of the ORM preserves the module boundary.
 
 ### Migrations
 
@@ -190,7 +192,7 @@ $organization->users()
 
 ### Queue / Job dispatch
 
-- Prefer the `dispatch(new JobClass(...))` helper over `JobClass::dispatch(...)` for better IDE / phpstan support on constructor args.
+- Prefer the helper functions — `dispatch(new JobClass(...))` for jobs, `event(new EventClass(...))` for events — over the static `::dispatch()` form, for better IDE / phpstan autocompletion on constructor args.
 - Use `ShouldQueueAfterCommit` for listeners and jobs whose effects depend on a DB write completing first (e.g. emails referencing a freshly-created row).
 
 ### Config / env
