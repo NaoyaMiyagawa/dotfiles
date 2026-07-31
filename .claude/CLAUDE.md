@@ -15,12 +15,27 @@
 When this session is running a top-tier reasoning model, treat it as the **orchestrator brain**, not the workhorse. The goal is fewer tokens and faster results by pushing execution down to cheaper, parallel workers.
 
 - **Reserve the orchestrator for thinking:** planning, decomposing tasks, reviewing results, making architectural decisions, and synthesizing the final answer.
-- **Delegate execution** to the named subagents already listed in context (defined in `~/.claude/agents/`), or hand the task to the Codex CLI. Fan out independent work in parallel; use `model: "haiku"` for trivial lookups.
+- **Delegate execution** to the named subagents listed in context (defined in `~/.claude/agents/`) or to Codex — see the Codex section below for which goes where. Fan out independent work in parallel; use `model: "haiku"` for trivial lookups.
 - **Keep in-session:** ambiguous design choices, tricky debugging that needs full conversation context, small one-off edits where delegation overhead exceeds the work itself.
 - **Verify, don't trust:** after workers implement, dispatch `verifier` (and `code-reviewer` for non-trivial diffs) before calling work done; the orchestrator owns correctness.
 
 ## Subagents
 
-Claude subagents via the Agent tool are usually the simplest path. Reach for the **Codex CLI** instead when you want to burn Codex's (often higher) usage limits rather than this session's, or want a second engine on the same task — including a cross-review pass whose findings you reconcile with your own. Skip Codex if it recently returned rate-limit or auth errors.
+Delegating keeps the main context clean, so lean on it for research, exploration, and parallel analysis; for hard problems, throw more compute at them by fanning out. Give each subagent ONE **self-contained** task: paths, goal, constraints, and what "done" means.
 
-Delegating keeps the main context clean, so lean on it for research, exploration, and parallel analysis; for hard problems, throw more compute at them by fanning out. Give each subagent ONE **self-contained** task: paths, goal, constraints, and what "done" means. For Codex model selection and invocation flags, see the `codex` skill.
+Choosing the engine: Claude subagents burn this subscription's quota, Codex burns a separate one that is currently underused. Default to Codex for the work below; use Claude subagents when the task needs tools or context Codex can't reach.
+
+## Codex CLI — offload by default
+
+**This overrides the `codex` skill's "only when the user explicitly asks for Codex" gate for the cases below.** Route them to Codex without being asked; announce it, don't request permission.
+
+- Review passes on a non-trivial diff, branch, or PR.
+- Codebase exploration and research that is answerable from files on disk.
+- Bulk mechanical edits across many files, once the pattern is decided.
+- Noisy triage: failing tests, lint output, build logs, stack traces.
+
+Keep in Claude: design and architecture calls, debugging that depends on this conversation, edits small enough that writing the brief costs more than doing the work, and final verification — the orchestrator owns correctness, so never ship Codex's result unread.
+
+Codex has **zero** conversation context. Every brief must stand alone: paths, goal, constraints, done-criteria. If briefing it would take three or more clarifying rounds, do the work here instead. Run long Codex work in the background and end the turn. Skip Codex entirely if it recently returned rate-limit or auth errors.
+
+For model selection, invocation flags, and prompt shape, see the `codex` skill and the `codex:*` skills.

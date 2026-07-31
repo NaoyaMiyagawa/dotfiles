@@ -100,6 +100,31 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "claude-opus-4-8",
+  "skillOverrides": {
+    "agent-browser": "off",
+    "ccc": "off",
+    "claude": "off",
+    "close-spec": "off",
+    "compare-screenshots": "off",
+    "custom-email-html-template-review": "off",
+    "custom-install-all-dependencies": "off",
+    "eval-skills": "off",
+    "explore-unknowns": "off",
+    "figma-implement-design": "off",
+    "implement-spec": "off",
+    "implement-spec-with-codex": "off",
+    "playwright": "off",
+    "playwright-interactive": "off",
+    "preview-shots": "off",
+    "refactor-clean": "off",
+    "renderer": "off",
+    "screenshot-critique": "off",
+    "sentry-cli": "off",
+    "write-docs": "off",
+    "write-spec": "off",
+    "write-tests": "off"
+  },
   "hooks": {
     "SessionStart": [
       {
@@ -117,15 +142,6 @@
           {
             "type": "command",
             "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux clear-progress >/dev/null 2>&1 || true",
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/myrepo-wiki-reminder.sh",
             "timeout": 10
           }
         ]
@@ -237,30 +253,6 @@
     "qmd@qmd": false,
     "frontend-design@claude-plugins-official": false,
     "crit@crit": true
-  },
-  "skillOverrides": {
-    "agent-browser": "off",
-    "ccc": "off",
-    "claude": "off",
-    "close-spec": "off",
-    "compare-screenshots": "off",
-    "custom-email-html-template-review": "off",
-    "custom-install-all-dependencies": "off",
-    "eval-skills": "off",
-    "explore-unknowns": "off",
-    "figma-implement-design": "off",
-    "implement-spec": "off",
-    "implement-spec-with-codex": "off",
-    "playwright": "off",
-    "playwright-interactive": "off",
-    "preview-shots": "off",
-    "refactor-clean": "off",
-    "renderer": "off",
-    "screenshot-critique": "off",
-    "sentry-cli": "off",
-    "write-docs": "off",
-    "write-spec": "off",
-    "write-tests": "off"
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
