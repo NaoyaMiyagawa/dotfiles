@@ -15,6 +15,10 @@ description: Committing code changes in git. Use when you are making a commit.
 
 When vendoring or porting files from another source, commit the raw copy first, then make integration/adjustment edits as a separate commit. The reviewer can then diff your changes against the pristine copy instead of against nothing.
 
+## Temporary verification code
+
+When you add throwaway code purely to verify something (a temporary test method, a debug probe) and intend to remove it right after, commit it and then commit its revert as a separate commit — even though the net diff is zero. This leaves a citable record in git history to look back on later, instead of the probe disappearing when squashed or left uncommitted.
+
 ## After committing
 
 Report the commit hash.

@@ -38,6 +38,8 @@ Keep changes consistent with existing project patterns unless asked to refactor.
 22. **Order fields/array keys to mirror their source of truth** (the spec, API contract, or referenced document) rather than an arbitrary order, so a reader can diff code against the reference. When a block has inline `//` comments, separate the commented groups with blank lines so each comment's scope is unambiguous.
 23. **Add the `#[\Override]` attribute to a method that overrides a parent's.** It documents the intent at a glance and makes the analyzer fail if the parent signature changes or the method stops overriding anything.
 24. **Switch a long arrow function to a classic closure.** `fn () => …` pays off only while the whole expression fits comfortably on one line; once it spills, write `function (…) { return …; }` so the body and its `return` read explicitly.
+25. **Assign a non-trivial expression to a named variable before passing it as an argument or chaining off it.** Don't inline a multi-step accessor chain (`$run->workflowVersion->actions->firstWhere(...)`) directly as a call argument, and don't chain further calls straight off a custom method's return value unless that method is designed for chaining (returns `$this`). Put the intermediate result in a named variable first — it documents what the value is and keeps the line steppable in a debugger.
+26. **Don't open two brackets before a line break (`[[`).** When a nested array literal is passed as an argument and the outer array wraps to a new line, give the inner array's opening bracket its own line too — a flush `[[` reads to a quick glance as a single `[`.
 
 ### Abstraction
 
@@ -49,6 +51,7 @@ Keep changes consistent with existing project patterns unless asked to refactor.
 
 - **Encapsulate error keys and status codes in static named constructors on the exception class.** Call sites should `throw DomainException::invalidRequest()` rather than passing a message key and HTTP status at each `throw`. The mapping lives in one place and call sites stay declarative.
 - **Handle expected error paths at the boundary.** Map a known domain failure to its response-contract shape at the controller (or edge) — a `try`/`catch` that returns the spec'd error response — rather than letting an anticipated failure surface as an unhandled 500.
+- **Extract a magic string used to identify an error into a named constant on the class that owns it.** When code compares a caught exception's message or an SDK error code against a literal (e.g. `'ResourceNotFoundException'`), hoist it to a `public const ERROR_CODE = '...'` on the exception/adapter class rather than repeating the literal at each comparison site.
 - **Scope a `try`/`catch` to the call that can actually throw.** Wrap only the statement whose failure you've traced to a real, reachable cause — don't add a defensive `catch` around a code path where the exception can't originate. When two call sites hit the same operation but only one can trigger the failure (e.g. a concurrent-write race that deletes a resource one path then reads), guard that one and leave the other bare.
 
 ### Validation
@@ -142,6 +145,7 @@ if ($user?->isInternalUser() && Organization::getInternalOrganization()?->hasEna
 12. **Removing a redundant cast: make the type explicit, don't silently drop it.** When a cast becomes obsolete, prefer replacing it with the plain primitive cast (e.g. `'string'`) over deleting the line — a missing cast is ambiguous between "deliberately default" and "forgotten", especially for id / primary-key columns. Only drop the line entirely when the default is unmistakable. If removing the cast also makes a conditional unreachable (e.g. a null guard that can no longer be true once the value is always a string), delete that dead branch in the same change, and confirm against the column's real DB nullability rather than assuming.
 13. **Return the collection type the consumer actually needs.** When a method builds a set of models, return `Illuminate\Database\Eloquent\Collection` rather than a base `Support\Collection` that every caller then has to convert back. Push the conversion into the producer — or drop it entirely by keeping the Eloquent collection intact through the pipeline — instead of leaving each call site to re-wrap it.
 14. **Don't span module boundaries with Eloquent relationships or `withCount()`.** When two models live in separate modules, don't declare a relationship (or reach for `withCount`) that crosses the seam — query each side independently and pass the needed data (e.g. counts) explicitly. Keeping cross-module coupling out of the ORM preserves the module boundary.
+15. **Scope a query with `whereIn`/`where` at the database level instead of fetching a superset and filtering in PHP.** When a method only needs a subset of a relation's rows, push the filter into the query builder rather than loading everything and narrowing it afterward with a collection `filter()`/`each()` pass — it cuts the rows the DB has to return and transfer.
 
 ### Migrations
 
@@ -207,6 +211,7 @@ $organization->users()
 ### Enums
 
 - **Treat an enum as the single source of truth for its set of valid values.** Reference it everywhere those values appear — config, validation rules (`Rule::enum(...)`/`new Enum(...)`), casts, `match` arms — not just in some call sites. A hardcoded copy of one of the values anywhere is a second source that will drift.
+- **Put payload/serialization logic for an enum on the enum itself, not at the call site.** When a call site builds an external-facing shape (e.g. an API payload) from an enum's cases, add a method on the enum (`toApiPayload()`) instead of a `match`/switch at the caller. Add a dedicated test for that method — the enum then has one place that owns the contract and one test guarding it against breaking changes.
 
 ### Translations
 

@@ -30,6 +30,10 @@ Example (replace names with this project’s services):
 
 If the minimal set is ambiguous, `./vendor/bin/sail up -d` for the default profile is acceptable; prefer listing only needed services when you want fewer containers.
 
+## Wide-scope runs
+
+For a run spanning an entire module or the whole repo, prefer committing, pushing, and letting CI run it rather than running it locally — CI shards test execution and finishes noticeably faster than a full local run.
+
 ## Do not use (wrong environment)
 
 Do **not** invoke any of these for this project unless the user explicitly says Sail is not used:

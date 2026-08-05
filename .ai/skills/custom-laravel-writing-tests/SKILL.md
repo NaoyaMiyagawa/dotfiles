@@ -159,7 +159,7 @@ it('xxx', function (
   e.g.
     - definitions() ... factory's default method
       // relationships
-    - forXxx($modelOrFactory) ... only when we need to specify relationship name with ->for().
+    - forXxx($modelOrFactory) ... only when we need to specify relationship name with ->for(). Never pass a literal relationship-key string at the call site (`->for($model, 'reviewer')`) — wrap it in a `forXxx()` state method instead, adding one if it doesn't exist yet.
     - hasXxx($modelOrFactory) ... only when we need to specify relationship name with ->has().
       // states
     - xxx() ... higher level api for setting specific data for one or more columns (e.g. `pending()`)
@@ -205,6 +205,15 @@ Use AAA comments:
 ```
 
 Use `// Act & Assert` for compact tests only.
+
+When one AAA section contains multiple distinct sub-steps (e.g. several setup steps under `// Arrange`), prefix each with `- ` so the structure is scannable at a glance:
+
+```php
+// Arrange
+// - create the workflow run
+// - upload the failing document
+...
+```
 
 ### Feature Test Pattern
 
@@ -383,6 +392,10 @@ For an event-listener class, add one case between `beforeEach()` and the `handle
 ### Regression tests
 
 When adding a test to guard against a specific 500/error you just fixed, assert only the success contract (e.g. `assertOk()` / page renders) on the route that previously broke. Don't over-specify by enumerating `->missing(...)` checks for fields the PR removes or by asserting the absence of every offending shape — those add maintenance cost without strengthening the regression guarantee.
+
+### Contract-drift tests
+
+When a test guards a method whose whole purpose is pinning an external-facing shape (e.g. an enum's `toApiPayload()`), mark it with a `// Test cases to detect drift in api payload` comment above the cases — it tells the next reader why the test exists without them having to infer it from the assertions.
 
 ### Test target exclusion
 
