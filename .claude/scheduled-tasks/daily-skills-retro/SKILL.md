@@ -24,14 +24,18 @@ Shell state does NOT persist between Bash calls — never stash the jq filter (o
 Before adopting anything, re-verify the supporting quote exists VERBATIM in the transcript (absolute file path + a grep that matches). Mining sub-agents hallucinate quotes; a candidate whose quote can't be located is rejected, not paraphrased into acceptance.
 
 ## What to adopt, and where
-Route each verified essence to exactly one destination:
-1. An existing skill in ~/dotfiles/.ai/skills/ already owns the topic → edit it in place; prefer sharpening or replacing an existing line over appending a new one.
+Triage first: check whether an existing rule already covers the correction. If it does, that's a compliance failure, not a coverage gap — rewording or appending prose won't fix it. Route those instead:
+- Mechanically checkable → add a row to ~/dotfiles/.ai/skills/custom-laravel-coding/references/tooling-candidates.md (destined for lint tooling in the work repo).
+- A judgment rule sitting in a long-tail checklist → promote it into the owning skill's core SKILL.md (move, don't copy).
+
+Otherwise route each verified essence to exactly one destination:
+1. An existing skill in ~/dotfiles/.ai/skills/ already owns the topic → edit it in place; prefer sharpening or replacing an existing line over appending a new one. Where a skill is split into a core SKILL.md plus references/checklist.md (e.g. custom-laravel-coding), new rules go to the checklist — the core stays capped at ~15 rules, so adding one there requires demoting one out.
 2. Language/framework/tool-specific with no existing home → create a new skill, only if the pattern will plausibly recur.
 3. Not language-specific (process, workflow, verification habits, general engineering judgment) → add one lean bullet to the matching section of ~/dotfiles/.ai/AGENTS.md (the global baseline), e.g. Core Principles.
 
 Adoption bar: an explicit correction, or a preference I've expressed more than once. One-off, task-local, or purely project-specific remarks are not standards. Generalise before writing: generic wording, no domain- or project-specific vocabulary — skills and AGENTS.md must stay generic across repositories.
 
-Keep instruction files lean: don't restate what a capable model already does by default; if a new rule supersedes an old one, replace it rather than append. A no-op run (nothing cleared the bar) is a valid outcome — say so and change nothing.
+Keep instruction files lean: don't restate what a capable model already does by default; if a new rule supersedes an old one, replace it rather than append. While editing a skill, merge duplicate or overlapping rules you notice and delete any rule the work repo's tooling now enforces. A no-op run (nothing cleared the bar) is a valid outcome — say so and change nothing.
 
 ## Delegation rules (avoid stuck background agents)
 - Run mining/extraction sub-agents synchronously — do NOT use run_in_background for work that finishes in a couple of minutes; background mode hides failures and gives no benefit here.

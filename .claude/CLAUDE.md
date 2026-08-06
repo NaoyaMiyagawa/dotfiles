@@ -5,6 +5,10 @@
 
 - When asked to create a new branch, run `git fetch --all` first so the base is current, then always create it from `origin/develop`. If that branch doesn't exist in the repo, create it from `origin/main` instead.
 
+## Laravel / PHP
+
+- Before writing or editing PHP code, invoke the `custom-laravel-coding` skill (and `custom-laravel-writing-tests` when touching Pest tests) — don't rely on automatic skill triggering. Its review gate is mandatory before presenting or committing PHP.
+
 ## Long-running commands
 
 - Never wait with polling loops in Bash (`until/while ...; do sleep N; done`) — they block the turn with no output and look like a hang. A PreToolUse hook denies them.

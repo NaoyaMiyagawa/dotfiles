@@ -21,6 +21,10 @@ When an existing test encodes the intended behaviour, change the implementation 
 
 Apply the current conventions (AAA, naming, dataset style, assertion rules) to the test cases you add or change — not to unrelated cases that already pass. Don't restyle, rename, or rewrite pre-existing tests to match today's conventions as part of a feature/fix PR: that churn buries the real diff in review and risks breaking a working guard. Bring an old test in line only when its behaviour is genuinely part of the change.
 
+## One test file per production file
+
+Keep a 1:1 mapping between a production file and its test file. When a change leaves one class's tests split across two test files (e.g. a feature's cases carved into a separate file), merge them into the single test file that mirrors the production file rather than leaving a class's tests scattered.
+
 ## Refactoring untested code
 
 Before refactoring a code path that has no direct test coverage, first write a **characterisation test** that pins the current observable behaviour and get it green against the _existing_ implementation. Then refactor while keeping it green. This proves the change is behaviour-preserving rather than asserting it after the fact.
