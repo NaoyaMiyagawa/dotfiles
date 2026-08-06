@@ -11,8 +11,8 @@
 
 ## Long-running commands
 
-- Never wait with polling loops in Bash (`until/while ...; do sleep N; done`) — they block the turn with no output and look like a hang. A PreToolUse hook denies them.
-- Launch long-running work with `run_in_background: true` and end the turn; you are re-invoked when it completes. To check progress once, use a single bounded read (`tail -n 50 <file>`), never a loop.
+- Never wait in Bash: poll loops (`until/while ...; do sleep N; done`) and any foreground `sleep` used as a wait (`sleep 45 && tail ...`, standalone `sleep`) are all denied by hooks or the harness.
+- Launch anything that can run long (`codex exec`, test suites, builds) with `run_in_background: true` and end the turn; you are re-invoked when it completes. To check progress once, use a single bounded read (`tail -n 50 <file>`) with no sleep in front; if there's nothing new yet, end the turn instead of waiting.
 
 ## Orchestrator Model Strategy (capable models)
 

@@ -95,12 +95,11 @@
     "deny": [
       "Bash(rm -rf :*)",
       "Bash(git clone:*)",
-      "Bash(python *)",
       "Bash(vendor/bin/phpstan *)"
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-opus-4-8",
+  "model": "claude-fable-5[1m]",
   "skillOverrides": {
     "agent-browser": "off",
     "ccc": "off",
@@ -108,10 +107,13 @@
     "close-spec": "off",
     "compare-screenshots": "off",
     "custom-email-html-template-review": "off",
+    "custom-fable-mode": "off",
     "custom-install-all-dependencies": "off",
     "eval-skills": "off",
     "explore-unknowns": "off",
+    "figma": "off",
     "figma-implement-design": "off",
+    "find-skills": "off",
     "implement-spec": "off",
     "implement-spec-with-codex": "off",
     "playwright": "off",
@@ -221,6 +223,10 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/no-poll-loops.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/prefer-python3.sh"
           },
           {
             "type": "command",
