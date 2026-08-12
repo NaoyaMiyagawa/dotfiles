@@ -403,6 +403,8 @@ When a test guards a method whose whole purpose is pinning an external-facing sh
 
 ### Test target exclusion
 
+Don't write tests that exercise framework or library behaviour rather than logic you own — e.g. asserting that a config override flows through the framework's plumbing. If the test would still pass with your own code deleted and only the framework left, it isn't testing anything you wrote.
+
 No need to write tests for the following classes:
 
 - Resource
