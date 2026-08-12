@@ -5,6 +5,13 @@
 
 - When asked to create a new branch, run `git fetch --all` first so the base is current, then always create it from `origin/develop`. If that branch doesn't exist in the repo, create it from `origin/main` instead.
 
+## Stacked PRs
+
+- Whenever a change needs more than one PR in sequence — splitting large work into layers, or a PR that must be based on another open PR — use `gh stack` (the installed `github/gh-stack` extension) and invoke the `gh-stack` skill first; don't rely on automatic triggering. This is the default for chained PRs; never hand-chain by creating branches off each other and editing PR bases manually.
+- The stack roots on the trunk from the Branching rule above, so pass it explicitly: `gh stack init --base develop <first-branch>` (or `--base main` where develop doesn't exist).
+- If a PR chain already exists by hand, adopt it instead of continuing manually: `gh stack link <pr> <pr> ...` links existing PRs into a stack.
+- Merge stacks with `gh stack merge --yes`; `gh pr merge` doesn't work on stacked PRs.
+
 ## Laravel / PHP
 
 - Before writing or editing PHP code, invoke the `custom-laravel-coding` skill (and `custom-laravel-writing-tests` when touching Pest tests) — don't rely on automatic skill triggering. Its review gate is mandatory before presenting or committing PHP.
