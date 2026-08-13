@@ -37,6 +37,10 @@ Don't add constructor parameters, setters, or config flags to production classes
 
 When the logic under test doesn't read a related record, don't create one to satisfy a foreign key — pass a plain scalar id instead (`verifier_id => 1`). Creating unused rows blurs the test's boundary and slows it down; reach for a factory only when the behaviour actually depends on that record existing.
 
+## Assert the behaviour the test names
+
+Scope assertions to the case's stated purpose. When the point is "the response comes back without error", asserting a successful response is enough — don't pile on incidental structural checks (a specific JSON path, a field-level `missing()` on some nested key) that aren't what the test is proving. Extra narrow assertions read as coverage but just make the test brittle against unrelated shape changes.
+
 ## Pest Rules
 
 1. Write tests in Pest style.

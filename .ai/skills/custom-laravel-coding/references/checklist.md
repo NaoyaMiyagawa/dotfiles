@@ -29,6 +29,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 18. Switch a long arrow function to a classic closure once the expression no longer fits on one line.
 19. Assign a non-trivial expression to a named variable before passing it as an argument or chaining off it; don't chain off a custom method's return unless it's designed for chaining (returns `$this`).
 20. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line.
+21. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
 
 ## Exceptions
 
@@ -38,6 +39,8 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## Validation
 
 - Name a `FormRequest` for the action it validates, mirroring the REST verb: `Store{X}Request`, `Update{X}Request`.
+- Order `FormRequest` methods by processing phase: `prepareForValidation()` → `rules()` → `failedValidation()` → accessor helpers.
+- `prepareForValidation()` only transforms input into the shape `rules()` can validate; don't throw from it — anything still malformed is `rules()`'s job to reject.
 - Don't scaffold optional hooks you won't use — no empty `authorize()` returning `true`.
 - Extract non-trivial or reusable validation into a dedicated `Rule` class named for what it checks (`Base64EncodedImage`); reserve inline rules for simple built-in cases.
 
@@ -52,7 +55,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Re-index before returning a documented `list<T>` — `->all()`, `->filter()`, `array_filter()`, unsetting elements can preserve keys; call `->values()`/`array_values()` first so the annotation and runtime shape don't diverge.
 - Add a one-line summary docblock to a method/class whose purpose isn't obvious from its name (domain/protocol logic, unfamiliar algorithms); skip it when the name says everything.
-- Link the exact spec/RFC section when implementing a standard — on every related endpoint/class, not just the first.
+- Link the exact spec/RFC section when implementing a standard — on every related endpoint/class, not just the first. Keep references to internal PRs, spikes, and tickets out of code, though; those belong in the PR description, not a code comment.
 
 ## Auth
 
