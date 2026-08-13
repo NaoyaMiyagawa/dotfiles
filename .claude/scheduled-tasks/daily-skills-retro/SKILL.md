@@ -33,7 +33,12 @@ Otherwise route each verified essence to exactly one destination:
 2. Language/framework/tool-specific with no existing home → create a new skill, only if the pattern will plausibly recur.
 3. Not language-specific (process, workflow, verification habits, general engineering judgment) → add one lean bullet to the matching section of ~/dotfiles/.ai/AGENTS.md (the global baseline), e.g. Core Principles.
 
-Adoption bar: an explicit correction, or a preference I've expressed more than once. One-off, task-local, or purely project-specific remarks are not standards. Generalise before writing: generic wording, no domain- or project-specific vocabulary — skills and AGENTS.md must stay generic across repositories.
+Adoption bar — judge by generalizability, not by how often I said it. Adopt a piece of feedback when it states or implies a rule that would apply to future code in other tasks or repos, even if I expressed it only once. Strong adopt signals: I corrected something the agent generated; imperative phrasing ("always", "never", "prefer", "don't", "instead of", "why is this..."); a style, structure, naming, or testing preference. The only two rejection reasons are: (a) task-local — tied to one specific file, bug, or business rule; (b) project-specific — only meaningful inside that repo's domain and not generalizable. Being said once is never a rejection reason. If a candidate is genuinely borderline (you can't tell whether it generalizes), don't drop it — record it in the ledger below. Generalise before writing: generic wording, no domain- or project-specific vocabulary — skills and AGENTS.md must stay generic across repositories.
+
+Because once-stated preferences now get adopted, the lean-file rules below are mandatory every run, not occasional hygiene.
+
+## Candidate ledger (cross-run memory for borderline items)
+A single 24h window can't observe "expressed more than once" — repetition happens across days. Maintain ~/dotfiles/.ai/mining-ledger.md: one line per borderline candidate (`date | proposed rule | verbatim quote | transcript path`). Read it at the start of each run; if today's mining surfaces a candidate expressing the same underlying rule as an existing entry (same intent, not verbatim text), promote it to a real destination and delete its ledger line. Prune entries older than 30 days.
 
 Keep instruction files lean: don't restate what a capable model already does by default; if a new rule supersedes an old one, replace it rather than append. While editing a skill, merge duplicate or overlapping rules you notice and delete any rule the work repo's tooling now enforces. A no-op run (nothing cleared the bar) is a valid outcome — say so and change nothing.
 
@@ -47,4 +52,4 @@ Keep instruction files lean: don't restate what a capable model already does by 
   - Stay within scope; if you can't finish, return partial findings, not a promise to continue.
 
 ## Report
-End with a short summary: what was adopted (destination file + the verbatim evidence quote) and what was rejected (one-line reason each).
+End with a short summary: what was adopted (destination file + the verbatim evidence quote), what was added to or promoted from the ledger, and what was rejected (one-line reason each).
