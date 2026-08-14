@@ -30,6 +30,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 19. Assign a non-trivial expression to a named variable before passing it as an argument or chaining off it; don't chain off a custom method's return unless it's designed for chaining (returns `$this`).
 20. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line.
 21. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
+22. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables.
 
 ## Exceptions
 
@@ -99,6 +100,9 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Controller class name and directory match the route resource (`Http/Controllers/Documents/ResendDocumentEmailController`).
 - Name a controller for the specific operation it performs, not a generic catch-all (`ResendInvoiceEmailController`, not `InvoiceController`); keep route, controller, directory, and test file names in sync.
 - Register a single-action controller with the array callable `[Controller::class, '__invoke']`, not the bare class string.
+- Give every controller action a `Request $request` (or a dedicated `FormRequest`) as its first parameter, even when the body doesn't read it — don't omit it. Break the parameter list across lines.
+- Resource route paths and their route names are plural — `/tokens`, not `/token`; keep path and name in sync.
+- Build JSON responses with the `response()->json(...)` helper rather than instantiating `JsonResponse` by hand — applies in controllers and in response/exception classes that emit JSON.
 
 ## Queue / Job dispatch
 

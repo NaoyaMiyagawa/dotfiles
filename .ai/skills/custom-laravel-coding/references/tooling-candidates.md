@@ -17,3 +17,4 @@ Enforcement names below are candidates to verify against current tool docs, not 
 | Start queries from `::query()` | small custom PHPStan/Larastan rule |
 | `immutable_datetime` cast default | small custom PHPStan rule over model casts |
 | `#[Scope]` over legacy `scopeXxx()` | Rector Laravel set or custom rule |
+| `Response::HTTP_*` constants over integer HTTP status-code literals | custom Rector/PHPStan rule flagging int literals in `response()`/`abort()`/`HttpException`/`setStatusCode` args — no stock fixer |

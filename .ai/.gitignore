@@ -11,6 +11,9 @@
 !/.gitignore
 !/AGENTS.md
 
+# mining ledger (cross-run memory for the daily skills retro)
+!/mining-ledger.md
+
 # docs (imported by AGENTS.md, e.g. @docs/RTK.md)
 !/docs/
 !/docs/**
