@@ -31,6 +31,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 20. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line.
 21. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
 22. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables.
+23. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
 
 ## Exceptions
 
@@ -102,6 +103,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Register a single-action controller with the array callable `[Controller::class, '__invoke']`, not the bare class string.
 - Give every controller action a `Request $request` (or a dedicated `FormRequest`) as its first parameter, even when the body doesn't read it — don't omit it. Break the parameter list across lines.
 - Resource route paths and their route names are plural — `/tokens`, not `/token`; keep path and name in sync.
+- Register routes in the app's existing route files (`web.php`/`api.php`); don't add a new custom route file for a feature.
 - Build JSON responses with the `response()->json(...)` helper rather than instantiating `JsonResponse` by hand — applies in controllers and in response/exception classes that emit JSON.
 
 ## Queue / Job dispatch
