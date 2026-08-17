@@ -13,7 +13,23 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
     ) {}
     ```
 4. Use string interpolation when possible (`"This is {$user->name}"`). When interpolation isn't feasible (a reusable format string, positional args), prefer `vsprintf` over `sprintf`.
-5. Use named args when a call spans multiple lines, and when calling into a package or other external API — the parameter order there can be re-ordered out from under you, and named args turn that into a compile-time break.
+5. Always use named args when an argument list is broken across lines — positional args are only for a call that fits on one line:
+    ```php
+    // Bad
+    $this->sender->send(
+        $user,
+        $template,
+        true,
+    );
+
+    // Good
+    $this->sender->send(
+        recipient: $user,
+        template: $template,
+        queue: true,
+    );
+    ```
+    Also use named args when calling into a package or other external API, even on one line — the parameter order there can be re-ordered out from under you, and named args turn that into a compile-time break.
 6. Don't wrap instantiation in brackets: `new Xxx()->...`.
 7. Prefer `$x === null` over `is_null($x)`.
 8. Strict membership checks: pass `true` as the third arg to `in_array()`/`array_search()` for allowlists, id lists, role/status lists — loose comparison invites type juggling (`0 == 'foo'`), a correctness and security risk in access checks.
@@ -50,6 +66,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Follow the project's established directory per kind; don't add a parallel variant (a fresh `Dto/` beside `DataTransferObjects/`). Prefer moving a legacy-located class to the canonical spot over adding a new class beside it.
 - Keep response/output shaping out of action/service/domain classes — extract a dedicated response class so each has one responsibility.
+- When a controller fetches or resolves a collaborator only to pass it into an action, move that call into the action — controllers pass through request-derived input, not pre-resolved dependencies the action can obtain itself.
 - Extract shared/cross-cutting logic into the repo's designated helper location; don't duplicate the same snippet per call site.
 - Match the declared namespace to the file's directory — check every added file, not just the one under discussion.
 
