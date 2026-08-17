@@ -33,6 +33,8 @@ Long PR descriptions hurt review more than they help. The diff and commit messag
 
 If the resulting body feels short, that's the goal. A reviewer should be able to read it in under 30 seconds.
 
+The 30-second rule covers the part above the fold. When the PR introduces a subsystem, protocol, or vocabulary of types the reviewer has no prior model of, add a reading guide as the last section of the body — see `custom-gh-pr-reading-guide` — and keep everything above it as short as it would have been anyway.
+
 ### Repository PR template
 Before drafting or editing the PR body, look for the repo's GitHub pull request template (common paths: `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE.md`, or `.github/PULL_REQUEST_TEMPLATE/*.md`). **Follow that template:** keep its section headings and fill every section it defines; add the rules below (references, Jira, validation) *inside* the template structure rather than ignoring the template. If the repo has no template, use a clear structured body consistent with team practice.
 
