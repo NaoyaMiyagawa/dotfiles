@@ -38,7 +38,7 @@ Adoption bar — judge by generalizability, not by how often I said it. Adopt a 
 Because once-stated preferences now get adopted, the lean-file rules below are mandatory every run, not occasional hygiene.
 
 ## Candidate ledger (cross-run memory for borderline items)
-A single 24h window can't observe "expressed more than once" — repetition happens across days. Maintain ~/dotfiles/.ai/mining-ledger.md: one line per borderline candidate (`date | proposed rule | verbatim quote | transcript path`). Read it at the start of each run; if today's mining surfaces a candidate expressing the same underlying rule as an existing entry (same intent, not verbatim text), promote it to a real destination and delete its ledger line. Prune entries older than 30 days.
+A single 24h window can't observe "expressed more than once" — repetition happens across days. Maintain ~/dotfiles/.ai/mining-ledger.md (local only — it holds verbatim quotes and transcript paths from work repos, so it is untracked and never committed): one line per borderline candidate (`date | proposed rule | verbatim quote | transcript path`). Read it at the start of each run; if today's mining surfaces a candidate expressing the same underlying rule as an existing entry (same intent, not verbatim text), promote it to a real destination and delete its ledger line. Prune entries older than 30 days.
 
 Keep instruction files lean: don't restate what a capable model already does by default; if a new rule supersedes an old one, replace it rather than append. While editing a skill, merge duplicate or overlapping rules you notice and delete any rule the work repo's tooling now enforces. A no-op run (nothing cleared the bar) is a valid outcome — say so and change nothing.
 

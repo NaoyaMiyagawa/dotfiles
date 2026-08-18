@@ -1,6 +1,6 @@
 ---
 name: custom-obsidian-wiki-write
-description: Write or update knowledge in the personal Obsidian knowledge wiki (vault root in `$OBSIDIAN_VAULT`) (the ingest / file-back workflow). Use when the user wants to capture a requirement, spec, business rule, decision, or architecture note; record what was just built or learned; ingest a source document; or save a synthesized answer back as a wiki page — e.g. "add this to the wiki", "document this in Obsidian", "ingest these notes", "update the MyRepo auth page". This is the Obsidian vault, NOT the LLM Wiki desktop app (use the `llm-wiki` skill for that). For Obsidian syntax details, also use the `obsidian-markdown` skill.
+description: Write or update knowledge in the personal Obsidian knowledge wiki (vault root in `$OBSIDIAN_VAULT`) (the ingest / file-back workflow). Use when the user wants to capture a requirement, spec, business rule, decision, or architecture note; record what was just built or learned; ingest a source document; or save a synthesized answer back as a wiki page — e.g. "add this to the wiki", "document this in Obsidian", "ingest these notes", "update the auth page". This is the Obsidian vault, NOT the LLM Wiki desktop app (use the `llm-wiki` skill for that). For Obsidian syntax details, also use the `obsidian-markdown` skill.
 ---
 
 # Custom Obsidian Wiki Write
@@ -25,7 +25,7 @@ conventions and workflows.
 
 ## Workflow
 
-1. **Scope the project.** Use the one the user names, else infer from CWD (MyRepo repo → `projects/myrepo`), else ask.
+1. **Scope the project.** Use the one the user names, else infer from CWD (repo named `foo` → `projects/foo`), else ask.
 2. **Pick the target.** Read `index.md` and Grep `wiki/` to find an existing page to update; otherwise create a new page from the matching template. One concept per page — split rather than sprawl. When one concept grows to own multiple pages, freely create a sub-directory for it under `wiki/` and group them there — keep per-module/domain pages under `wiki/modules/` so they're classified apart from cross-cutting notes.
 3. **Write at the right altitude.** Requirements/specs/why. Use frontmatter (`type`, `tags`, `updated`), `[[wikilinks]]` for internal links, and callouts. Cite where it came from in a `## Sources` section (repo paths, source pages, PR/ticket). For pages that document code, also stamp **provenance frontmatter** (see below) so drift can be detected later.
 4. **Keep the graph healthy.** Create pages for referenced concepts that lack one; update cross-references on related pages; flag conflicts with the existing wiki using `> [!warning]` instead of silently overwriting. Resolve any `> [!question] Open questions` the new knowledge answers.
@@ -45,7 +45,7 @@ conventions and workflows.
 Pages that document a codebase must carry machine-readable provenance so staleness can be detected automatically. In addition to the standard frontmatter, add:
 
 ```yaml
-source_repo: <org>/<repo>        # repo the page describes
+source_repo: <org>/<repo>             # repo the page describes
 source_commit: 3c7ed12                # repo HEAD (short SHA) when the page was last verified
 source_paths:                         # the code this page is derived from
   - app-modules/workflow/src/WorkflowSteps/Actions

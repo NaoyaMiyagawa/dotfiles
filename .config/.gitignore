@@ -22,6 +22,8 @@
 # git
 !git/
 !git/**
+# work identity holds an employer email address — keep it out of this public repo
+git/conf.d/work.conf
 
 # opencode
 !opencode/oh-my-opencode.json

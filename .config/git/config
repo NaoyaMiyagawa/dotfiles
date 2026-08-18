@@ -29,6 +29,7 @@
     path = conf.d/delta.conf
 
 # Work repos get the work identity; the default (personal) identity is the
-# [user] block at the top of this file.
+# [user] block at the top of this file. conf.d/work.conf is untracked (it holds an
+# employer email address) — create it manually on a new machine.
 [includeIf "gitdir:~/dev/work/"]
     path = conf.d/work.conf

@@ -47,19 +47,15 @@
       "Bash(man *)",
       "Bash(mkdir:*)",
       "Bash(mypy*)",
-      "Bash(node*)",
       "Bash(npm list*)",
       "Bash(npm run lint)",
       "Bash(npm run test:*)",
-      "Bash(npm run*)",
       "Bash(npm test*)",
-      "Bash(npx *)",
       "Bash(printf *)",
       "Bash(pwd *)",
       "Bash(pydoc *)",
       "Bash(pylint *)",
       "Bash(pytest *)",
-      "Bash(python3 *)",
       "Bash(readlink *)",
       "Bash(realpath *)",
       "Bash(sed -n *)",
@@ -285,5 +281,11 @@
   "tui": "fullscreen",
   "theme": "custom:my-theme",
   "preferredNotifChannel": "terminal_bell",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "autoMode": {
+    "soft_deny": [
+      "$defaults",
+      "Bash(git push --force*)"
+    ]
+  }
 }

@@ -1,6 +1,6 @@
 ---
 name: custom-obsidian-wiki-query
-description: Answer domain-knowledge or codebase-knowledge questions from the personal Obsidian knowledge wiki (vault root in `$OBSIDIAN_VAULT`). Use when the user asks what a project or module does, its requirements, specs, business rules, flows, or architecture — e.g. "how does MyRepo auth work", "what are the billing requirements", "what does the wiki say about verification", "explain the workflow module" — or explicitly references the Obsidian vault/wiki. Read-only by default; can file a reusable answer back as a new wiki page. This is the Obsidian vault, NOT the LLM Wiki desktop app (use the `llm-wiki` skill for that).
+description: Answer domain-knowledge or codebase-knowledge questions from the personal Obsidian knowledge wiki (vault root in `$OBSIDIAN_VAULT`). Use when the user asks what a project or module does, its requirements, specs, business rules, flows, or architecture — e.g. "how does the billing service auth work", "what are the billing requirements", "what does the wiki say about verification", "explain the workflow module" — or explicitly references the Obsidian vault/wiki. Read-only by default; can file a reusable answer back as a new wiki page. This is the Obsidian vault, NOT the LLM Wiki desktop app (use the `llm-wiki` skill for that).
 ---
 
 # Custom Obsidian Wiki Query
@@ -17,9 +17,9 @@ Implements the **query** workflow of the vault's LLM Wiki method. The vault's ow
 ## Vault layout
 
 - Root: `$OBSIDIAN_VAULT` — resolve it once (`echo "${OBSIDIAN_VAULT:?set OBSIDIAN_VAULT in your shell env}"`) and use that absolute path with Read/Grep, which don't expand env vars.
-- Project wikis: `projects/<name>/wiki/` (e.g. `myrepo`, `otherrepo`)
+- Project wikis: `projects/<name>/wiki/` (one directory per project)
 - Spine: `projects/<name>/index.md` (catalog), `log.md` (history); raw inputs in `sources/`
-- The whole vault is indexed as the **qmd collection `obsidian`** (hybrid lexical + semantic search). qmd paths mirror vault-relative paths: `qmd://obsidian/projects/myrepo/wiki/Auth.md` ⇄ `$OBSIDIAN_VAULT/projects/myrepo/wiki/Auth.md`.
+- The whole vault is indexed as the **qmd collection `obsidian`** (hybrid lexical + semantic search). qmd paths mirror vault-relative paths: `qmd://obsidian/projects/<name>/wiki/Auth.md` ⇄ `$OBSIDIAN_VAULT/projects/<name>/wiki/Auth.md`.
 - Reading needs no setup — qmd/Grep/Read work directly. Writing a page back may require `/add-dir "$OBSIDIAN_VAULT"`.
 
 ## Search with qmd
@@ -43,7 +43,7 @@ If a model-backed command fails (models/GPU unavailable), fall back to `qmd sear
 
 ## Workflow
 
-1. **Scope the project.** If the user names one, use it. Else infer from CWD (working in the MyRepo repo → `projects/myrepo`). Else search the whole collection.
+1. **Scope the project.** If the user names one, use it. Else infer from CWD (working in a repo named `foo` → `projects/foo`). Else search the whole collection.
 2. **Find relevant pages.** Run `qmd query` (see above) with intent tuned to the project/topic. Skim the project `index.md` for the catalog when useful, then `qmd get`/`multi-get` the top hits for full content.
 3. **Answer with citations.** Synthesize from the wiki content. Cite the pages used as `[[Page]]`, and pass through the repo paths / source pages those pages themselves cite. Distinguish documented fact from inference, and surface any relevant `> [!question] Open questions`.
 4. **Handle gaps honestly.** If the wiki doesn't cover it, say so — do not fabricate. Offer to **ingest**: read the actual codebase/source (the repo you're working in) to answer now and, if useful, write a new page per the method.
