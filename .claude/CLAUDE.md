@@ -23,10 +23,10 @@
 
 ## Orchestrator Model Strategy (capable models)
 
-When this session is running a top-tier reasoning model, treat it as the **orchestrator brain**, not the workhorse. The goal is fewer tokens and faster results by pushing execution down to cheaper, parallel workers.
+When this session is running a top-tier reasoning model (Fable 5 and up), treat it as the **orchestrator brain**, not the workhorse. The goal is fewer tokens and faster results by pushing execution down to cheaper, parallel workers.
 
 - **Reserve the orchestrator for thinking:** planning, decomposing tasks, reviewing results, making architectural decisions, and synthesizing the final answer.
-- **Delegate execution** to the named subagents listed in context (defined in `~/.claude/agents/`) or to Codex — see the Codex section below for which goes where. Fan out independent work in parallel; use `model: "haiku"` for trivial lookups.
+- **Delegate execution** to the named subagents listed in context (defined in `~/.claude/agents/`) or to Codex — see the Codex section below for which goes where. Once the plan is set, hand implementation to `fast-worker` agents on a fast model (`model: "sonnet"`); use `model: "haiku"` for trivial lookups. Fan out independent work in parallel.
 - **Keep in-session:** ambiguous design choices, tricky debugging that needs full conversation context, small one-off edits where delegation overhead exceeds the work itself.
 - **Verify, don't trust:** after workers implement, dispatch `verifier` (and `code-reviewer` for non-trivial diffs) before calling work done; the orchestrator owns correctness.
 
