@@ -48,6 +48,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 21. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
 22. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables.
 23. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
+24. A validation/normalization helper returns the validated value with a declared return type — native, or a PHPDoc array shape where native syntax can't express it — so the caller reassigns to the same variable (`$header = $this->validateHeader($header)`). Don't write it as a `void` guard the caller can't type off or chain from.
 
 ## Exceptions
 
@@ -66,6 +67,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Follow the project's established directory per kind; don't add a parallel variant (a fresh `Dto/` beside `DataTransferObjects/`). Prefer moving a legacy-located class to the canonical spot over adding a new class beside it.
 - Keep response/output shaping out of action/service/domain classes — extract a dedicated response class so each has one responsibility.
+- An action class exposes only `__invoke()` publicly. When it needs a helper routine, extract that to a dedicated helper/service class rather than adding a second public method on the action.
 - When a controller fetches or resolves a collaborator only to pass it into an action, move that call into the action — controllers pass through request-derived input, not pre-resolved dependencies the action can obtain itself.
 - Extract shared/cross-cutting logic into the repo's designated helper location; don't duplicate the same snippet per call site.
 - Match the declared namespace to the file's directory — check every added file, not just the one under discussion.
@@ -94,6 +96,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Define query scopes with the `#[Scope]` attribute, not the legacy `scopeXxx()` method.
 - Dispatch domain events from the calling service/action, not inside a model method — side effects belong at the orchestration layer.
+- Expose domain operations as purpose-specific model methods — a single-record updater, or intention-revealing state transitions (`markIssued()`, `markClaimed()`) — rather than making callers reach for a generic or bulk mutator directly. Keep the shared generic/bulk method as an internal helper the named methods delegate to.
 
 ## Eloquent
 

@@ -226,7 +226,7 @@ When one AAA section contains multiple distinct sub-steps (e.g. several setup st
 ### Feature Test Pattern
 
 1. Use `route('...')` to build request URLs.
-2. Prefer combining request and assertion fluently when clear.
+2. Prefer combining request and assertion fluently when clear. When the request has a body, pass the payload as a multi-line array literal as the call's second argument (`postJson(route(...), [ 'xxx' => ..., ])`) and chain the assertions directly off it — don't hoist the payload into a separate variable or cram it onto one line.
 
 Example:
 
