@@ -70,6 +70,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - An action class exposes only `__invoke()` publicly. When it needs a helper routine, extract that to a dedicated helper/service class rather than adding a second public method on the action.
 - When a controller fetches or resolves a collaborator only to pass it into an action, move that call into the action — controllers pass through request-derived input, not pre-resolved dependencies the action can obtain itself.
 - Extract shared/cross-cutting logic into the repo's designated helper location; don't duplicate the same snippet per call site.
+- A value object owns its own hydration and behaviour — parse a raw array into it via a `fromArray()` named constructor, and put logic that operates on its data on the VO, not inlined in each action/service that consumes it. A second consumer needing the same VO logic is the signal to move it onto the VO.
 - Match the declared namespace to the file's directory — check every added file, not just the one under discussion.
 
 ## PHPDoc / typing
@@ -113,6 +114,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Backfills and data manipulation use the `DB` facade, never Eloquent models — migrations are time-frozen; models reflect today's schema and will drift.
 - Fix a not-yet-merged migration in place; corrective migrations are only for schema already merged or released.
+- Head a data/backfill migration with a comment stating why it's needed and what it does — the schema diff shows the columns, not the reason a one-off backfill exists.
 - Column order: foreign keys right after the `id`/`uuid` key columns; audit-style FKs (`created_by`, `updated_by`) near `timestamps()`.
 
 ## Routing
