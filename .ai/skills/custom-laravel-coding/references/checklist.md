@@ -104,7 +104,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Update children through the relation: `$parent->children()->update([...])`, not a fresh `Child::query()->where('parent_id', ...)`.
 - Don't set `updated_at` manually unless the value must intentionally diverge from "now" (backfills, replication).
 - Prefer time-ordered UUIDs (`Str::orderedUuid()`) populated by a trait/hook, not assigned by hand per record; keep the model hook and any bulk-insert path on the same strategy.
-- Use `firstOrFail()`/`findOrFail()` when a record's existence is an expected invariant — fail loudly at the fetch, not with `first()` + null-guarding.
+- Use `firstOrFail()`/`findOrFail()` when a record's existence is an expected invariant — fail loudly at the fetch, not with `first()` + null-guarding. Never reach for `sole()` for a single expected record; `firstOrFail()` reads clearly, `sole()` obscures intent.
 - When removing a redundant cast, replace it with the explicit primitive cast (e.g. `'string'`) rather than silently dropping the line; delete any guard the change makes unreachable, confirming against the column's real DB nullability.
 - Return `Illuminate\Database\Eloquent\Collection` when that's what consumers need — push conversion into the producer, don't make every call site re-wrap.
 - Don't span module boundaries with relationships or `withCount()` — query each side independently and pass the needed data explicitly.
@@ -114,7 +114,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Backfills and data manipulation use the `DB` facade, never Eloquent models — migrations are time-frozen; models reflect today's schema and will drift.
 - Fix a not-yet-merged migration in place; corrective migrations are only for schema already merged or released.
-- Head a data/backfill migration with a comment stating why it's needed and what it does — the schema diff shows the columns, not the reason a one-off backfill exists.
+- Head a data/backfill migration with a comment stating why it's needed and what it does — the schema diff shows the columns, not the reason a one-off backfill exists. When it reshapes or canonicalizes an existing stored structure, show the before→after shape concretely in that comment (or the PR body), not just prose — a reviewer without context can't infer the transformation from words alone.
 - Column order: foreign keys right after the `id`/`uuid` key columns; audit-style FKs (`created_by`, `updated_by`) near `timestamps()`.
 
 ## Routing
