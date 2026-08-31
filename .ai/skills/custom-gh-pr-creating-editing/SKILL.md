@@ -96,7 +96,7 @@ Use the `/custom-pr-self-review` command (it loads these standards and includes 
 
 ```bash
 cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-codex exec "Review \`gh pr diff\` for this PR against the applicable coding-standard skills under ~/dotfiles/.ai/skills/ (read the ones relevant to the changed files for criteria). Flag violations, bugs, risks, and missing tests with file:line and a concrete fix. Do not edit files."
+codex exec -c model_reasoning_effort=high -o <scratchpad>/codex-review.md "Review \`gh pr diff\` for this PR against the applicable coding-standard skills under ~/dotfiles/.ai/skills/ (read the ones relevant to the changed files for criteria). Flag violations, bugs, risks, and missing tests with file:line and a concrete fix. Do not edit files." < /dev/null
 ```
 
 Skip only if Codex is rate-limited/unauthenticated; note that you couldn't get the second opinion. Surface its findings to the user — don't silently accept or discard them.
