@@ -95,7 +95,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
+  "model": "fable",
   "skillOverrides": {
     "agent-browser": "off",
     "ccc": "off",
@@ -254,7 +254,8 @@
     "swift-lsp@claude-plugins-official": false,
     "qmd@qmd": false,
     "frontend-design@claude-plugins-official": false,
-    "crit@crit": true
+    "crit@crit": true,
+    "mattpocock-skills@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
