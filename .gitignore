@@ -28,6 +28,7 @@
 !/LICENSE
 !.gitignore
 !.gitkeep
+!/.gitattributes
 
 # .ai
 !/.ai

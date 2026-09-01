@@ -1,0 +1,5 @@
+# Claude Code rewrites settings.json with its own key order and spacing on
+# every settings change; normalize through jq (filter defined in ~/.gitconfig:
+#   git config --global filter.jsonsort.clean "jq -S 'walk(if type==\"array\" then sort else . end)'"
+# ) so diffs only show real changes.
+/.claude/settings.json filter=jsonsort
