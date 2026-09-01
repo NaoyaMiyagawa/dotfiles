@@ -1,8 +1,235 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "advisorModel": "fable",
+  "autoMode": {
+    "soft_deny": [
+      "$defaults",
+      "Bash(git push --force*)"
+    ]
+  },
+  "effortLevel": "high",
+  "enabledPlugins": {
+    "codex@openai-codex": true,
+    "crit@crit": true,
+    "figma@claude-plugins-official": false,
+    "frontend-design@claude-plugins-official": false,
+    "mattpocock-skills@claude-plugins-official": true,
+    "php-lsp@claude-plugins-official": false,
+    "qmd@qmd": false,
+    "swift-lsp@claude-plugins-official": false
+  },
   "env": {
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
   },
+  "extraKnownMarketplaces": {
+    "crit": {
+      "source": {
+        "repo": "tomasz-tomczyk/crit",
+        "source": "github"
+      }
+    },
+    "openai-codex": {
+      "source": {
+        "repo": "openai/codex-plugin-cc",
+        "source": "github"
+      }
+    },
+    "qmd": {
+      "source": {
+        "repo": "tobi/qmd",
+        "source": "github"
+      }
+    }
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { i=$(cat); printf '%s' \"$i\" | cmux claude-hook notification; m=$(printf '%s' \"$i\" | jq -r '.message // empty' 2>/dev/null); case \"$m\" in *\"waiting for your input\"*) : ;; *) cmux set-progress 0.5 --label waiting >/dev/null 2>&1 ;; esac; } || true",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "_adrafinil": true,
+            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil release $CLAUDE_CODE_SESSION_ID --tool claude-code",
+            "type": "command"
+          }
+        ],
+        "matcher": "idle_prompt"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux set-progress 0.5 --label working >/dev/null 2>&1 || true",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/sonar-secrets/build-scripts/pretool-secrets.sh",
+            "timeout": 60,
+            "type": "command"
+          }
+        ],
+        "matcher": "Read"
+      },
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/no-poll-loops.sh",
+            "type": "command"
+          },
+          {
+            "command": "~/.claude/hooks/prefer-python3.sh",
+            "type": "command"
+          },
+          {
+            "command": "~/.claude/hooks/prefer-rg-fd.sh",
+            "type": "command"
+          },
+          {
+            "command": "~/.claude/hooks/rtk-rewrite.sh",
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "_adrafinil": true,
+            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil release $CLAUDE_CODE_SESSION_ID --tool claude-code",
+            "type": "command"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux clear-progress >/dev/null 2>&1 || true",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook session-start || true",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "_adrafinil": true,
+            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil acquire $CLAUDE_CODE_SESSION_ID --tool claude-code",
+            "type": "command"
+          }
+        ],
+        "matcher": "clear"
+      },
+      {
+        "hooks": [
+          {
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux clear-progress >/dev/null 2>&1 || true",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "startup|resume|clear"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "_adrafinil": true,
+            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil release $CLAUDE_CODE_SESSION_ID --tool claude-code",
+            "type": "command"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook stop; cmux set-progress 1.0 --label done >/dev/null 2>&1; (~/dotfiles/bin/cmux-pr-titles >/dev/null 2>&1 &); } || true",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "_adrafinil": true,
+            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil acquire --tool claude-code --subagent",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "_adrafinil": true,
+            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil release --tool claude-code --subagent",
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "_adrafinil": true,
+            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil acquire $CLAUDE_CODE_SESSION_ID --tool claude-code",
+            "type": "command"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook prompt-submit; cmux set-progress 0.01 --label working >/dev/null 2>&1; } || true",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/sonar-secrets/build-scripts/prompt-secrets.sh",
+            "timeout": 60,
+            "type": "command"
+          }
+        ],
+        "matcher": "*"
+      }
+    ]
+  },
+  "model": "fable",
   "permissions": {
     "allow": [
       "Bash(* | grep*)",
@@ -12,16 +239,21 @@
       "Bash(* | tail*)",
       "Bash(* | uniq*)",
       "Bash(* | wc*)",
+      "Bash(./vendor/bin/pint *)",
+      "Bash(./vendor/bin/sail *)",
+      "Bash(./vendor/bin/sail artisan:*)",
+      "Bash(./vendor/bin/sail exec app:*)",
+      "Bash(./vendor/bin/sail test:*)",
+      "Bash(./vendor/bin/sail up:*)",
       "Bash(awk*)",
-      "Bash(cp *)",
-      "Bash(mv *)",
       "Bash(basename *)",
       "Bash(black --check*)",
       "Bash(black --diff*)",
       "Bash(cat *)",
+      "Bash(cmux *)",
+      "Bash(cp *)",
       "Bash(curl *)",
       "Bash(cut *)",
-      "Bash(jira issue view *)",
       "Bash(diff *)",
       "Bash(dirname *)",
       "Bash(echo *)",
@@ -30,15 +262,14 @@
       "Bash(fd *)",
       "Bash(find *)",
       "Bash(gh api repos/:owner/:repo/pulls/$(gh pr view --json number --jq .number)/comments:*)",
+      "Bash(gh auth status*)",
       "Bash(gh pr view --comments)",
       "Bash(gh pr view --json body --jq .body:*)",
       "Bash(gh pr*)",
-      "Bash(gh auth status*)",
       "Bash(git *)",
-      "Bash(rg *)",
       "Bash(grep *)",
-      "Bash(cmux *)",
       "Bash(head *)",
+      "Bash(jira issue view *)",
       "Bash(jq *)",
       "Bash(less *)",
       "Bash(ls*)",
@@ -46,6 +277,7 @@
       "Bash(make test*)",
       "Bash(man *)",
       "Bash(mkdir:*)",
+      "Bash(mv *)",
       "Bash(mypy*)",
       "Bash(npm list*)",
       "Bash(npm run lint)",
@@ -58,6 +290,8 @@
       "Bash(pytest *)",
       "Bash(readlink *)",
       "Bash(realpath *)",
+      "Bash(rg *)",
+      "Bash(rtk *)",
       "Bash(sed -n *)",
       "Bash(serena:*)",
       "Bash(sort *)",
@@ -67,35 +301,28 @@
       "Bash(true *)",
       "Bash(type *)",
       "Bash(uniq*)",
+      "Bash(vendor/bin/pint *)",
+      "Bash(vendor/bin/sail *)",
       "Bash(wc*)",
       "Bash(which *)",
       "Bash(yq eval*)",
-      "Bash(./vendor/bin/sail *)",
-      "Bash(vendor/bin/sail *)",
-      "Bash(./vendor/bin/sail up:*)",
-      "Bash(./vendor/bin/sail artisan:*)",
-      "Bash(./vendor/bin/sail exec app:*)",
-      "Bash(./vendor/bin/sail test:*)",
-      "Bash(./vendor/bin/pint *)",
-      "Bash(vendor/bin/pint *)",
-      "Bash(rtk *)",
       "Edit(**)",
       "Grep(**)",
-      "mcp__serena",
       "Read(**)",
       "Read(~/.claude/*)",
       "Read(~/.zshrc)",
       "Read(~/dotfiles/.ai/skills/**)",
-      "TodoWrite(**)"
+      "TodoWrite(**)",
+      "mcp__serena"
     ],
+    "defaultMode": "auto",
     "deny": [
-      "Bash(rm -rf :*)",
       "Bash(git clone:*)",
+      "Bash(rm -rf :*)",
       "Bash(vendor/bin/phpstan *)"
-    ],
-    "defaultMode": "auto"
+    ]
   },
-  "model": "fable",
+  "preferredNotifChannel": "terminal_bell",
   "skillOverrides": {
     "agent-browser": "off",
     "ccc": "off",
@@ -123,170 +350,12 @@
     "write-spec": "off",
     "write-tests": "off"
   },
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux claude-hook session-start || true",
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "startup|resume|clear",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux clear-progress >/dev/null 2>&1 || true",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux clear-progress >/dev/null 2>&1 || true",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook stop; cmux set-progress 1.0 --label done >/dev/null 2>&1; (~/dotfiles/bin/cmux-pr-titles >/dev/null 2>&1 &); } || true",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { i=$(cat); printf '%s' \"$i\" | cmux claude-hook notification; m=$(printf '%s' \"$i\" | jq -r '.message // empty' 2>/dev/null); case \"$m\" in *\"waiting for your input\"*) : ;; *) cmux set-progress 0.5 --label waiting >/dev/null 2>&1 ;; esac; } || true",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook prompt-submit; cmux set-progress 0.01 --label working >/dev/null 2>&1; } || true",
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/sonar-secrets/build-scripts/prompt-secrets.sh",
-            "timeout": 60
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux set-progress 0.5 --label working >/dev/null 2>&1 || true",
-            "timeout": 10
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/prefer-rg-fd.sh"
-          },
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/no-poll-loops.sh"
-          },
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/prefer-python3.sh"
-          },
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/rtk-rewrite.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "Read",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/.claude/hooks/sonar-secrets/build-scripts/pretool-secrets.sh",
-            "timeout": 60
-          }
-        ]
-      }
-    ]
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "npx -y ccstatusline@latest",
-    "padding": 0
-  },
-  "enabledPlugins": {
-    "php-lsp@claude-plugins-official": false,
-    "figma@claude-plugins-official": false,
-    "codex@openai-codex": true,
-    "swift-lsp@claude-plugins-official": false,
-    "qmd@qmd": false,
-    "frontend-design@claude-plugins-official": false,
-    "crit@crit": true,
-    "mattpocock-skills@claude-plugins-official": true
-  },
-  "extraKnownMarketplaces": {
-    "openai-codex": {
-      "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
-      }
-    },
-    "qmd": {
-      "source": {
-        "source": "github",
-        "repo": "tobi/qmd"
-      }
-    },
-    "crit": {
-      "source": {
-        "source": "github",
-        "repo": "tomasz-tomczyk/crit"
-      }
-    }
-  },
-  "effortLevel": "high",
-  "advisorModel": "fable",
-  "tui": "fullscreen",
-  "theme": "custom:my-theme",
-  "preferredNotifChannel": "terminal_bell",
   "skipAutoPermissionPrompt": true,
-  "autoMode": {
-    "soft_deny": [
-      "$defaults",
-      "Bash(git push --force*)"
-    ]
-  }
+  "statusLine": {
+    "command": "~/dotfiles/bin/ccstatusline-rounded",
+    "padding": 0,
+    "type": "command"
+  },
+  "theme": "custom:my-theme",
+  "tui": "fullscreen"
 }

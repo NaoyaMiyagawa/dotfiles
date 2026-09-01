@@ -1,0 +1,5 @@
+#!/bin/sh
+# ccstatusline hardcodes one decimal place on its percentage widgets
+# (toFixed(1) in every usage/context widget, no precision setting),
+# so round NN.N% -> NN% here instead.
+npx -y ccstatusline@latest "$@" | perl -pe 's/(\d+\.\d+)%/sprintf("%.0f%%", $1)/ge'
