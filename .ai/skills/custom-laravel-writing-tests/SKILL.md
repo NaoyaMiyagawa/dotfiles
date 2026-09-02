@@ -37,6 +37,10 @@ Don't add constructor parameters, setters, or config flags to production classes
 
 When the logic under test doesn't read a related record, don't create one to satisfy a foreign key — pass a plain scalar id instead (`verifier_id => 1`). Creating unused rows blurs the test's boundary and slows it down; reach for a factory only when the behaviour actually depends on that record existing.
 
+## Freeze time to assert a timestamp
+
+When the code under test stamps a datetime, call `freezeTime()` in Arrange and assert the exact value against `now()` — `expect($document->issued_at->toDateTimeString())->toBe(now()->toDateTimeString())`. A `not->toBeNull()` on a timestamp proves the column was touched, not that it was set to the right moment.
+
 ## Assert the behaviour the test names
 
 Scope assertions to the case's stated purpose. When the point is "the response comes back without error", asserting a successful response is enough — don't pile on incidental structural checks (a specific JSON path, a field-level `missing()` on some nested key) that aren't what the test is proving. Extra narrow assertions read as coverage but just make the test brittle against unrelated shape changes.
@@ -60,7 +64,7 @@ Follow the `custom-php-running-test` skill (`~/dotfiles/.ai/skills/custom-php-ru
 
 1. Create local variables first, then assign to `$this` properties.
 2. Exception: static literal values that do not come from factories.
-3. Set fakes in `beforeEach` when needed (`Event::fake([...])`, `Storage::fake(...)`).
+3. Set fakes in `beforeEach` (`Event::fake([...])`, `Storage::fake(...)`). When the method under test dispatches a job, event, or mail, fake `Queue`/`Event`/`Mail` in `beforeEach` for every case in the block regardless of case type — the thing being tested is always whether it dispatches, so the fake belongs in setup, not per-case.
 
 Example:
 
@@ -214,7 +218,7 @@ Use AAA comments:
 
 Use `// Act & Assert` for compact tests only.
 
-When one AAA section contains multiple distinct sub-steps (e.g. several setup steps under `// Arrange`), prefix each with `- ` so the structure is scannable at a glance:
+A bare `//` comment in a test is reserved for the three AAA markers only. Every other comment inside a test body — a sub-step under a section, a note on a line — carries the `- ` prefix. So when one AAA section contains multiple distinct sub-steps (e.g. several setup steps under `// Arrange`), prefix each with `- ` so the structure is scannable at a glance:
 
 ```php
 // Arrange
@@ -274,6 +278,10 @@ describe('{method name}', function () {
       it('returns 403 for workflow from another org group', function () {
         // ...
       });
+  });
+
+  describe('edge case', function () {
+    // Test the rare shapes — put this block last, under the major cases
   });
 });
 ```

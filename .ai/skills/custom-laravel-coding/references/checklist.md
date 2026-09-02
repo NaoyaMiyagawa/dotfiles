@@ -5,7 +5,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## PHP
 
 1. Use `use` imports instead of inline FQNs like `\App\Models\User`.
-2. Prefer calling `__invoke()` for invokable classes for IDE support: `app(Xxx::class)->__invoke()`.
+2. Prefer calling a magic method by name for IDE support: `app(Xxx::class)->__invoke()` for invokable classes, `$uri->__toString()` rather than a `(string)` cast.
 3. Always break constructor args across lines:
     ```php
     public function __construct(
@@ -33,27 +33,29 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 6. Don't wrap instantiation in brackets: `new Xxx()->...`.
 7. Prefer `$x === null` over `is_null($x)`.
 8. Strict membership checks: pass `true` as the third arg to `in_array()`/`array_search()` for allowlists, id lists, role/status lists — loose comparison invites type juggling (`0 == 'foo'`), a correctness and security risk in access checks.
-9. Comment workarounds with their removal condition — why the guard exists and when it can be removed; don't bury the rationale in the PR description alone.
+9. Use `empty()` for a truthy check on a nullable array or string, not `=== null`.
 10. Treat a nullable return type as a contract to guard at every call site: `?->` or an explicit null check everywhere, with a sensible default for the absent case. A mix of guarded and bare dereferences of the same nullable accessor is a latent null crash.
 11. Compare value objects through an `equals(self $other): bool` method, not their unwrapped scalars.
 12. Initialize derived state in the constructor, not lazily; don't add a named constructor/factory that only wraps `new` plus a config read — reserve static named constructors for real logic.
 13. Resolve from the container with `app(X::class)`, not an injected `Container`; don't register a binding in a service provider solely to call one method.
 14. Break a long union/intersection type or generic across multiple lines when it's hard to scan.
-15. Don't leave comments narrating a previous implementation ("was X before") — git holds that history; keep only why the current code is the way it is.
-16. Order fields/array keys to mirror their source of truth (spec, API contract, referenced document); separate inline-commented groups with blank lines so each comment's scope is unambiguous.
-17. Add `#[\Override]` to a method that overrides a parent's.
-18. Switch a long arrow function to a classic closure once the expression no longer fits on one line.
-19. Assign a non-trivial expression to a named variable before passing it as an argument or chaining off it; don't chain off a custom method's return unless it's designed for chaining (returns `$this`).
-20. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line.
-21. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
-22. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables.
-23. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
-24. A validation/normalization helper returns the validated value with a declared return type — native, or a PHPDoc array shape where native syntax can't express it — so the caller reassigns to the same variable (`$header = $this->validateHeader($header)`). Don't write it as a `void` guard the caller can't type off or chain from.
-25. Name a variable that holds a map keyed by a field after that key (`xxxById`, `xxxByKey`) — the name tells the reader the structure at every later use. Applies to plain arrays and `keyBy(...)` results alike.
+15. Order fields/array keys to mirror their source of truth (spec, API contract, referenced document); separate inline-commented groups with blank lines so each comment's scope is unambiguous. When adding a case to a set that already exists in several files — enum, `match` arms, factory states, lang keys, tests — put it beside its closest sibling in every one of them, so the parallel files stay in the same order.
+16. Add `#[\Override]` to a method that overrides a parent's.
+17. Switch a long arrow function to a classic closure once the expression no longer fits on one line.
+18. Assign a non-trivial expression to a named variable before passing it as an argument or chaining off it; don't chain off a custom method's return unless it's designed for chaining (returns `$this`).
+19. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line.
+20. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
+21. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables.
+22. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
+23. A validation/normalization helper returns the validated value with a declared return type — native, or a PHPDoc array shape where native syntax can't express it — so the caller reassigns to the same variable (`$header = $this->validateHeader($header)`). Don't write it as a `void` guard the caller can't type off or chain from.
+24. Name a variable that holds a map keyed by a field after that key (`xxxById`, `xxxByKey`) — the name tells the reader the structure at every later use. Applies to plain arrays and `keyBy(...)` results alike.
+25. Give each case in a multi-case `match` arm its own line rather than extending the existing one.
+26. Gate a minority case behind the domain predicate that names it (`if ($order->hasSubscription()) { ... }`). Don't run its helper on the main path and assign the return value unconditionally: the common path should read as the common path.
 
 ## Exceptions
 
 - Extract a magic string used to identify an error into a named constant on the class that owns it (`public const ERROR_CODE = '...'`), not repeated literals at each comparison site.
+- Throw the project's `NotImplementedException` for a branch that is deliberately not built yet — not a generic `RuntimeException`/`LogicException` that reads like a real failure.
 - Scope a `try`/`catch` to the call that can actually throw, and only for a traced, reachable failure; when two sites hit the same operation but only one can fail, guard that one and leave the other bare.
 
 ## Validation
@@ -67,17 +69,19 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## Class organization
 
 - Follow the project's established directory per kind; don't add a parallel variant (a fresh `Dto/` beside `DataTransferObjects/`). Prefer moving a legacy-located class to the canonical spot over adding a new class beside it.
-- Group a cohesive set of related classes into a dedicated sub-namespace to keep the parent folder slim; but leave a genuinely ambiguous or cross-cutting class at the module root rather than forcing it into a sub-directory.
+- Group a cohesive set of related classes into a dedicated sub-namespace to keep the parent folder slim; but leave a genuinely ambiguous or cross-cutting class at the module root rather than forcing it into a sub-directory. A class several modules use belongs in the root module's directory for its kind, not in whichever feature module happened to need it first.
 - Keep response/output shaping out of action/service/domain classes — extract a dedicated response class so each has one responsibility.
 - An action class exposes only `__invoke()` publicly. When it needs a helper routine, extract that to a dedicated helper/service class rather than adding a second public method on the action.
 - When a controller fetches or resolves a collaborator only to pass it into an action, move that call into the action — controllers pass through request-derived input, not pre-resolved dependencies the action can obtain itself.
 - Extract shared/cross-cutting logic into the repo's designated helper location; don't duplicate the same snippet per call site.
 - A value object owns its own hydration and behaviour — parse a raw array into it via a `fromArray()` named constructor, and put logic that operates on its data on the VO, not inlined in each action/service that consumes it. A second consumer needing the same VO logic is the signal to move it onto the VO.
+- A value object/DTO enforces its own invariants in the constructor — throw when a required argument is empty or invalid rather than accepting it or giving it a permissive default (e.g. don't default a must-be-non-empty array to `[]`; drop the default and validate). A required argument carrying no default also sorts ahead of the optional ones.
 - Match the declared namespace to the file's directory — check every added file, not just the one under discussion.
 
 ## PHPDoc / typing
 
 - Re-index before returning a documented `list<T>` — `->all()`, `->filter()`, `array_filter()`, unsetting elements can preserve keys; call `->values()`/`array_values()` first so the annotation and runtime shape don't diverge.
+- When the same `assert($x instanceof Y)` narrowing repeats across call sites, put it in a typed accessor that asserts once and returns the narrowed type, and let the call sites read that.
 - Add a one-line summary docblock to a method/class whose purpose isn't obvious from its name (domain/protocol logic, unfamiliar algorithms); skip it when the name says everything.
 - Link the exact spec/RFC section when implementing a standard — on every related endpoint/class, not just the first. Keep references to internal PRs, spikes, and tickets out of code, though; those belong in the PR description, not a code comment.
 
@@ -111,6 +115,8 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Return `Illuminate\Database\Eloquent\Collection` when that's what consumers need — push conversion into the producer, don't make every call site re-wrap.
 - Don't span module boundaries with relationships or `withCount()` — query each side independently and pass the needed data explicitly.
 - Push filters into the query (`whereIn`/`where`) instead of fetching a superset and narrowing in PHP with `filter()`/`each()`.
+- Call `pluck()`, `count()`, `exists()` and aggregates on the query, not on a hydrated collection: `$document->histories()->orderBy('id')->pluck('status')`, not `->get()->pluck('status')`.
+- Fold a conditional variant of a query into the same call with `when()` and a nested where group instead of running a second query and merging the results in PHP.
 
 ## Migrations
 
