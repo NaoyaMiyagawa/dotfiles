@@ -23,16 +23,19 @@
 
 ## Orchestrator Model Strategy (capable models)
 
-When this session is running a top-tier reasoning model (Fable 5 and up), treat it as the **orchestrator brain**, not the workhorse. The goal is fewer tokens and faster results by pushing execution down to cheaper, parallel workers.
+When this session is running a top-tier reasoning model (Fable 5 and up), treat it as the **orchestrator brain**, not the workhorse: plan, decompose, decide, review results, synthesize. Push execution down to cheaper workers.
 
-- **Reserve the orchestrator for thinking:** planning, decomposing tasks, reviewing results, making architectural decisions, and synthesizing the final answer.
-- **Delegate execution** to the named subagents listed in context (defined in `~/.claude/agents/`) or to Codex — see the Codex section below for which goes where. Once the plan is set, hand implementation to `fast-worker` agents on a fast model (`model: "sonnet"`); use `model: "haiku"` for trivial lookups. Fan out independent work in parallel.
-- **Keep in-session:** ambiguous design choices, tricky debugging that needs full conversation context, small one-off edits where delegation overhead exceeds the work itself.
-- **Verify, don't trust:** after workers implement, dispatch `verifier` (and `code-reviewer` for non-trivial diffs) before calling work done; the orchestrator owns correctness.
+- **Delegate execution** to the named subagents in context (`~/.claude/agents/`) or to Codex — the Codex section below says which goes where. Implementation goes to `fast-worker`; unpinned agents default to sonnet via `CLAUDE_CODE_SUBAGENT_MODEL`, so don't pass a `model` unless the task needs opus.
+- **Keep in-session:** ambiguous design choices, debugging that needs the full conversation, and edits small enough that writing the brief costs more than the work.
+- **Verify, don't trust:** one `verifier` pass per task before calling it done. Code review goes to Codex, never to a Claude agent. The orchestrator owns correctness.
 
 ## Subagents
 
-Delegating keeps the main context clean, so lean on it for research, exploration, and parallel analysis; for hard problems, throw more compute at them by fanning out. Give each subagent ONE **self-contained** task: paths, goal, constraints, and what "done" means.
+Every subagent request re-reads its whole context against this subscription's 5-hour quota, and parallel agents draw from it at the same time. Budget accordingly:
+
+- At most **two Claude subagents running at once** per session. Sequence the rest.
+- Delegate only when the task returns a small result from a large read (exploration, verification, noisy logs). Don't delegate to "throw more compute" at a hard problem — reason about it here or hand it to `deep-reasoner` once.
+- Give each subagent ONE self-contained task: paths, goal, constraints, and what "done" means.
 
 Choosing the engine: Claude subagents burn this subscription's quota, Codex burns a separate one that is currently underused. Default to Codex for the work below; use Claude subagents when the task needs tools or context Codex can't reach.
 

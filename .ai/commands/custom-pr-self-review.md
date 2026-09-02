@@ -61,7 +61,7 @@ A self-review by the same model that wrote the code shares its blind spots. Get 
 
 ```bash
 cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-codex exec -c model_reasoning_effort=high -o <scratchpad>/codex-review.md "Review the diff from \`git diff <base>...HEAD\` (or \`gh pr diff\`). Read the coding-standard skills under ~/dotfiles/.ai/skills/ for criteria. Flag violations, bugs, risks, and missing tests with file:line and a concrete fix. Do not edit files." < /dev/null
+timeout 600 codex exec -c model_reasoning_effort=medium -o <scratchpad>/codex-review.md "Review the diff from \`git diff <base>...HEAD\` (or \`gh pr diff\`). Read the coding-standard skills under ~/dotfiles/.ai/skills/ for criteria. Flag violations, bugs, risks, and missing tests with file:line and a concrete fix. Do not edit files." < /dev/null
 ```
 
 Fold Codex's findings into the output: **attribute them** (e.g. "Codex flagged …") and reconcile disagreements with your own pass rather than blindly accepting or discarding them. You own correctness.

@@ -7,7 +7,7 @@
       "Bash(git push --force*)"
     ]
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "enabledPlugins": {
     "codex@openai-codex": true,
     "crit@crit": true,
@@ -19,7 +19,8 @@
     "swift-lsp@claude-plugins-official": false
   },
   "env": {
-    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1"
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   },
   "extraKnownMarketplaces": {
     "crit": {
@@ -55,7 +56,6 @@
       {
         "hooks": [
           {
-            "_adrafinil": true,
             "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil release $CLAUDE_CODE_SESSION_ID --tool claude-code",
             "type": "command"
           }
@@ -109,8 +109,8 @@
       {
         "hooks": [
           {
-            "_adrafinil": true,
-            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil release $CLAUDE_CODE_SESSION_ID --tool claude-code",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux clear-progress >/dev/null 2>&1 || true",
+            "timeout": 10,
             "type": "command"
           }
         ]
@@ -118,8 +118,7 @@
       {
         "hooks": [
           {
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux clear-progress >/dev/null 2>&1 || true",
-            "timeout": 10,
+            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil release $CLAUDE_CODE_SESSION_ID --tool claude-code",
             "type": "command"
           }
         ]
@@ -138,30 +137,29 @@
       {
         "hooks": [
           {
-            "_adrafinil": true,
-            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil acquire $CLAUDE_CODE_SESSION_ID --tool claude-code",
-            "type": "command"
-          }
-        ],
-        "matcher": "clear"
-      },
-      {
-        "hooks": [
-          {
             "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && cmux clear-progress >/dev/null 2>&1 || true",
             "timeout": 10,
             "type": "command"
           }
         ],
         "matcher": "startup|resume|clear"
+      },
+      {
+        "hooks": [
+          {
+            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil acquire $CLAUDE_CODE_SESSION_ID --tool claude-code",
+            "type": "command"
+          }
+        ],
+        "matcher": "clear"
       }
     ],
     "Stop": [
       {
         "hooks": [
           {
-            "_adrafinil": true,
-            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil release $CLAUDE_CODE_SESSION_ID --tool claude-code",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook stop; cmux set-progress 1.0 --label done >/dev/null 2>&1; (~/dotfiles/bin/cmux-pr-titles >/dev/null 2>&1 &); } || true",
+            "timeout": 10,
             "type": "command"
           }
         ]
@@ -169,8 +167,7 @@
       {
         "hooks": [
           {
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook stop; cmux set-progress 1.0 --label done >/dev/null 2>&1; (~/dotfiles/bin/cmux-pr-titles >/dev/null 2>&1 &); } || true",
-            "timeout": 10,
+            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil release $CLAUDE_CODE_SESSION_ID --tool claude-code",
             "type": "command"
           }
         ]
@@ -180,7 +177,6 @@
       {
         "hooks": [
           {
-            "_adrafinil": true,
             "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil acquire --tool claude-code --subagent",
             "type": "command"
           }
@@ -191,7 +187,6 @@
       {
         "hooks": [
           {
-            "_adrafinil": true,
             "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil release --tool claude-code --subagent",
             "type": "command"
           }
@@ -202,8 +197,8 @@
       {
         "hooks": [
           {
-            "_adrafinil": true,
-            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil acquire $CLAUDE_CODE_SESSION_ID --tool claude-code",
+            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook prompt-submit; cmux set-progress 0.01 --label working >/dev/null 2>&1; } || true",
+            "timeout": 10,
             "type": "command"
           }
         ]
@@ -211,8 +206,7 @@
       {
         "hooks": [
           {
-            "command": "[ -n \"$CMUX_SURFACE_ID\" ] && command -v cmux >/dev/null 2>&1 && { cmux claude-hook prompt-submit; cmux set-progress 0.01 --label working >/dev/null 2>&1; } || true",
-            "timeout": 10,
+            "command": "/Applications/Adrafinil.app/Contents/Helpers/adrafinil acquire $CLAUDE_CODE_SESSION_ID --tool claude-code",
             "type": "command"
           }
         ]
@@ -229,7 +223,7 @@
       }
     ]
   },
-  "model": "fable",
+  "model": "claude-fable-5-1[1m]",
   "permissions": {
     "allow": [
       "Bash(* | grep*)",
