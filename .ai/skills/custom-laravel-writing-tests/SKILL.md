@@ -37,9 +37,25 @@ Don't add constructor parameters, setters, or config flags to production classes
 
 When the logic under test doesn't read a related record, don't create one to satisfy a foreign key — pass a plain scalar id instead (`verifier_id => 1`). Creating unused rows blurs the test's boundary and slows it down; reach for a factory only when the behaviour actually depends on that record existing.
 
+The same applies to a "belongs to someone else" case: the default factory already yields a foreign record, so don't build the other tenant's whole graph. One sanity `expect()` states the precondition.
+
+```php
+// Arrange
+$invoice = Invoice::factory()->createOne();
+expect($invoice->organization->is($this->user->organization))->toBeFalse();
+
+// Act & Assert
+post(route('invoices.resend', ['invoice' => $invoice->id]))
+    ->assertNotFound();
+```
+
 ## Freeze time to assert a timestamp
 
 When the code under test stamps a datetime, call `freezeTime()` in Arrange and assert the exact value against `now()` — `expect($document->issued_at->toDateTimeString())->toBe(now()->toDateTimeString())`. A `not->toBeNull()` on a timestamp proves the column was touched, not that it was set to the right moment.
+
+## Right-size the suite
+
+Don't add a case an existing case already covers, and don't open a test file for one trivial case. Fold a one-line variant into the neighbouring case instead of a new `it()`. A dev-only or simulation class keeps only the cases that guard its important behaviour. Several cases that each check one header or one payload field usually collapse into one.
 
 ## Assert the behaviour the test names
 
@@ -88,6 +104,8 @@ describe('{method name}', function () {
 ```
 
 4. Resolve the class under test with `app(Xxx::class)->method()` at each call site — don't cache it in a `$this->` property. A stored property loses IDE completion on the lines that use it.
+5. When the code under test reads config, set the value in `beforeEach` (`config()->set('app.url', 'https://app.example.test')`) and assert against the raw literal — don't rebuild the expectation by reading config back or composing it with helpers.
+6. Reuse a constant the production class already declares (`Controller::PAGE_SIZE`) instead of repeating its literal in the test.
 
 ### Dataset
 
@@ -164,6 +182,7 @@ it('xxx', function (
 - **Add a factory class in the same PR as a new Eloquent model.** Without one, tests reach for raw `Model::create([...])` or `DB::insert(...)` and the convention drifts; later contributors then have nothing to copy from. Wire it via the `HasFactory` trait and include at least the columns the model marks as required.
 - **Derive a factory default with the same rule production uses.** When a column's value is computed from another field (e.g. a type/key derived from a path or parent), the factory must apply the _real_ derivation, not a convenient shortcut that happens to pass for simple cases. A factory default that diverges from production logic seeds inconsistent data and lets bugs slip past green tests.
 - **States that persist related records go in `afterCreating()`, not `afterMaking()`.** A state should keep `Model::factory()->someState()->make()` database-free: only assign explicitly-provided associations during `make()`/`state()`, and defer creating any default related record to `afterCreating()`. Building a related record in `afterMaking()` makes `make()` silently hit the database, which surprises callers that expected an unsaved instance.
+- A state method returns `$this->state(fn () => [...])` — no return type on the closure. The per-key lazy form `'key' => fn () => ...` belongs in `definition()` only.
 - Prefer factory state methods when available to reduce hardcoding keys.
   e.g. `withStatus(XxxStatus $status)` when having `status` column.
   If there is no existing state method for a column, you can add it.
@@ -216,7 +235,7 @@ Use AAA comments:
 ...
 ```
 
-Use `// Act & Assert` for compact tests only.
+Use `// Act & Assert` for compact tests only. Add the markers to every case you write, even when the surrounding cases in an older file lack them.
 
 A bare `//` comment in a test is reserved for the three AAA markers only. Every other comment inside a test body — a sub-step under a section, a note on a line — carries the `- ` prefix. So when one AAA section contains multiple distinct sub-steps (e.g. several setup steps under `// Arrange`), prefix each with `- ` so the structure is scannable at a glance:
 
@@ -230,7 +249,8 @@ A bare `//` comment in a test is reserved for the three AAA markers only. Every 
 ### Feature Test Pattern
 
 1. Use `route('...')` to build request URLs.
-2. Prefer combining request and assertion fluently when clear. When the request has a body, pass the payload as a multi-line array literal as the call's second argument (`postJson(route(...), [ 'xxx' => ..., ])`) and chain the assertions directly off it — don't hoist the payload into a separate variable or cram it onto one line.
+2. Prefer combining request and assertion fluently when clear. When the request has a body, pass the payload as a multi-line array literal as the call's second argument (`postJson(route(...), [ 'xxx' => ..., ])`) and chain the assertions directly off it — don't hoist the payload into a separate variable or cram it onto one line. One chained call per line: `withToken()`, the request, and each `assertXxx()` each get their own line. Keep the `route()` call itself on one line unless it carries more than one query parameter.
+3. Reach for the dedicated helper before hand-rolling its equivalent: `withToken()` over a hand-built `Authorization` header, `assertInvalid()` over `assertSessionHasErrors()`, `assertRedirectBack()` over `assertRedirect(route(...))` when the redirect is back, `createOneQuietly()` over building a model by hand, and the model class in `assertDatabaseHas(Model::class, ...)` over the table name.
 
 Example:
 
@@ -251,8 +271,7 @@ $data = $response->...;
 assert($data)->...
 ```
 
-3. Use `describe()` blocks effectively to group same category of test cases
-   By default, you can have these ones.
+4. Use `describe()` blocks to group cases in request-flow order: happy paths first, then validation failures (they reject before business logic runs), then other unhappy paths, then authorization, then edge cases. Major behaviour sits above minor: a secondary feature of an endpoint gets its own `describe` at the bottom, and cases follow the branch order of the production code they exercise.
 
 ```php
 describe('{method name}', function () {
@@ -260,27 +279,27 @@ describe('{method name}', function () {
     // Test successful cases
   });
 
+  describe('unhappy paths - validations', function () {
+    // Test validation error cases
+  });
+
   describe('unhappy paths', function () {
-    // Test error cases
+    // Test other error cases
     // e.g.)
       it('returns 404 for workflow from another org', function () {
         // ...
       });
   });
 
-  describe('validations', function () {
-    // Test validation error cases
-  });
-
   describe('authorization', function () {
-    // Test policy middleware logic
+    // Test policy / middleware logic
       // e.g.)
       it('returns 403 for workflow from another org group', function () {
         // ...
       });
   });
 
-  describe('edge case', function () {
+  describe('edge cases', function () {
     // Test the rare shapes — put this block last, under the major cases
   });
 });
@@ -315,7 +334,18 @@ mock(Xxx::class)
 ### Assertions
 
 - To assert a record persisted, prefer `$model->refresh()` (reloads from DB) over `expect($model)->toBeInstanceOf(...)` + `expect($model->exists)->toBeTrue()` — the refresh both confirms persistence and surfaces the stored values for further assertions.
-- Don't use `->and()`, just use two separate lines for cleanliness.
+- One `expect()` per subject: chain every matcher for that subject off it, and start a new `expect()` line when the subject changes. Never `->and()`.
+
+    ```php
+    expect($signer->request['Message'])
+        ->toBe($digest)
+        ->toHaveLength(32)
+        ->not->toBe(hash('sha256', $digest, binary: true));
+
+    expect($signer->request['KeyId'])->toBe($keyId);
+    ```
+
+- `toBe` for scalars and enums; `toEqual` for arrays and objects, where key order and instance identity aren't part of the contract (JSON columns round-tripped through the DB reorder keys).
 - Use `foreach` over `assert(x)->each()` for cleanliness.
 - For validation failures, always assert with the full expected message map, not the field-only form. Pass the expected message via a dataset column so each case documents its own failure.
 
@@ -422,3 +452,4 @@ No need to write tests for the following classes:
 - Resource
 - DTO
 - Event
+- Policy — the controller tests' `authorization` block covers the policy logic; a separate policy test only earns its place when controller tests mock the policy or assert just that it is wired.
