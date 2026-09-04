@@ -9,7 +9,7 @@ typeset -gU FPATH fpath
 # asdf (0.16+) uses a binary; keep data dir explicit for shim path.
 export ASDF_DATA_DIR="${ASDF_DATA_DIR:-$HOME/.asdf}"
 
-# pnpm global installs land directly in $PNPM_HOME (its bin/ stays empty).
+# pnpm <11 put global bins directly in $PNPM_HOME; pnpm 11 uses $PNPM_HOME/bin.
 export PNPM_HOME="${PNPM_HOME:-$HOME/.local/share/pnpm}"
 
 # Completions installed by tools (e.g. sentry-cli); must be on fpath before
@@ -40,6 +40,7 @@ path=(
     # console-ninja
     "$HOME/.console-ninja/.bin"(N-/)
     # pnpm
+    "$PNPM_HOME/bin"(N-/)
     "$PNPM_HOME"(N-/)
     # sonarqube-cli
     "$HOME/.local/share/sonarqube-cli/bin"(N-/)
