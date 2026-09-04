@@ -23,3 +23,4 @@ Enforcement names below are candidates to verify against current tool docs, not 
 | Multi-line arrow fn → classic closure (checklist PHP #17) | custom Rector/php-cs-fixer rule flagging an `fn (...) =>` whose token span crosses a newline |
 | One case per line in a multi-case `match` arm | custom Rector/php-cs-fixer rule flagging a `match` arm whose case list holds more than one case on a line |
 | `->__toString()` over a `(string)` cast | custom Rector rule rewriting `(string) $expr` where the operand is `Stringable` |
+| No `@property`/`@property-read` PHPDoc on models | small custom PHPStan rule flagging `@property` tags in class docblocks under `Models/` |

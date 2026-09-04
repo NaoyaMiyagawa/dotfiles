@@ -103,6 +103,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Define query scopes with the `#[Scope]` attribute, not the legacy `scopeXxx()` method.
 - Dispatch domain events from the calling service/action, not inside a model method — side effects belong at the orchestration layer.
+- No `@property`/`@property-read` PHPDoc block on a model — the IDE-helper stubs and casts already supply the types, so a hand-written block only drifts from the schema.
 - Expose domain operations as purpose-specific model methods — a single-record updater, or intention-revealing state transitions (`markIssued()`, `markClaimed()`) — rather than making callers reach for a generic or bulk mutator directly. Keep the shared generic/bulk method as an internal helper the named methods delegate to.
 
 ## Eloquent

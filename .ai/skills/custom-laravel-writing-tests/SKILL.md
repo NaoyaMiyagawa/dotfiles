@@ -56,7 +56,7 @@ Scope assertions to the case's stated purpose. When the point is "the response c
 
 ## Running tests
 
-Follow the `custom-php-running-test` skill (`~/dotfiles/.ai/skills/custom-php-running-test/SKILL.md`) — Sail only, minimal containers, `--parallel` for larger scopes.
+Follow the `custom-php-running-test` skill (`~/dotfiles/.ai/skills/custom-php-running-test/SKILL.md`) — Sail only, minimal containers, no `--parallel` locally.
 
 ## Coding standard
 
@@ -87,7 +87,7 @@ describe('{method name}', function () {
 });
 ```
 
-4. Use app(Xxx::class) in each test case for better IDE support when the class is the test target.
+4. Resolve the class under test with `app(Xxx::class)->method()` at each call site — don't cache it in a `$this->` property. A stored property loses IDE completion on the lines that use it.
 
 ### Dataset
 

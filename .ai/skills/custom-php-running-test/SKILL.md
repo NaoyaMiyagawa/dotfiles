@@ -11,7 +11,7 @@ Tests must run inside the Sail stack so PHP extensions, `.env`, DB, and services
 ./vendor/bin/sail artisan test {filepath}
 ```
 
-Omit `{filepath}` to run the full suite, or pass a path or `--filter=` as needed — when the change set is known, prefer passing just those test paths. Add `--parallel` for faster runs on larger scopes.
+Omit `{filepath}` to run the full suite, or pass a path or `--filter=` as needed — when the change set is known, prefer passing just those test paths. Do not pass `--parallel` locally; process startup and per-worker DB setup make it slower than a single process on Sail.
 
 ## Containers must be running (minimal stack)
 
