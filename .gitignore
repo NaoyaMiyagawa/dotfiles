@@ -51,6 +51,8 @@
 !/.claude/scheduled-tasks/
 !/.claude/scheduled-tasks/*/
 !/.claude/scheduled-tasks/*/SKILL.md
+!/.claude/scheduled-tasks/*/scripts/
+!/.claude/scheduled-tasks/*/scripts/**
 
 # .config
 !/.config
