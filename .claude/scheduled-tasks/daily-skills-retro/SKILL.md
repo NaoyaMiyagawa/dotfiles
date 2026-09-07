@@ -13,13 +13,19 @@ Mine my feedback from the past 24 hours for coding-standard essence, and adopt w
 Ground everything in repositories I've actually been working in — infer them from the recent transcripts' project directories (or the current working directory), never from a hardcoded repo name.
 
 ## How to mine the transcripts
-Transcripts live under ~/.claude/projects/<slug>/*.jsonl. Always pass ABSOLUTE paths — the <slug> dirs start with `-`, so relative paths parse as flags. Transcripts are gitignored (dotfiles .gitignore covers `/.claude/**` via the ~/.claude symlink), so shortlist with `fd --no-ignore -e jsonl --changed-within 24h . ~/.claude/projects` and pass `-u` to any rg over them — without those flags the search silently returns nothing. Then extract user turns in ONE jq pass over all shortlisted files — no per-file shell loop (loops here have hung):
-1. Write this jq program to a scratchpad file with the Write tool (not a heredoc — literal control chars trip a command guard), then run `jq -rc -f <program.jq> <absolute files...>` (use `input_filename` in the program if you need per-file attribution):
-  select(.type=="user") | .message.content | if type=="string" then . elif type=="array" then (map(select(.type=="text").text) | join("\n")) else empty end | select(. != "")
-2. Inline review comments left through difit arrive as a **tool_result**, not a text turn, so the program above misses them. Run a second jq pass over the same files selecting `.type=="user"` records whose `.message.content[]` has `.type=="tool_result"` and whose content matches `=====\n<path>:L<n>\n<comment>`; split on `-----`. This stream carried ~200 comments in Aug 2026 against ~30 in text turns — it is the primary source, not a supplement. The blocks mix authors: the agent preloads its own findings with `difit --comment`. A block is user feedback only when it sits under a `Reply N (User)` marker or reads in the user's terse imperative voice; multi-sentence explanatory prose and "Applied — …" notes are agent-authored and are not evidence.
-Skip transcripts whose only user turns are scheduled-task prompts — they contain no live feedback. Real feedback comes from interactive coding sessions. Exclude this run's own live transcript.
+Run the bundled extractor — it already handles every trap below:
 
-Shell state does NOT persist between Bash calls — never stash the jq filter (or any value) in a shell variable for a later command; it evaporates and jq runs with the filename as its program. The `-f <file>` approach above avoids this entirely.
+```bash
+~/dotfiles/.claude/scheduled-tasks/daily-skills-retro/scripts/mine.sh <scratchpad>/mine <this-session-id>
+```
+
+It shortlists `~/.claude/projects/**/*.jsonl` changed in the last 24h (skipping this run's own transcript and `subagents/`), then runs two jq programs from `scripts/` in one pass each:
+- `user-turns.jq` → `turns.jsonl`: user text turns, one JSON string per line, prefixed `### [<session>]`. Drops `<system-reminder>`, `<command-*>`, `<scheduled-task>` and skill-body blocks at the block level (dropping whole turns loses feedback that arrived with an attached reminder).
+- `difit-comments.jq` → `difit.txt`: inline review comments left through difit. These arrive as a **tool_result**, not a text turn, matching `=====\n<path>:L<n>\n<comment>`. This stream carried ~200 comments in Aug 2026 against ~30 in text turns — it is the primary source, not a supplement. Blocks mix authors: the agent preloads its own findings with `difit --comment`. A block is user feedback only when it sits under a `Reply N (User)` marker or reads in the user's terse imperative voice; multi-sentence explanatory prose and "Applied — …" notes are agent-authored and are not evidence.
+
+Skip transcripts whose only user turns are scheduled-task prompts — they contain no live feedback. A retro run re-reads earlier transcripts, so the same difit batch can show up under two sessions; check yesterday's skill commits before adopting something already absorbed.
+
+If you must run jq by hand: pass ABSOLUTE paths (the `<slug>` dirs start with `-`), use `fd --no-ignore` / `rg -u` (transcripts are gitignored via the `~/.claude` symlink), load programs with `-f <file>` written via the Write tool (heredocs with control chars trip a command guard), feed files through `xargs` (zsh doesn't word-split `$VAR`), and never stash anything in a shell variable across Bash calls — state doesn't persist.
 
 ## Grounding (anti-hallucination)
 Before adopting anything, re-verify the supporting quote exists VERBATIM in the transcript (absolute file path + a grep that matches). Mining sub-agents hallucinate quotes; a candidate whose quote can't be located is rejected, not paraphrased into acceptance.
