@@ -28,9 +28,17 @@ description: Applies React/TSX component conventions — file layout, component 
    file that uses them. Create a sibling `Component.types.ts` only when a second
    module imports those types.
 
+## Data lifecycle
+
+6. **Branch on the fetch hook's lifecycle flags.** Render loading, error, and
+   success states from what the data hook already exposes (`isLoading`, `isError`,
+   `data`) — `isLoading && <Spinner />`, `data && <Content />`. Don't derive a
+   parallel status from the presence or absence of fields; when the render logic
+   follows the data lifecycle it reads top to bottom.
+
 ## JSX formatting
 
-6. **Blank line between sibling elements.** Separate adjacent tags at the same
+7. **Blank line between sibling elements.** Separate adjacent tags at the same
    nesting level with one blank line, including after a closing `)}` of a
    conditional. This is `react/jsx-newline` (`{"prevent": false}`) in
    eslint-plugin-react — enable it where the repo lints JSX rather than fixing it
@@ -45,3 +53,8 @@ description: Applies React/TSX component conventions — file layout, component 
   <CopyToClipBoardButton textToCopy={url} />
 </div>
 ```
+
+## Tests
+
+8. **AAA comments in every spec.** Each test body carries `// Arrange`, `// Act`,
+   `// Assert` markers, same as the Laravel test convention.
