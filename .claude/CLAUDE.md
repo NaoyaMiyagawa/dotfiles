@@ -16,6 +16,10 @@
 
 - Before writing or editing PHP code, invoke the `custom-laravel-coding` skill (and `custom-laravel-writing-tests` when touching Pest tests) — don't rely on automatic skill triggering. Its review gate is mandatory before presenting or committing PHP.
 
+## React / TSX
+
+- Before writing or editing React components or pages, invoke the `custom-react-coding` skill — don't rely on automatic skill triggering.
+
 ## Long-running commands
 
 - Never wait in Bash: poll loops (`until/while ...; do sleep N; done`) and any foreground `sleep` used as a wait (`sleep 45 && tail ...`, standalone `sleep`) are all denied by hooks or the harness.
