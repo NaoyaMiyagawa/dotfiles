@@ -54,13 +54,17 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 27. Helper methods are `private` by default; `protected` only for an extension point a subclass actually uses. Drop a public method with no external caller and inline single-use logic into its one caller.
 28. Don't take a parameter whose value is identical at every call site — hardcode the invariant inside the method.
 29. Don't annotate a return type the reader can see at a glance — a factory state closure, a one-line `fn () => [...]`.
+30. Methods on a service/helper class are instance methods, not `static` — the class is container-resolved (rule 13), and a static method only blocks injection and test doubles.
+31. `->reject(fn ($x) => $x === null)` over `->filter(fn ($x) => $x !== null)` — don't negate a predicate inside `filter()`.
+32. On a class that isn't a value object, a method returning a derived value is `getXxx()` (`getBirthdate()`); bare noun names are for VO properties (core rule 6).
+33. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`), and name the subject for what it holds — `$dateValue`, not `$value`.
 
 ## Exceptions
 
 - Extract a magic literal — an error code, a limit, a page size — into a named constant on the class that owns it (`public const ERROR_CODE = '...'`, `private const HISTORY_ITEM_COUNT = 5`), not repeated literals at each use site.
 - Exception classes carry the `Exception` suffix and extend `Exception` directly; a `RuntimeException` parent or `ShouldntReport` only with a stated reason. Status codes are `Response::HTTP_*` constants, never integer literals — in exceptions, responses, and `abort()` alike.
 - Throw the project's `NotImplementedException` for a branch that is deliberately not built yet — not a generic `RuntimeException`/`LogicException` that reads like a real failure.
-- Scope a `try`/`catch` to the call that can actually throw, and only for a traced, reachable failure; when two sites hit the same operation but only one can fail, guard that one and leave the other bare.
+- A `try`/`catch` is only for a traced, reachable failure; when two sites hit the same operation but only one can fail, guard that one and leave the other bare.
 
 ## Validation
 
@@ -134,7 +138,9 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Backfills and data manipulation use the `DB` facade, never Eloquent models — migrations are time-frozen; models reflect today's schema and will drift.
 - Fix a not-yet-merged migration in place; corrective migrations are only for schema already merged or released.
 - Head a data/backfill migration with a comment stating why it's needed and what it does — the schema diff shows the columns, not the reason a one-off backfill exists. When it reshapes or canonicalizes an existing stored structure, show the before→after shape concretely in that comment (or the PR body), not just prose — a reviewer without context can't infer the transformation from words alone.
-- Column order: foreign keys right after the `id`/`uuid` key columns; audit-style FKs (`created_by`, `updated_by`) near `timestamps()`.
+- Column order: foreign keys right after the `id`/`uuid` key columns; audit-style FKs (`created_by`, `updated_by`) near `timestamps()`. Mirror that order when populating a new model instance: `->associate()` the owning relations right after `new Xxx()`, audit relations next to the timestamps.
+- Declare FK columns with `foreignId()`, not `unsignedBigInteger()`.
+- One migration per schema change and one `Schema::table()` call per table per direction — don't split a change across files or `table()` calls without a stated reason.
 
 ## Routing
 

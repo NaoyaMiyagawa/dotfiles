@@ -28,9 +28,14 @@ description: Applies React/TSX component conventions — file layout, component 
    file that uses them. Create a sibling `Component.types.ts` only when a second
    module imports those types.
 
+## Props
+
+6. **Defaulted props last.** In a props type and its destructuring, required
+   props come first and any prop with a default value sits at the end.
+
 ## Data lifecycle
 
-6. **Branch on the fetch hook's lifecycle flags.** Render loading, error, and
+7. **Branch on the fetch hook's lifecycle flags.** Render loading, error, and
    success states from what the data hook already exposes (`isLoading`, `isError`,
    `data`) — `isLoading && <Spinner />`, `data && <Content />`. Don't derive a
    parallel status from the presence or absence of fields; when the render logic
@@ -38,7 +43,7 @@ description: Applies React/TSX component conventions — file layout, component 
 
 ## JSX formatting
 
-7. **Blank line between sibling elements.** Separate adjacent tags at the same
+8. **Blank line between sibling elements.** Separate adjacent tags at the same
    nesting level with one blank line, including after a closing `)}` of a
    conditional. This is `react/jsx-newline` (`{"prevent": false}`) in
    eslint-plugin-react — enable it where the repo lints JSX rather than fixing it
@@ -56,5 +61,5 @@ description: Applies React/TSX component conventions — file layout, component 
 
 ## Tests
 
-8. **AAA comments in every spec.** Each test body carries `// Arrange`, `// Act`,
+9. **AAA comments in every spec.** Each test body carries `// Arrange`, `// Act`,
    `// Assert` markers, same as the Laravel test convention.
