@@ -83,6 +83,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - An action class exposes only `__invoke()` publicly. When it needs a helper routine, extract that to a dedicated helper/service class rather than adding a second public method on the action.
 - An action class is one use case. A small set of operations on one concept (issue / redeem a code, generate / verify a one-time value) lives together in one service class so the data flow is traceable in a single file — not one action class per operation.
 - Don't wrap a single caller's handful of scalars in an input DTO — pass the parameters.
+- A service takes the values it needs (an enum, an array) as arguments, not the model that holds them — the caller shouldn't write state onto a model just so the callee can read it back, and the service stays free of the model.
 - Route a cross-cutting concern such as flow logging through named methods on a dedicated service (`app(ImportFlowLogger::class)->fileAccepted(...)`) with a shared message prefix, not scattered `Log::` calls — call sites are then found by reference.
 - When a controller fetches or resolves a collaborator only to pass it into an action, move that call into the action — controllers pass through request-derived input, not pre-resolved dependencies the action can obtain itself.
 - Extract shared/cross-cutting logic into the repo's designated helper location; don't duplicate the same snippet per call site.

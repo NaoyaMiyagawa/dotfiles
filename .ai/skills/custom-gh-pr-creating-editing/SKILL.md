@@ -30,6 +30,7 @@ Long PR descriptions hurt review more than they help. The diff and commit messag
 - Cut "Notes" / "Behavioural notes" / "Further comments" sections unless they carry information not derivable from the diff (e.g. an out-of-scope decision, a follow-up PR, a non-obvious test gap).
 - **Link, don't duplicate.** When a detail already lives in a committed doc, issue, or ticket, link to it instead of pasting its content into the description — a second copy drifts from the source the moment either side changes. Keep the canonical version in one place and point the PR at it.
 - Validation logs go inside the `<details>` block (see below) so they don't dominate the visible body.
+- **Editing an existing description:** keep everything the user added by hand — screenshots, videos, notes — and change only the sections the request covers.
 
 If the resulting body feels short, that's the goal. A reviewer should be able to read it in under 30 seconds.
 
@@ -85,6 +86,9 @@ If you ran validation commands, put them at the end of the description inside a 
 
 ## Assignees
 Assign @NaoyaMiyagawa.
+
+## Reviewers
+Don't request reviewers unless the user names them — the author self-reviews first.
 
 ## Labels
 When it's a refactoring work, tag "Refactoring".
