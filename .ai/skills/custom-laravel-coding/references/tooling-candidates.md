@@ -24,3 +24,4 @@ Enforcement names below are candidates to verify against current tool docs, not 
 | One case per line in a multi-case `match` arm | custom Rector/php-cs-fixer rule flagging a `match` arm whose case list holds more than one case on a line |
 | `->__toString()` over a `(string)` cast | custom Rector rule rewriting `(string) $expr` where the operand is `Stringable` |
 | No `@property`/`@property-read` PHPDoc on models | small custom PHPStan rule flagging `@property` tags in class docblocks under `Models/` |
+| Test-body `//` comments other than `Arrange`/`Act`/`Assert` carry a `- ` prefix (writing-tests skill, AAA Comments) | custom Pint/php-cs-fixer rule over comment tokens inside `test()`/`it()` closures: flag `// text` that is not one of the three markers and does not start with `// - ` |

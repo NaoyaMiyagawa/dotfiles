@@ -44,20 +44,21 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 17. Switch a long arrow function to a classic closure once the expression no longer fits on one line.
 18. Assign a non-trivial expression to a named variable before passing it as an argument or chaining off it; don't chain off a custom method's return unless it's designed for chaining (returns `$this`).
 19. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line.
-20. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
-21. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables. Prefix a contextual aside (a temporary limitation, a scope note) with `NOTE:`; a why-comment stays bare.
-22. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
-23. A validation/normalization helper returns the validated value with a declared return type — native, or a PHPDoc array shape where native syntax can't express it — so the caller reassigns to the same variable (`$header = $this->validateHeader($header)`). Don't write it as a `void` guard the caller can't type off or chain from.
-24. Name a variable that holds a map keyed by a field after that key (`xxxById`, `xxxByKey`) — the name tells the reader the structure at every later use. Applies to plain arrays and `keyBy(...)` results alike.
-25. Give each case in a multi-case `match` arm its own line rather than extending the existing one.
-26. Gate a minority case behind the domain predicate that names it (`if ($order->hasSubscription()) { ... }`). Don't run its helper on the main path and assign the return value unconditionally: the common path should read as the common path.
-27. Helper methods are `private` by default; `protected` only for an extension point a subclass actually uses. Drop a public method with no external caller and inline single-use logic into its one caller.
-28. Don't take a parameter whose value is identical at every call site — hardcode the invariant inside the method.
-29. Don't annotate a return type the reader can see at a glance — a factory state closure, a one-line `fn () => [...]`.
-30. Methods on a service/helper class are instance methods, not `static` — the class is container-resolved (rule 13), and a static method only blocks injection and test doubles.
-31. `->reject(fn ($x) => $x === null)` over `->filter(fn ($x) => $x !== null)` — don't negate a predicate inside `filter()`.
-32. On a class that isn't a value object, a method returning a derived value is `getXxx()` (`getBirthdate()`); bare noun names are for VO properties (core rule 6).
-33. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`), and name the subject for what it holds — `$dateValue`, not `$value`.
+20. In a fluent chain, a comment about one step goes on its own line above that step, never trailing after the call — a trailing note pushes the line past the ceiling and hides which step it explains.
+21. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
+22. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables. Prefix a contextual aside (a temporary limitation, a scope note) with `NOTE:`; a why-comment stays bare.
+23. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
+24. A validation/normalization helper returns the validated value with a declared return type — native, or a PHPDoc array shape where native syntax can't express it — so the caller reassigns to the same variable (`$header = $this->validateHeader($header)`). Don't write it as a `void` guard the caller can't type off or chain from.
+25. Name a variable that holds a map keyed by a field after that key (`xxxById`, `xxxByKey`) — the name tells the reader the structure at every later use. Applies to plain arrays and `keyBy(...)` results alike.
+26. Give each case in a multi-case `match` arm its own line rather than extending the existing one.
+27. Gate a minority case behind the domain predicate that names it (`if ($order->hasSubscription()) { ... }`). Don't run its helper on the main path and assign the return value unconditionally: the common path should read as the common path.
+28. Helper methods are `private` by default; `protected` only for an extension point a subclass actually uses. Drop a public method with no external caller and inline single-use logic into its one caller.
+29. Don't take a parameter whose value is identical at every call site — hardcode the invariant inside the method.
+30. Don't annotate a return type the reader can see at a glance — a factory state closure, a one-line `fn () => [...]`.
+31. Methods on a service/helper class are instance methods, not `static` — the class is container-resolved (rule 13), and a static method only blocks injection and test doubles.
+32. `->reject(fn ($x) => $x === null)` over `->filter(fn ($x) => $x !== null)` — don't negate a predicate inside `filter()`.
+33. On a class that isn't a value object, a method returning a derived value is `getXxx()` (`getBirthdate()`); bare noun names are for VO properties (core rule 6).
+34. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`), and name the subject for what it holds — `$dateValue`, not `$value`.
 
 ## Exceptions
 
