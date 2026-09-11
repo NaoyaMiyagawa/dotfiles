@@ -1,19 +1,18 @@
 # Laravel coding checklist — long tail
 
-The review gate in `../SKILL.md` enforces this list; the core rules live there. When a rule here keeps being violated in practice, promote it into the core (move, don't copy). Mechanical rules destined for lint tooling are mapped in [tooling-candidates.md](tooling-candidates.md).
+The review gate in `../SKILL.md` enforces this list; the core rules live there. When a rule here keeps being violated in practice, promote it into the core (move, don't copy). Mechanical rules destined for lint tooling are mapped in [tooling-candidates.md](tooling-candidates.md). Cross-references use section and rule names, not numbers, so a reorder doesn't break them.
 
-## PHP
+## PHP — formatting and syntax
 
 1. Use `use` imports instead of inline FQNs like `\App\Models\User`; no `as` aliases unless a name collision forces one.
-2. Prefer calling a magic method by name for IDE support: `app(Xxx::class)->__invoke()` for invokable classes, `$uri->__toString()` rather than a `(string)` cast.
-3. Always break constructor args across lines:
+2. Always break constructor args across lines:
     ```php
     public function __construct(
         public readonly string $xxx,
     ) {}
     ```
-4. Use string interpolation when possible (`"This is {$user->name}"`). When interpolation isn't feasible (a reusable format string, positional args), prefer `vsprintf` over `sprintf`. A string that is itself multi-line text (CSS, HTML, SQL) is concatenated one logical line per source line, indented as the text would be — not packed two declarations to a line.
-5. Always use named args when an argument list is broken across lines — positional args are only for a call that fits on one line:
+3. Use string interpolation when possible (`"This is {$user->name}"`). When interpolation isn't feasible (a reusable format string, positional args), prefer `vsprintf` over `sprintf`. A string that is itself multi-line text (CSS, HTML, SQL) is concatenated one logical line per source line, indented as the text would be — not packed two declarations to a line.
+4. Always use named args when an argument list is broken across lines — positional args are only for a call that fits on one line:
     ```php
     // Bad
     $this->sender->send(
@@ -30,41 +29,58 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
     );
     ```
     On a one-line call, name only an argument whose meaning the call doesn't already show — a bare boolean or a magic number. A value that reads as itself stays positional (`setPaper('A4', 'landscape')`, `setOrder(1)`), even when calling into a package.
-6. Don't wrap instantiation in brackets: `new Xxx()->...`.
-7. Prefer `$x === null` over `is_null($x)`.
-8. Strict membership checks: pass `true` as the third arg to `in_array()`/`array_search()` for allowlists, id lists, role/status lists — loose comparison invites type juggling (`0 == 'foo'`), a correctness and security risk in access checks.
-9. Use `empty()` for a truthy check on a nullable array or string, not `=== null`.
-10. Treat a nullable return type as a contract to guard at every call site: `?->` or an explicit null check everywhere, with a sensible default for the absent case. A mix of guarded and bare dereferences of the same nullable accessor is a latent null crash.
-11. Compare value objects through an `equals(self $other): bool` method, not their unwrapped scalars.
-12. Initialize derived state in the constructor, not lazily; don't add a named constructor/factory that only wraps `new` plus a config read — reserve static named constructors for real logic.
-13. `new` is for value-ish classes only — DTOs, value objects, validation rules, events, models. Resolve actions and services with `app(X::class)`, in tests too; not `new`, not an injected `Container`. Don't register a binding in a service provider solely to call one method.
-14. Break a long union/intersection type or generic across multiple lines when it's hard to scan.
-15. Order fields/array keys to mirror their source of truth (spec, API contract, referenced document); order constants and methods by lifecycle — success before failure, `markPublished()` before `markArchived()` — and mirror that order in the test file; separate inline-commented groups with blank lines so each comment's scope is unambiguous. When adding a case to a set that already exists in several files — enum, `match` arms, factory states, lang keys, tests — put it beside its closest sibling in every one of them, so the parallel files stay in the same order.
-16. Add `#[\Override]` to a method that overrides a parent's.
-17. Switch a long arrow function to a classic closure once the expression no longer fits on one line.
-18. Assign a non-trivial expression to a named variable before passing it as an argument or chaining off it; don't chain off a custom method's return unless it's designed for chaining (returns `$this`).
-19. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line.
-20. A comment about one step of a fluent chain or one entry of an array literal goes on its own line above it, never trailing after it (`// Community Partner: avoid line break in header` above `'D' => 23,`) — a trailing note pushes the line past the ceiling and hides which line it explains.
-21. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
-22. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables. Prefix a contextual aside (a temporary limitation, a scope note) with `NOTE:`; a why-comment stays bare.
-23. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
-24. A validation/normalization helper returns the validated value with a declared return type — native, or a PHPDoc array shape where native syntax can't express it — so the caller reassigns to the same variable (`$header = $this->validateHeader($header)`). Don't write it as a `void` guard the caller can't type off or chain from.
-25. Name a variable that holds a map keyed by a field after that key (`xxxById`, `xxxByKey`) — the name tells the reader the structure at every later use. Applies to plain arrays and `keyBy(...)` results alike.
-26. Give each case in a multi-case `match` arm its own line rather than extending the existing one.
-27. Gate a minority case behind the domain predicate that names it (`if ($order->hasSubscription()) { ... }`). Don't run its helper on the main path and assign the return value unconditionally: the common path should read as the common path.
-28. Helper methods are `private` by default; `protected` only for an extension point a subclass actually uses. Drop a public method with no external caller and inline single-use logic into its one caller.
-29. Don't take a parameter whose value is identical at every call site — hardcode the invariant inside the method.
-30. Don't annotate a return type the reader can see at a glance — a factory state closure, a one-line `fn () => [...]`.
-31. Methods on a service/helper class are instance methods, not `static` — the class is container-resolved (rule 13), and a static method only blocks injection and test doubles.
-32. `->reject(fn ($x) => $x === null)` over `->filter(fn ($x) => $x !== null)` — don't negate a predicate inside `filter()`.
-33. On a class that isn't a value object, a method returning a derived value is `getXxx()` (`getBirthdate()`); bare noun names are for VO properties (core rule 6).
-34. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`), and name the subject for what it holds — `$dateValue`, not `$value`.
-35. A variable or constant holding a measurement carries its unit (`$cellPaddingInPoints`, `TIMEOUT_IN_SECONDS`) — a bare `$padding` leaves the reader guessing px vs pt.
+5. Don't wrap instantiation in brackets: `new Xxx()->...`.
+6. Break a long union/intersection type or generic across multiple lines when it's hard to scan.
+7. Switch a long arrow function to a classic closure once the expression no longer fits on one line.
+8. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line.
+9. Give each case in a multi-case `match` arm its own line rather than extending the existing one.
+10. Don't annotate a return type the reader can see at a glance — a factory state closure, a one-line `fn () => [...]`.
+
+## PHP — comments
+
+11. A comment about one step of a fluent chain or one entry of an array literal goes on its own line above it, never trailing after it (`// wide enough for the longest header label` above `'D' => 23,`) — a trailing note pushes the line past the ceiling and hides which line it explains.
+12. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
+13. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables. Prefix a contextual aside (a temporary limitation, a scope note) with `NOTE:`; a why-comment stays bare.
+
+## PHP — expressions and null handling
+
+14. Prefer calling a magic method by name for IDE support: `app(Xxx::class)->__invoke()` for invokable classes, `$uri->__toString()` rather than a `(string)` cast.
+15. Prefer `$x === null` over `is_null($x)`.
+16. Strict membership checks: pass `true` as the third arg to `in_array()`/`array_search()` for allowlists, id lists, role/status lists — loose comparison invites type juggling (`0 == 'foo'`), a correctness and security risk in access checks.
+17. Use `empty()` to check a nullable array or string for emptiness, not `=== null`.
+18. Treat a nullable return type as a contract to guard at every call site: `?->` or an explicit null check everywhere, with a sensible default for the absent case. A mix of guarded and bare dereferences of the same nullable accessor is a latent null crash.
+19. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
+20. `->reject(fn ($x) => $x === null)` over `->filter(fn ($x) => $x !== null)` — don't negate a predicate inside `filter()`.
+21. Assign a non-trivial expression to a named variable before passing it as an argument or chaining off it; don't chain off a custom method's return unless it's designed for chaining (returns `$this`).
+
+## PHP — naming
+
+22. Name a variable that holds a map keyed by a field after that key (`xxxById`, `xxxByKey`) — the name tells the reader the structure at every later use. Applies to plain arrays and `keyBy(...)` results alike.
+23. On a class that isn't a value object, a method returning a derived value is `getXxx()` (`getBirthdate()`); bare noun names are for VO properties (core rule *Value holders are `final readonly` with `public readonly` properties*).
+24. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`), and name the subject for what it holds — `$dateValue`, not `$value`.
+25. A variable or constant holding a measurement carries its unit (`$cellPaddingInPoints`, `TIMEOUT_IN_SECONDS`) — a bare `$padding` leaves the reader guessing px vs pt.
+
+## PHP — design and structure
+
+26. Compare value objects through an `equals(self $other): bool` method, not their unwrapped scalars.
+27. Initialize derived state in the constructor, not lazily; don't add a named constructor/factory that only wraps `new` plus a config read — reserve static named constructors for real logic.
+28. `new` is for value-ish classes only — DTOs, value objects, validation rules, events, models. Resolve actions and services with `app(X::class)`, in tests too; not `new`, not an injected `Container`. Don't register a binding in a service provider solely to call one method.
+29. Methods on a service/helper class are instance methods, not `static` — the class is container-resolved (see the `new`-vs-`app()` rule under *PHP — design and structure*), and a static method only blocks injection and test doubles.
+30. Order fields/array keys to mirror their source of truth (spec, API contract, referenced document); order constants and methods by lifecycle — success before failure, `markAsPublished()` before `markAsArchived()` — and mirror that order in the test file; separate inline-commented groups with blank lines so each comment's scope is unambiguous. When adding a case to a set that already exists in several files — enum, `match` arms, factory states, lang keys, tests — put it beside its closest sibling in every one of them, so the parallel files stay in the same order.
+31. Add `#[Override]` to a method that overrides a parent's, importing the attribute with `use Override;` rather than writing `#[\Override]` inline.
+32. A validation/normalization helper returns the validated value with a declared return type — native, or a PHPDoc array shape where native syntax can't express it — so the caller reassigns to the same variable (`$header = $this->validateHeader($header)`). Don't write it as a `void` guard the caller can't type off or chain from.
+33. Gate a minority case behind the domain predicate that names it (`if ($order->hasSubscription()) { ... }`). Don't run its helper on the main path and assign the return value unconditionally: the common path should read as the common path.
+34. Helper methods are `private` by default; `protected` only for an extension point a subclass actually uses. Drop a public method with no external caller and inline single-use logic into its one caller.
+35. Don't take a parameter whose value is identical at every call site — hardcode the invariant inside the method.
+
+## Constants and literals
+
+- A literal becomes a named constant when it is reused across classes or its name says something the value doesn't (`FALLBACK_PAPER_SIZE = 'A4'`, `COLUMN_WIDTH_DATETIME = 26`, `ERROR_CODE`, `HISTORY_ITEM_COUNT`). A one-off entry in a per-class config array (a column width, a header label) stays a literal with a comment line above it (see the comment-above-the-line rule under *PHP — comments*) — a constant for it is churn.
+- Status codes are `Response::HTTP_*` constants, never integer literals — in exceptions, responses, and `abort()` alike.
 
 ## Exceptions
 
-- A literal becomes a named constant when it is reused across classes or its name says something the value doesn't (`FALLBACK_PAPER_SIZE = 'A4'`, `COLUMN_WIDTH_DATETIME = 26`, `ERROR_CODE`, `HISTORY_ITEM_COUNT`). A one-off entry in a per-class config array (a column width, a header label) stays a literal with a comment line above it (rule 20) — a constant for it is churn.
-- Exception classes carry the `Exception` suffix and extend `Exception` directly; a `RuntimeException` parent or `ShouldntReport` only with a stated reason. Status codes are `Response::HTTP_*` constants, never integer literals — in exceptions, responses, and `abort()` alike.
+- Exception classes carry the `Exception` suffix and extend `Exception` directly; a `RuntimeException` parent or `ShouldntReport` only with a stated reason.
 - Throw the project's `NotImplementedException` for a branch that is deliberately not built yet — not a generic `RuntimeException`/`LogicException` that reads like a real failure.
 - A `try`/`catch` is only for a traced, reachable failure; when two sites hit the same operation but only one can fail, guard that one and leave the other bare.
 
@@ -127,7 +143,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Reach related rows through the relation on the instance you already hold — `$parent->children()->update([...])`, `$comment->post()->lockForUpdate()->first()` — not a fresh `Child::query()->where('parent_id', ...)`; never re-fetch a model the route already bound.
 - Fix N+1 loading with eager loading (`with()` / `loadMissing()`), not a cache layer.
 - Don't set `updated_at` manually unless the value must intentionally diverge from "now" (backfills, replication).
-- Prefer time-ordered UUIDs (`Str::orderedUuid()`) populated by a trait/hook, not assigned by hand per record; keep the model hook and any bulk-insert path on the same strategy.
+- Prefer time-ordered UUIDs (`Str::orderedUuid()`) populated by a trait/hook, not assigned by hand per record (the bulk-insert path follows the same strategy — core rule *Bulk insert when creating multiple records*).
 - Use `firstOrFail()`/`findOrFail()` when a record's existence is an expected invariant — fail loudly at the fetch, not with `first()` + null-guarding. Never reach for `sole()` for a single expected record; `firstOrFail()` reads clearly, `sole()` obscures intent.
 - When removing a redundant cast, replace it with the explicit primitive cast (e.g. `'string'`) rather than silently dropping the line; delete any guard the change makes unreachable, confirming against the column's real DB nullability.
 - Return `Illuminate\Database\Eloquent\Collection` when that's what consumers need — push conversion into the producer, don't make every call site re-wrap.

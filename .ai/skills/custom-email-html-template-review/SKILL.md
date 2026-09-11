@@ -5,11 +5,7 @@ description: Review and refactor Blade-rendered email HTML for client compatibil
 
 # Email HTML template review
 
-## Goal
-
-Take **rendered HTML** (or a Blade view plus its sample render) and determine whether it is safe for email clients. Return **structured feedback** and **rewritten HTML** (and, when relevant, **template-level changes**) that remove client-breaking patterns.
-
-Email HTML is not web HTML. Assume **no flexbox/grid for layout**, **limited `<style>` support**, and **no JavaScript**. Treat Outlook (Word engine) and Gmail web as mandatory compatibility targets unless the user names a narrower audience.
+Audit **rendered HTML** (or a Blade view plus its sample render) for email-client safety and return prioritized findings, rewritten HTML, and the Blade-source changes behind them. Email HTML is not web HTML: no flexbox/grid for layout, limited `<style>` support, no JavaScript. Outlook (Word engine) and Gmail web are mandatory targets unless the user names a narrower audience.
 
 ## Inputs to request if missing
 

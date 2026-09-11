@@ -1,21 +1,11 @@
 ---
 name: custom-empirical-prompt-tuning
-description: Methodology for iteratively improving agent-facing instructions (skills / slash commands / CLAUDE.md / code-gen prompts) by having a bias-free executor run them and evaluating two-sidedly (executor self-report + instruction-side metrics) until improvements plateau. Use after creating or revising a prompt or skill.
+description: Iteratively improve agent-facing instructions (skills, slash commands, CLAUDE.md, code-gen prompts) by having a blank-slate subagent run them and evaluating two-sidedly until improvements plateau. Use after creating or substantially revising a skill or prompt, when an agent misbehaves and the cause may be instruction ambiguity, or when hardening a frequently used prompt. Not for one-off throwaway prompts.
 ---
 
 # Empirical Prompt Tuning
 
 The author of a prompt cannot judge its quality. The clearer the writer thinks something is, the more likely another agent will stumble on it. The core of this skill is to **have a bias-free executor actually run the instruction, evaluate it two-sidedly, and iterate**. Do not stop until improvements plateau.
-
-## When to use
-
-- Right after creating or substantially revising a skill / slash command / task prompt
-- When an agent does not behave as expected and you want to attribute the cause to ambiguity on the instruction side
-- When hardening high-importance instructions (frequently used skills, automation-core prompts)
-
-When not to use:
-- One-off throwaway prompts (evaluation cost does not pay off)
-- When the goal is not to improve success rate but merely to reflect the writer's subjective preferences
 
 ## Workflow
 

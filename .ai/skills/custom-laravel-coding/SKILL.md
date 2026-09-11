@@ -58,6 +58,6 @@ The core rules below are what to hold in mind while writing. The long tail lives
 
 Changed PHP is not done until it has passed a style review. Before presenting or committing:
 
-1. Review the diff — only the diff — against the Core rules above, [references/checklist.md](references/checklist.md), and, for test files, the `custom-laravel-writing-tests` skill.
+1. Review the diff — only the diff — against the Core rules above and [references/checklist.md](references/checklist.md); for test files, also the `custom-laravel-writing-tests` skill's core rules and its `references/checklist.md`.
 2. For a non-trivial diff, offload the pass to Codex per the global Codex rules, pointing it at those files as its checklist. For a small diff, do the pass yourself in-session.
 3. Fix the violations, then present.

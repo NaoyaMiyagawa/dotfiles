@@ -1,6 +1,6 @@
 ---
 name: custom-obsidian-wiki-write
-description: Write or update knowledge in the personal Obsidian knowledge wiki (vault root in `$OBSIDIAN_VAULT`) (the ingest / file-back workflow). Use when the user wants to capture a requirement, spec, business rule, decision, or architecture note; record what was just built or learned; ingest a source document; or save a synthesized answer back as a wiki page — e.g. "add this to the wiki", "document this in Obsidian", "ingest these notes", "update the auth page". This is the Obsidian vault, NOT the LLM Wiki desktop app (use the `llm-wiki` skill for that). For Obsidian syntax details, also use the `obsidian-markdown` skill.
+description: Write or update knowledge in the personal Obsidian knowledge wiki. Use when the user wants to capture a requirement, spec, business rule, decision, or architecture note; record what was just built or learned; ingest a source document; or file a synthesized answer back as a page ("add this to the wiki", "document this in Obsidian", "update the auth page"). NOT for the LLM Wiki desktop app (`llm-wiki` skill); pair with `obsidian-markdown` for syntax.
 ---
 
 # Custom Obsidian Wiki Write

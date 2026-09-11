@@ -99,11 +99,6 @@ When it's a refactoring work, tag "Refactoring".
 ## Code review (local, different model)
 This repo does not use PR review bots — do not post any `@`-mention review trigger on the PR. After creating or editing the PR, run the review **locally with the Codex CLI** — a different model from Claude Code, for an unbiased, different-perspective check. Review against the applicable coding-standard skills under `~/dotfiles/.ai/skills/` (Laravel coding, Laravel tests, PHP linter/static-analysis/test, email templates), not generic advice.
 
-Use the `/custom-pr-self-review` command (it loads these standards and includes the Codex step), or invoke Codex directly:
-
-```bash
-cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-timeout 600 codex exec -c model_reasoning_effort=medium -o <scratchpad>/codex-review.md "Review \`gh pr diff\` for this PR against the applicable coding-standard skills under ~/dotfiles/.ai/skills/ (read the ones relevant to the changed files for criteria). Flag violations, bugs, risks, and missing tests with file:line and a concrete fix. Do not edit files." < /dev/null
-```
+Run the `/custom-pr-self-review` command — it loads these standards, runs PHPStan, and carries the exact Codex invocation. Don't restate the command here.
 
 Skip only if Codex is rate-limited/unauthenticated; note that you couldn't get the second opinion. Surface its findings to the user — don't silently accept or discard them.

@@ -1,6 +1,6 @@
 ---
 name: custom-code-review-html
-description: Render a code review as a self-contained HTML report — findings in risk order, verbatim before/after code panes, per-finding triage (accept/reject/comment), and a markdown hand-off to paste back into the implementing session. Use when reviewing a large diff, branch, or PR and the user wants an HTML page or report instead of terminal output, when a review needs a checklist the human can work through one point at a time, or when another review skill needs a visual output format.
+description: Render a code review as a self-contained, triageable HTML report with a markdown hand-off. Use when reviewing a large diff, branch, or PR and the user wants an HTML page or report instead of terminal output, when the reviewer needs to work through findings one at a time, or when another review skill needs a visual output format.
 ---
 
 # Code Review HTML Report
