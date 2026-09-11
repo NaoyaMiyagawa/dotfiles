@@ -67,8 +67,8 @@ Scope assertions to the case's stated purpose. When the point is "the response c
 2. Import Pest Laravel functions when used:
     - `use function Pest\Laravel\actingAs;`
     - `use function Pest\Laravel\mock;`
-3. `describe('<method-name>')` must match the subject public method — one `describe` per method; merge cases into the existing block instead of duplicating a method's `describe`.
-4. Name cases without a leading "it": `it('creates the record')`, not `it('it creates the record')`.
+3. `describe('<method-name>')` must match the subject public method — one `describe` per method; merge cases into the existing block instead of duplicating a method's `describe`. When the block's `beforeEach` fakes something one case needs real (`Excel::fake()` vs a rendered download), swap the fake off inside that case — don't open a sibling `describe` for the same method.
+4. Name cases without a leading "it": `it('creates the record')`, not `it('it creates the record')`. Double-quote a name that contains an apostrophe (`it("exports a programme's sessions")`) — a backslash escape in the name breaks grepping for the failed case later.
 
 ## Running tests
 
@@ -78,7 +78,7 @@ Follow the `custom-php-running-test` skill (`~/dotfiles/.ai/skills/custom-php-ru
 
 ### beforeEach
 
-1. Create local variables first, then assign to `$this` properties.
+1. Create local variables first, then assign to `$this` properties. When every case in the file acts as the same user, `actingAs()` once here, not per case — and name the variable by role (`$superAdmin`, `$reviewer`) so the role is visible wherever it's used, not `$user`.
 2. Exception: static literal values that do not come from factories.
 3. Set fakes in `beforeEach` (`Event::fake([...])`, `Storage::fake(...)`). When the method under test dispatches a job, event, or mail, fake `Queue`/`Event`/`Mail` in `beforeEach` for every case in the block regardless of case type — the thing being tested is always whether it dispatches, so the fake belongs in setup, not per-case.
 
@@ -190,7 +190,7 @@ it('xxx', function (
   e.g.
     - definitions() ... factory's default method
       // relationships
-    - forXxx($modelOrFactory) ... only when we need to specify relationship name with ->for(). Never pass a literal relationship-key string at the call site (`->for($model, 'reviewer')`) — wrap it in a `forXxx()` state method instead, adding one if it doesn't exist yet.
+    - forXxx($modelOrFactory) ... only when we need to specify relationship name with ->for(). Never pass a literal relationship-key string at the call site (`->for($model, 'reviewer')`) — wrap it in a `forXxx()` state method instead, adding one if it doesn't exist yet. Its body is `return $this->for($owner, 'owner');` when the model declares the relationship — not a `state()` closure writing the raw `owner_id` column.
     - hasXxx($modelOrFactory) ... only when we need to specify relationship name with ->has().
       // states
     - xxx() ... higher level api for setting specific data for one or more columns (e.g. `pending()`)
@@ -198,6 +198,7 @@ it('xxx', function (
 - Use `->forEachSequence()` when all patterns must be covered.
 - Use `->createOne()` / `->createMany()` for better return types.
 - Prefer `::factory(x)` over `->count(x)` when creating more than one record.
+- Order a factory chain at the call site: `count()` (where it must appear, e.g. nested inside `->has()`), then relationship states (`->has(...)`, `->forXxx(...)`), then column states (`->active()`, `->withXxx(...)`), then the `create*()` call.
 - Extract common lines when calling multiple same factories and they are similar.
   e.g.
 
@@ -249,8 +250,8 @@ A bare `//` comment in a test is reserved for the three AAA markers only. Every 
 ### Feature Test Pattern
 
 1. Use `route('...')` to build request URLs.
-2. Prefer combining request and assertion fluently when clear. When the request has a body, pass the payload as a multi-line array literal as the call's second argument (`postJson(route(...), [ 'xxx' => ..., ])`) and chain the assertions directly off it — don't hoist the payload into a separate variable or cram it onto one line. One chained call per line: `withToken()`, the request, and each `assertXxx()` each get their own line. Keep the `route()` call itself on one line unless it carries more than one query parameter.
-3. Reach for the dedicated helper before hand-rolling its equivalent: `withToken()` over a hand-built `Authorization` header, `assertInvalid()` over `assertSessionHasErrors()`, `assertRedirectBack()` over `assertRedirect(route(...))` when the redirect is back, `createOneQuietly()` over building a model by hand, and the model class in `assertDatabaseHas(Model::class, ...)` over the table name.
+2. Prefer combining request and assertion fluently when clear. When the request has a body, pass the payload as a multi-line array literal as the call's second argument (`postJson(route(...), [ 'xxx' => ..., ])`) and chain the assertions directly off it — don't hoist the payload into a separate variable or cram it onto one line. One chained call per line: `withToken()`, the request, and each `assertXxx()` each get their own line — the first assertion breaks onto its own line even when it is the only one (`])` then `->assertOk();`), so the next assertion added lines up with it. Keep the `route()` call itself on one line unless it carries more than one route or query parameter.
+3. A response assertion reused across test files (a downloaded-PDF check, a JSON envelope check) becomes a `TestResponse` macro in `tests/Pest.php` so it chains like the built-ins: `post(...)->assertDownloadedPdf()`, not a standalone helper taking `$response`. Reach for the dedicated helper before hand-rolling its equivalent: `withToken()` over a hand-built `Authorization` header, `assertInvalid()` over `assertSessionHasErrors()`, `assertRedirectBack()` over `assertRedirect(route(...))` when the redirect is back, `createOneQuietly()` over building a model by hand, and the model class in `assertDatabaseHas(Model::class, ...)` over the table name.
 
 Example:
 
@@ -409,7 +410,7 @@ mock(Xxx::class)
 
 Every production class under test gets its **own** test file mirroring its name — don't append a new class's cases to a collaborator's existing test file just because the flow passes through it (e.g. a job's cases belong in `{Job}Test.php`, not in the controller test that dispatches it).
 
-Test file name must mirror the production class name verbatim, including suffixes like `Job`, `Service`, `Action`, `Controller`.
+Test file name must mirror the production class name verbatim, including suffixes like `Job`, `Service`, `Action`, `Controller`. The class is the one the test enters through: a case that sends an HTTP request belongs in that route's `{Controller}Test.php`, even when the behaviour under test lives in an export or service class the controller calls — a `{Service}Test.php` full of `post(route(...))` calls has a name that lies about its contents.
 
 - `RunManualPostIssuanceActionJob` → `RunManualPostIssuanceActionJobTest.php` (not `RunManualPostIssuanceActionTest.php`)
 - `MPIADocumentsController` → `MPIADocumentsControllerTest.php`
@@ -438,6 +439,8 @@ For an event-listener class, add one case between `beforeEach()` and the `handle
 ### Regression tests
 
 When adding a test to guard against a specific 500/error you just fixed, assert only the success contract (e.g. `assertOk()` / page renders) on the route that previously broke. Don't over-specify by enumerating `->missing(...)` checks for fields the PR removes or by asserting the absence of every offending shape — those add maintenance cost without strengthening the regression guarantee.
+
+For a query-count fix (an N+1), the regression case asserts the count itself — `expectsDatabaseQueryCount(n)` or a `DB::listen()` tally against several records — so it fails on the unfixed code and stays red if the N+1 returns. A plain `assertOk()` cannot see the extra queries.
 
 ### Contract-drift tests
 

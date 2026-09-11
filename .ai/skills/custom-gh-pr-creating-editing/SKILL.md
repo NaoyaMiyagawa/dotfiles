@@ -19,6 +19,9 @@ If you only have the key, fetch Summary from Jira (CLI or UI) before `gh pr crea
 
 When the PR is **not** Jira-driven, either lead with a short bracketed tag that mirrors the label (e.g. `[REFACTOR]`) or use no tag at all — never invent a Jira-style key.
 
+- A fix for a Sentry issue: `[Sentry Fix] <outcome>` (e.g. `[Sentry Fix] Skip per-document media order lookup when attaching uploaded PDFs`).
+- Follow-up work on a ticket that already shipped a PR: reuse the same key, no new Jira ticket — `[KEY] Follow-up — <what this PR does>`.
+
 ## Description
 
 ### Keep it concise

@@ -12,7 +12,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
         public readonly string $xxx,
     ) {}
     ```
-4. Use string interpolation when possible (`"This is {$user->name}"`). When interpolation isn't feasible (a reusable format string, positional args), prefer `vsprintf` over `sprintf`.
+4. Use string interpolation when possible (`"This is {$user->name}"`). When interpolation isn't feasible (a reusable format string, positional args), prefer `vsprintf` over `sprintf`. A string that is itself multi-line text (CSS, HTML, SQL) is concatenated one logical line per source line, indented as the text would be — not packed two declarations to a line.
 5. Always use named args when an argument list is broken across lines — positional args are only for a call that fits on one line:
     ```php
     // Bad
@@ -29,7 +29,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
         queue: true,
     );
     ```
-    Also use named args when calling into a package or other external API, even on one line — the parameter order there can be re-ordered out from under you, and named args turn that into a compile-time break.
+    On a one-line call, name only an argument whose meaning the call doesn't already show — a bare boolean or a magic number. A value that reads as itself stays positional (`setPaper('A4', 'landscape')`, `setOrder(1)`), even when calling into a package.
 6. Don't wrap instantiation in brackets: `new Xxx()->...`.
 7. Prefer `$x === null` over `is_null($x)`.
 8. Strict membership checks: pass `true` as the third arg to `in_array()`/`array_search()` for allowlists, id lists, role/status lists — loose comparison invites type juggling (`0 == 'foo'`), a correctness and security risk in access checks.
@@ -44,7 +44,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 17. Switch a long arrow function to a classic closure once the expression no longer fits on one line.
 18. Assign a non-trivial expression to a named variable before passing it as an argument or chaining off it; don't chain off a custom method's return unless it's designed for chaining (returns `$this`).
 19. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line.
-20. In a fluent chain, a comment about one step goes on its own line above that step, never trailing after the call — a trailing note pushes the line past the ceiling and hides which step it explains.
+20. A comment about one step of a fluent chain or one entry of an array literal goes on its own line above it, never trailing after it (`// Community Partner: avoid line break in header` above `'D' => 23,`) — a trailing note pushes the line past the ceiling and hides which line it explains.
 21. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
 22. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables. Prefix a contextual aside (a temporary limitation, a scope note) with `NOTE:`; a why-comment stays bare.
 23. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
@@ -59,10 +59,11 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 32. `->reject(fn ($x) => $x === null)` over `->filter(fn ($x) => $x !== null)` — don't negate a predicate inside `filter()`.
 33. On a class that isn't a value object, a method returning a derived value is `getXxx()` (`getBirthdate()`); bare noun names are for VO properties (core rule 6).
 34. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`), and name the subject for what it holds — `$dateValue`, not `$value`.
+35. A variable or constant holding a measurement carries its unit (`$cellPaddingInPoints`, `TIMEOUT_IN_SECONDS`) — a bare `$padding` leaves the reader guessing px vs pt.
 
 ## Exceptions
 
-- Extract a magic literal — an error code, a limit, a page size — into a named constant on the class that owns it (`public const ERROR_CODE = '...'`, `private const HISTORY_ITEM_COUNT = 5`), not repeated literals at each use site.
+- A literal becomes a named constant when it is reused across classes or its name says something the value doesn't (`FALLBACK_PAPER_SIZE = 'A4'`, `COLUMN_WIDTH_DATETIME = 26`, `ERROR_CODE`, `HISTORY_ITEM_COUNT`). A one-off entry in a per-class config array (a column width, a header label) stays a literal with a comment line above it (rule 20) — a constant for it is churn.
 - Exception classes carry the `Exception` suffix and extend `Exception` directly; a `RuntimeException` parent or `ShouldntReport` only with a stated reason. Status codes are `Response::HTTP_*` constants, never integer literals — in exceptions, responses, and `abort()` alike.
 - Throw the project's `NotImplementedException` for a branch that is deliberately not built yet — not a generic `RuntimeException`/`LogicException` that reads like a real failure.
 - A `try`/`catch` is only for a traced, reachable failure; when two sites hit the same operation but only one can fail, guard that one and leave the other bare.
