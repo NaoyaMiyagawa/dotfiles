@@ -23,6 +23,10 @@
 !/bin/
 !/bin/**
 
+# editor workspace settings (hides untracked runtime data from the explorer/watcher)
+!/.vscode/
+!/.vscode/settings.json
+
 # github
 !/README.md
 !/LICENSE
