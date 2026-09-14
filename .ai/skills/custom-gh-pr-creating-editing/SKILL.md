@@ -6,7 +6,7 @@ description: Create or edit the GitHub pull request for the current branch — t
 # Custom GitHub PR Creating/Editing
 
 ## Title
-When the branch or PR is Jira-driven (ticket key in the branch name, or the work clearly maps to a Jira issue you can identify), set the GitHub PR title to **bracketed issue key, space, then title**: `[KEY] Title` where `KEY` is the Jira issue key (e.g. `AN-1000`) and `Title` is the Jira **Summary** verbatim (no rephrasing).
+When the branch or PR is Jira-driven (ticket key in the branch name, a ticket the user named or you created during the session, or the work clearly maps to a Jira issue you can identify), set the GitHub PR title to **bracketed issue key, space, then title**: `[KEY] Title` where `KEY` is the Jira issue key (e.g. `AN-1000`) and `Title` is the Jira **Summary** verbatim (no rephrasing).
 
 Example: `[AN-1000] User Management Page`
 
@@ -19,7 +19,7 @@ If you only have the key, fetch Summary from Jira (CLI or UI) before `gh pr crea
 
 When the PR is **not** Jira-driven, either lead with a short bracketed tag that mirrors the label (e.g. `[REFACTOR]`) or use no tag at all — never invent a Jira-style key.
 
-- A fix for a Sentry issue: `[Sentry Fix] <outcome>` (e.g. `[Sentry Fix] Skip per-document media order lookup when attaching uploaded PDFs`).
+- A fix for a Sentry issue: `[Sentry Fix] <outcome>` (e.g. `[Sentry Fix] Skip per-document media order lookup when attaching uploaded PDFs`). Once a Jira ticket exists for it — including one created in this session — the key leads: `[KEY] [Sentry Fix] <outcome>`.
 - Follow-up work on a ticket that already shipped a PR: reuse the same key, no new Jira ticket — `[KEY] Follow-up — <what this PR does>`.
 
 ## Description
