@@ -56,9 +56,16 @@ description: Applies React/TSX component conventions — file layout, component 
     parallel status from the presence or absence of fields; when the render logic
     follows the data lifecycle it reads top to bottom.
 
-## JSX formatting
+## Unavailable states
 
-12. **Blank line between sibling elements.** Separate adjacent tags at the same
+12. **Disable at the point of choice, and say why.** When an option or input is
+    unavailable under the current state, disable it where the user would pick it and
+    state the governing rule in a tooltip. Don't hide it, and don't let the user
+    select it only to reject it later.
+
+## Formatting
+
+13. **Blank line between sibling elements.** Separate adjacent tags at the same
     nesting level with one blank line, including after a closing `)}` of a
     conditional. This is `react/jsx-newline` (`{"prevent": false}`) in
     eslint-plugin-react — enable it where the repo lints JSX rather than fixing it
@@ -74,7 +81,12 @@ description: Applies React/TSX component conventions — file layout, component 
 </div>
 ```
 
+14. **Blank line before `return`.** When statements precede a `return`, separate them
+    with one blank line. This is ESLint `padding-line-between-statements`
+    (`{ blankLine: "always", prev: "*", next: "return" }`, under `@stylistic` on
+    ESLint 9) — enable it where the repo lints TS rather than fixing it by hand.
+
 ## Tests
 
-13. **AAA comments in every spec.** Each test body carries `// Arrange`, `// Act`,
+15. **AAA comments in every spec.** Each test body carries `// Arrange`, `// Act`,
     `// Assert` markers, same as the Laravel test convention.
