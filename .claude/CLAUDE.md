@@ -20,6 +20,10 @@
 
 - Before writing or editing React components or pages, invoke the `custom-react-coding` skill — don't rely on automatic skill triggering.
 
+## GitHub Actions
+
+- Before adding or editing files under `.github/workflows/` or `.github/actions/`, invoke the `custom-github-actions-workflows` skill — don't rely on automatic skill triggering.
+
 ## Long-running commands
 
 - Never wait in Bash: poll loops (`until/while ...; do sleep N; done`) and any foreground `sleep` used as a wait (`sleep 45 && tail ...`, standalone `sleep`) are all denied by hooks or the harness.

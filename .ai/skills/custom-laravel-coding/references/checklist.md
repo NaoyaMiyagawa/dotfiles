@@ -53,26 +53,27 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 20. `->reject(fn ($x) => $x === null)` over `->filter(fn ($x) => $x !== null)` — don't negate a predicate inside `filter()`.
 21. Assign a non-trivial expression to a named variable before passing it as an argument or chaining off it; don't chain off a custom method's return unless it's designed for chaining (returns `$this`).
 22. Choose a value by case with `match(true)` whose arms are named predicates — `$this->isImageAttribute($attribute) => …, default => …` — not a ternary on a raw `===` comparison; when the concept has no model/enum home, the predicate is a private method on the class.
+23. Name each operand of a compound condition as a boolean before the `if` — `$isMdoc = …; $isApiCall = …; if ($isMdoc && ! $isApiCall)` — rather than inlining two method calls into one condition.
 
 ## PHP — naming
 
-23. Name a variable that holds a map keyed by a field after that key (`xxxById`, `xxxByKey`) — the name tells the reader the structure at every later use. Applies to plain arrays and `keyBy(...)` results alike.
-24. On a class that isn't a value object, a method returning a derived value is `getXxx()` (`getBirthdate()`); bare noun names are for VO properties (core rule *Value holders are `final readonly` with `public readonly` properties*).
-25. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`), and name the subject for what it holds — `$dateValue`, not `$value`.
-26. A variable or constant holding a measurement carries its unit (`$cellPaddingInPoints`, `TIMEOUT_IN_SECONDS`) — a bare `$padding` leaves the reader guessing px vs pt.
+24. Name a variable that holds a map keyed by a field after that key (`xxxById`, `xxxByKey`) — the name tells the reader the structure at every later use. Applies to plain arrays and `keyBy(...)` results alike.
+25. On a class that isn't a value object, a method returning a derived value is `getXxx()` (`getBirthdate()`); bare noun names are for VO properties (core rule *Value holders are `final readonly` with `public readonly` properties*).
+26. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`). Name any variable for what it holds, not for its relation to the surrounding code — `$dateValue`, not `$value`; `$testsForThisShard`, not `$mine`.
+27. A variable or constant holding a measurement carries its unit (`$cellPaddingInPoints`, `TIMEOUT_IN_SECONDS`) — a bare `$padding` leaves the reader guessing px vs pt.
 
 ## PHP — design and structure
 
-27. Compare value objects through an `equals(self $other): bool` method, not their unwrapped scalars.
-28. Initialize derived state in the constructor, not lazily; don't add a named constructor/factory that only wraps `new` plus a config read — reserve static named constructors for real logic.
-29. `new` is for value-ish classes only — DTOs, value objects, validation rules, events, models. Resolve actions and services with `app(X::class)`, in tests too; not `new`, not an injected `Container`. Don't register a binding in a service provider solely to call one method.
-30. Methods on a service/helper class are instance methods, not `static` — the class is container-resolved (see the `new`-vs-`app()` rule under *PHP — design and structure*), and a static method only blocks injection and test doubles.
-31. Order fields/array keys to mirror their source of truth (spec, API contract, referenced document); order constants and methods by lifecycle — success before failure, `markAsPublished()` before `markAsArchived()` — and mirror that order in the test file; separate inline-commented groups with blank lines so each comment's scope is unambiguous. When adding a case to a set that already exists in several files — enum, `match` arms, factory states, lang keys, tests — put it beside its closest sibling in every one of them, so the parallel files stay in the same order.
-32. Add `#[Override]` to a method that overrides a parent's, importing the attribute with `use Override;` rather than writing `#[\Override]` inline.
-33. A validation/normalization helper returns the validated value with a declared return type — native, or a PHPDoc array shape where native syntax can't express it — so the caller reassigns to the same variable (`$header = $this->validateHeader($header)`). Don't write it as a `void` guard the caller can't type off or chain from.
-34. Gate a minority case behind the domain predicate that names it (`if ($order->hasSubscription()) { ... }`). Don't run its helper on the main path and assign the return value unconditionally: the common path should read as the common path.
-35. Helper methods are `private` by default; `protected` only for an extension point a subclass actually uses. Drop a public method with no external caller and inline single-use logic into its one caller.
-36. Don't take a parameter whose value is identical at every call site — hardcode the invariant inside the method.
+28. Compare value objects through an `equals(self $other): bool` method, not their unwrapped scalars.
+29. Initialize derived state in the constructor, not lazily; don't add a named constructor/factory that only wraps `new` plus a config read — reserve static named constructors for real logic.
+30. `new` is for value-ish classes only — DTOs, value objects, validation rules, events, models. Resolve actions and services with `app(X::class)`, in tests too; not `new`, not an injected `Container`. Don't register a binding in a service provider solely to call one method.
+31. Methods on a service/helper class are instance methods, not `static` — the class is container-resolved (see the `new`-vs-`app()` rule under *PHP — design and structure*), and a static method only blocks injection and test doubles.
+32. Order fields/array keys to mirror their source of truth (spec, API contract, referenced document); order constants and methods by lifecycle — success before failure, `markAsPublished()` before `markAsArchived()` — with `isXxx()` predicates ahead of the other methods, and mirror that order in the test file; separate inline-commented groups with blank lines so each comment's scope is unambiguous. When adding a case to a set that already exists in several files — enum, `match` arms, factory states, lang keys, tests — put it beside its closest sibling in every one of them, so the parallel files stay in the same order.
+33. Add `#[Override]` to a method that overrides a parent's, importing the attribute with `use Override;` rather than writing `#[\Override]` inline.
+34. A validation/normalization helper returns the validated value with a declared return type — native, or a PHPDoc array shape where native syntax can't express it — so the caller reassigns to the same variable (`$header = $this->validateHeader($header)`). Don't write it as a `void` guard the caller can't type off or chain from.
+35. Gate a minority case behind the domain predicate that names it (`if ($order->hasSubscription()) { ... }`). Don't run its helper on the main path and assign the return value unconditionally: the common path should read as the common path.
+36. Helper methods are `private` by default; `protected` only for an extension point a subclass actually uses. Drop a public method with no external caller and inline single-use logic into its one caller.
+37. Don't take a parameter whose value is identical at every call site — hardcode the invariant inside the method.
 
 ## Constants and literals
 
