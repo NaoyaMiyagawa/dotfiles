@@ -21,7 +21,7 @@ Turn work into Jira tickets that a teammate with zero conversation context can p
 
 ## Decomposition
 
-- One ticket = one independently deliverable, verifiable outcome — roughly one PR. "Done" must be demoable or testable on its own.
+- One ticket = one independently deliverable, verifiable outcome — roughly one PR, or one whole stacked-PR chain (the stack is one outcome; never one ticket per layer). "Done" must be demoable or testable on its own.
 - Slice vertically (user-visible outcome) rather than by layer; split by layer only when different people/teams own the layers.
 - If describing the ticket's status would take more than a sentence, it is too big — split it. If a ticket can't fail code review on its own, it is too small — merge it.
 - No grab-bag tickets ("misc fixes", "cleanup") — each hides untrackable work. Give each fix its own ticket or drop it.

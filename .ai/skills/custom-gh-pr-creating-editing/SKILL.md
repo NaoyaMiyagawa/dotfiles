@@ -21,6 +21,7 @@ When the PR is **not** Jira-driven, either lead with a short bracketed tag that 
 
 - A fix for a Sentry issue: `[Sentry Fix] <outcome>` (e.g. `[Sentry Fix] Skip per-document media order lookup when attaching uploaded PDFs`). Once a Jira ticket exists for it — including one created in this session — the key leads: `[KEY] [Sentry Fix] <outcome>`.
 - Follow-up work on a ticket that already shipped a PR: reuse the same key, no new Jira ticket — `[KEY] Follow-up — <what this PR does>`.
+- PRs in one stack are one piece of work: every title leads with the same `[KEY]` (or the same short bracketed effort tag, e.g. `[Speed-up CI]`, when no ticket exists) so the chain reads as one in the PR list, and every description links the same ticket.
 
 ## Description
 
