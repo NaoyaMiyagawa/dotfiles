@@ -40,14 +40,15 @@ If the resulting body feels short, that's the goal. A reviewer should be able to
 
 The 30-second rule covers the part above the fold. When the PR introduces a subsystem, protocol, or vocabulary of types the reviewer has no prior model of, add a reading guide as the last section of the body — see `custom-gh-pr-reading-guide` — and keep everything above it as short as it would have been anyway.
 
-### Before/after evidence for performance work
-When the PR's point is that something got faster, cheaper, or smaller, the description shows the result, not just the claim.
+### Before/after evidence
+When the PR's point is that something got faster, cheaper, or smaller, or that rendered output stayed the same (a dependency upgrade checked against Storybook), the description shows the result, not just the claim.
 
 - Put the evidence under the template's screenshots or results section: it is the outcome of the change.
 - Use a two-column `| Before | After |` table with one row per screenshot pair. Each cell carries the screenshot plus a one-line caption naming the step and the measurement, e.g. `Before: container init took 42s` / `After: container init took 9s`. Bold the After cells so the gain reads at a glance.
 - One table per change lever (e.g. health-check tuning vs. tmpfs mount) so a reader can attribute each gain to a specific change, not to the PR as a whole.
 - State in one sentence why the change is faster (the mechanism), not only that it is.
 - Screenshots show the page only. Hide browser chrome such as the bookmark bar before capturing.
+- Upload the images yourself: write the table with local paths (`![before](./before.png)`) and pass each file as `--attach './before.png#alt text'` on `gh pr create` / `gh pr edit`; gh rewrites the references to the uploaded URLs. Never hand the upload to the user.
 
 ### Repository PR template
 Before drafting or editing the PR body, look for the repo's GitHub pull request template (common paths: `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE.md`, or `.github/PULL_REQUEST_TEMPLATE/*.md`). **Follow that template:** keep its section headings and fill every section it defines; add the rules below (references, Jira, validation) *inside* the template structure rather than ignoring the template. If the repo has no template, use a clear structured body consistent with team practice.
