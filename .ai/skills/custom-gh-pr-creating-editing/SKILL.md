@@ -113,3 +113,6 @@ This repo does not use PR review bots — do not post any `@`-mention review tri
 Run the `/custom-pr-self-review` command — it loads these standards, runs PHPStan, and carries the exact Codex invocation. Don't restate the command here.
 
 Skip only if Codex is rate-limited/unauthenticated; note that you couldn't get the second opinion. Surface its findings to the user — don't silently accept or discard them.
+
+## Dependency bumps
+When the PR diff touches `package.json`, `composer.json`, a lockfile, or a `uses:` line in `.github/workflows/`, run `custom-gh-dependabot-assess` on the new PR right after creating it. The assessment comment is what the reviewer reads instead of the changelog.

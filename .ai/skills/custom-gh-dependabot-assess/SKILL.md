@@ -1,19 +1,19 @@
 ---
 name: custom-gh-dependabot-assess
-description: Assess open Dependabot PRs in the current repo and post a short risk comment on each — what the package does, where the repo uses it, what the bump changes, and whether merging can break the app. Use when the user asks to assess, review, or check Dependabot PRs, asks what's in the Dependabot queue, or passes PR numbers with "reassess".
+description: Assess dependency bump PRs — Dependabot's or a dev's own — and post a short risk comment on each: what the package does, where the repo uses it, what the bump changes, and whether merging can break the app. Use when the user asks to assess, review, or check Dependabot PRs, asks what's in the Dependabot queue, passes PR numbers with "reassess", or has just created a PR that changes package.json, composer.json, or a lockfile.
 metadata:
   short-description: Post a short risk assessment comment on Dependabot PRs
 ---
 
 # Dependabot PR Assessment
 
-Turn a Dependabot PR into a two-line answer a dev can act on without opening the diff: a risk badge with a recommendation, and the evidence folded underneath. Read-only on the repo. Never run the test suite; CI already does.
+Turn a dependency bump PR into a two-line answer a dev can act on without opening the diff: a risk badge with a recommendation, and the evidence folded underneath. Read-only on the repo. Never run the test suite; CI already does.
 
 Prereq: `gh auth status` passes. Repo = the one the current directory is in.
 
 ## Workflow
 
-1. **Select PRs.** Arguments win: PR numbers or URLs, `all`, and the flag `reassess`. Without arguments, list and let the user multi-select:
+1. **Select PRs.** Arguments win: PR numbers or URLs, `all`, and the flag `reassess`. Human-authored bump PRs are reached by argument only. Without arguments, list Dependabot's and let the user multi-select:
    ```bash
    gh pr list --author app/dependabot --state open --json number,title,comments,reviews \
      --jq '.[] | {number, title,
@@ -21,7 +21,7 @@ Prereq: `gh auth status` passes. Repo = the one the current directory is in.
        human_comments: ([(.comments[], .reviews[]) | select(.author.login | test("^app/|\\[bot\\]$|^(github-actions|dependabot|renovate)$|^copilot-") | not)] | length)}'
    ```
    Show number, title, `assessed`, `human_comments`. Skip `assessed` PRs unless `reassess` was passed; say so in one line per skipped PR. When the run cannot prompt (non-interactive), print the list and stop.
-2. **Read the PR.** `gh pr view <n> --json title,body,commits,headRefOid,statusCheckRollup,url`. Parse the `updated-dependencies:` YAML trailer in the first commit body: `dependency-name`, `dependency-version`, `dependency-type` (`direct:production` / `direct:development` / `indirect`), `update-type` when present, `dependency-group` for grouped PRs. Bump type = `update-type` when present, else the semver diff of the versions in the title; on a grouped PR with neither, read the old version from `gh pr diff <n>` on the manifest. For grouped PRs, assess only `direct:*` packages and count the rest.
+2. **Read the PR.** `gh pr view <n> --json title,body,commits,headRefOid,statusCheckRollup,url`. Parse the `updated-dependencies:` YAML trailer in the first commit body: `dependency-name`, `dependency-version`, `dependency-type` (`direct:production` / `direct:development` / `indirect`), `update-type` when present, `dependency-group` for grouped PRs. Bump type = `update-type` when present, else the semver diff of the versions in the title; on a grouped PR with neither, read the old version from `gh pr diff <n>` on the manifest. For grouped PRs, assess only `direct:*` packages and count the rest. A human-authored PR has no trailer: take package, old and new version from the manifest hunks of `gh pr diff <n>` (`package.json`, `composer.json`, workflow files), category from which dependency block the line sits in, and treat more than one changed direct package as a group.
 3. **Assess each package.** Fill the four sections below. Every claim about a breaking change or advisory carries a deep link to its release note, changelog heading, or advisory page.
 4. **Decide the risk.** Apply the [risk rules](#risk-rules). Fill `templates/single.md`, or `templates/group.md` when the trailer has `dependency-group` and more than one direct package. Recommendation is one of the three fixed forms.
 5. **Post.** Write the body to a scratch file, then `gh pr comment <n> --body-file <file>`. On `reassess`, edit the existing marker comment instead: find its `id` via `gh pr view <n> --json comments --jq '.comments[] | select(.body | contains("<!-- dependabot-assessment -->")) | .id'`, then `gh api -X PATCH /repos/{owner}/{repo}/issues/comments/<id> -F body=@<file>`. One assessment per PR, always.
