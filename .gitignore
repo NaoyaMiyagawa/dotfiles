@@ -71,3 +71,7 @@
 
 # linter
 !/.stylelintrc.js
+
+# Zed local databases
+.config/zed/embeddings/
+.config/zed/prompts/
