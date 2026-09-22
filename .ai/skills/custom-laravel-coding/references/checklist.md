@@ -77,7 +77,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 ## Constants and literals
 
-- A literal becomes a named constant when it is reused across classes or its name says something the value doesn't (`FALLBACK_PAPER_SIZE = 'A4'`, `COLUMN_WIDTH_DATETIME = 26`, `ERROR_CODE`, `HISTORY_ITEM_COUNT`). A one-off entry in a per-class config array (a column width, a header label) stays a literal with a comment line above it (see the comment-above-the-line rule under *PHP — comments*) — a constant for it is churn.
+- A literal becomes a named constant when it is reused across classes or its name says something the value doesn't (`FALLBACK_PAPER_SIZE = 'A4'`, `COLUMN_WIDTH_DATETIME = 26`, `HISTORY_ITEM_COUNT`). A one-off entry in a per-class config array (a column width, a header label) stays a literal with a comment line above it (see the comment-above-the-line rule under *PHP — comments*) — a constant for it is churn.
 - Status codes are `Response::HTTP_*` constants, never integer literals — in exceptions, responses, and `abort()` alike.
 
 ## Exceptions
@@ -90,6 +90,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Name a `FormRequest` for the action it validates, mirroring the REST verb: `Store{X}Request`, `Update{X}Request`.
 - Order `FormRequest` methods by processing phase: `prepareForValidation()` → `rules()` → `failedValidation()` → accessor helpers.
+- Read request input through the typed accessors — `$request->string('q')`, `->integer()`, `->boolean()`, `->enum('status', Status::class)`, `->collect('ids')` — not `$request->input()` followed by a cast.
 - `prepareForValidation()` only transforms input into the shape `rules()` can validate; don't throw from it — anything still malformed is `rules()`'s job to reject.
 - Don't scaffold optional hooks you won't use — no empty `authorize()` returning `true`.
 - Extract non-trivial or reusable validation into a dedicated `Rule` class named for what it checks (`Base64EncodedImage`); reserve inline rules for simple built-in cases.
@@ -153,6 +154,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Push filters into the query (`whereIn`/`where`) instead of fetching a superset and narrowing in PHP with `filter()`/`each()`.
 - Call `pluck()`, `count()`, `exists()` and aggregates on the query, not on a hydrated collection: `$document->histories()->orderBy('id')->pluck('status')`, not `->get()->pluck('status')`.
 - Fold a conditional variant of a query into the same call with `when()` and a nested where group instead of running a second query and merging the results in PHP.
+- In a model scope, qualify columns with `$this->qualifyColumn('status')`, never a hand-written `'table.status'`. When the model already declares the relation, reach the related rows through it (`whereRelation()`, `whereHas()`, a constrained `with()`) rather than a hand-written `join()` that repeats table names; keep the manual join only when a measured query plan shows the relation form is too slow.
 
 ## Migrations
 

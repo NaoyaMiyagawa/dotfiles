@@ -20,6 +20,10 @@
 
 - Before writing or editing React components or pages, invoke the `custom-react-coding` skill — don't rely on automatic skill triggering.
 
+## Shell scripts
+
+- Before writing or editing a shell script, invoke the `custom-shell-scripting` skill — don't rely on automatic skill triggering.
+
 ## GitHub Actions
 
 - Before adding or editing files under `.github/workflows/` or `.github/actions/`, invoke the `custom-github-actions-workflows` skill — don't rely on automatic skill triggering.
