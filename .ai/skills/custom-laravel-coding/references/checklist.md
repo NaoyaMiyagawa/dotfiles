@@ -143,6 +143,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 ## Eloquent
 
+- When a query chain spans lines, break after `::query()` too — `Model::query()` alone on the first line, every chained call on its own line below — not `Model::query()->where(...)` on line one with the rest wrapped beneath.
 - Reach related rows through the relation on the instance you already hold — `$parent->children()->update([...])`, `$comment->post()->lockForUpdate()->first()` — not a fresh `Child::query()->where('parent_id', ...)`; never re-fetch a model the route already bound.
 - Fix N+1 loading with eager loading (`with()` / `loadMissing()`), not a cache layer.
 - Don't set `updated_at` manually unless the value must intentionally diverge from "now" (backfills, replication).

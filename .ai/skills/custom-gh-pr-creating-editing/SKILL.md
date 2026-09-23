@@ -12,12 +12,12 @@ Example: `[AN-1000] User Management Page`
 
 If you only have the key, fetch Summary from Jira (CLI or UI) before `gh pr create` / `gh pr edit`. Prefer this format over an invented title unless the repository documents a different naming rule that takes precedence.
 
-**The title must be scannable at a glance.** A reviewer browsing the PR list should grasp what the PR does without opening it. Lead with the outcome, not the mechanics. Avoid stacked qualifiers, internal-only jargon, or trailing "(...)" notes that belong in the body.
+**The title must be scannable at a glance.** A reviewer browsing the PR list should grasp what the PR does without opening it. Name the outcome, not the mechanics. Avoid stacked qualifiers, internal-only jargon, or trailing "(...)" notes that belong in the body.
 
-- Good: `[REFACTOR] Use model-binding in Switch Organization endpoint`
+- Good: `[REFACTOR] Switch Organization endpoint - Use model-binding`
 - Bad:   `[REFACTOR] Refactor SwitchOrganizationRequest to remove authorize() block and migrate org_id to route param for cleaner auth (SonarCloud)`
 
-When the PR is **not** Jira-driven, either lead with a short bracketed tag that mirrors the label (e.g. `[REFACTOR]`) or use no tag at all — never invent a Jira-style key.
+When the PR is **not** Jira-driven, the title is `[TAG] <Area or tool> - <Outcome>`: a short bracketed tag that mirrors the label (`[FIX]`, `[REFACTOR]`), the area or tool the change touches, a hyphen, then the outcome — `[FIX] API Doc - Show one document in the trigger request example`, `[REFACTOR] Rector - Auto-insert query() to model method calls`. Never invent a Jira-style key.
 
 - A fix for a Sentry issue: `[Sentry Fix] <outcome>` (e.g. `[Sentry Fix] Skip per-document media order lookup when attaching uploaded PDFs`). Once a Jira ticket exists for it — including one created in this session — the key leads: `[KEY] [Sentry Fix] <outcome>`.
 - Follow-up work on a ticket that already shipped a PR: reuse the same key, no new Jira ticket — `[KEY] Follow-up — <what this PR does>`.
