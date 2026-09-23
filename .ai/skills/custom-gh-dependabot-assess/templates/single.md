@@ -1,5 +1,5 @@
 **Risk:** {{badge}} **{{level}}** — {{recommendation}}
-**Summary:** `{{package}}` {{from}} → {{to}} · {{bump}} · {{category}}
+**Summary:** {{category}} · `{{package}}` {{from}} → {{to}} · {{bump}}
 
 <details><summary><b>Details</b></summary>
 

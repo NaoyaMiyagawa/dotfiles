@@ -3,9 +3,9 @@
 
 <details><summary><b>Details</b></summary>
 
-| Package | Bump | Category | Used in | Risk |
+| Category | Package | Bump | Used in | Risk |
 |---|---|---|---|---|
-| `{{package}}` {{from}} → {{to}} | {{bump}} | {{category}} | {{usage_summary}} | {{badge}} |
+| {{category}} | `{{package}}` {{from}} → {{to}} | {{bump}} | {{usage_summary}} | {{badge}} |
 
 +{{indirect_count}} transitive packages not assessed.
 
