@@ -21,7 +21,7 @@ Two top-level sections — this split is the whole point:
 - **User-facing changes** — anything a user, customer, or internal operator will notice: new features, page/UI changes, behaviour changes, bug fixes users hit. Plain language, lead with the outcome ("Issuers can now bulk-revoke documents"), no code identifiers.
 - **Internal changes** — refactors, dependency upgrades, CI/tooling, performance, test-only work. Terse dev language is fine.
 
-Within each section, group bullets under a `###` category heading named by what they touch: `Xxx feature`, `Xxx page`, `Dependency upgrades`, `CI`, etc. One bullet per change, ending with its bare PR number `(#123)` — never a full URL or markdown link, which GitHub expands into the PR title and clutters the line. Don't force a category onto a single stray change — an `Other` group is fine.
+Within each section, group bullets under a `###` category heading named by what they touch: `Xxx feature`, `Xxx page`, `Dependency upgrades`, `CI`, etc. One bullet per change, with its PR number on a nested sub-bullet below it (`  - #123`, one sub-bullet per PR) — never inline on the top-level line, where GitHub expands `#123` into the PR title and clutters the level-1 list. Use the bare `#123`, never a full URL or markdown link. Don't force a category onto a single stray change — an `Other` group is fine.
 
 If the repo's PR template doesn't fit release notes, this format takes precedence.
 
@@ -33,4 +33,4 @@ Add a **⚠️ Release cautions** section. Verify each check against `git diff o
 - **External-app impact** — changes to public API routes, request/response shapes, webhooks, events, or anything consumed by API consumers or sub-systems. Name which consumer is affected and how.
 - **Also flag when present** — DB migrations (call out destructive or long-running ones), queue/scheduled-job changes, feature flags to toggle, one-off commands to run at deploy.
 
-For every check, write the result even when it's `None` — the reader must see the check happened, not wonder whether it was skipped.
+For every check, write the result even when it's `None` — the reader must see the check happened, not wonder whether it was skipped. PR numbers follow the same sub-bullet rule here: a check that cites PRs puts each point on its own sub-bullet with its `#123` nested below, never inline in the sentence.
