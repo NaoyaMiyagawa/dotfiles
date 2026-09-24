@@ -14,5 +14,5 @@ _What changed:_ {{what_changed}}
 _Risk:_ {{risk_reasoning}}
 </details>
 
-<sub>Assessed by {{tool}} · {{datetime}}</sub>
+<sub>Posted by {{tool}} ({{model}}) at {{datetime}}</sub>
 <!-- dependabot-assessment -->

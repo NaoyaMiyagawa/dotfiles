@@ -58,5 +58,5 @@ Work PRs sequentially by default. In Claude Code, one worker per PR (max 2 concu
 - `{{category}}` label: `direct:production` → `prod (direct)`, `direct:development` → `dev (direct)`, `indirect` → `prod (transitive)` or `dev (transitive)` from the lockfile (npm `"dev": true`, Composer `packages-dev`), GitHub Actions → `ci`.
 - No sentence about CI status, not even inside the fold. The PR page already shows it.
 - Single PR under about 40 lines, group under about 80. The diff holds the detail; this is the map.
-- Footer time from `date '+%Y-%m-%d %H:%M %Z'`, tool name = whichever agent ran it.
+- Footer: fill `{{tool}}`, `{{model}}`, `{{datetime}}` per the `custom-gh-comment-footer` skill.
 - Keep `<!-- dependabot-assessment -->` as the last line; step 1 depends on it.
