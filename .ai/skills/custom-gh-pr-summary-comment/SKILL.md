@@ -13,7 +13,7 @@ Prereq: `gh` authenticated (`gh auth status`). Find the PR: `gh pr view --json n
 
 ## The two goals that override everything
 
-1. **Scannable, not exhaustive.** The old comments on these PRs were technically complete but unreadable — nested `#`/`##`/`###` headings, multi-paragraph bullets, war-story debugging narratives. Do not reproduce that. The diff and commits already hold the full detail; this comment is the *map*, not the territory.
+1. **Scannable, not exhaustive.** No nested headings, multi-paragraph bullets, or debugging narratives. The diff and commits already hold the full detail; this comment is the *map*, not the territory.
 2. **Every reference is a deep link.** When the comment cites a spec section, a doc heading, a source symbol, or the prior summary, link to the exact point — never to the page root. See [Linking](#linking).
 
 ## Structure

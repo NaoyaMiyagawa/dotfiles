@@ -5,18 +5,4 @@ description: Fetches GitHub pull request context for the current branch. Use whe
 
 # Custom GitHub PR Context Fetch
 
-## Scope
-
-Run this only for PR-related requests. Do not run on every task.
-
-## Commands
-
-```bash
-gh pr view --json title,body,comments
-```
-
-## Behavior
-
-1. Run the commands above and summarize key task context.
-2. If no PR exists for the current branch, report that PR context is unavailable and continue with non-PR task context.
-3. Do not block implementation when PR is missing unless user explicitly requires PR-based work.
+Run `gh pr view --json title,body,comments` and summarize the task context. If the branch has no PR, say so and continue without it unless the user requires PR-based work.

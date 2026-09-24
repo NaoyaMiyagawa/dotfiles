@@ -41,7 +41,5 @@ Confirm Sail is up first (`./vendor/bin/sail ps`). Start only what the snippet n
 
 ## Do not
 
-- Do **not** run `php artisan tinker` on the host (wrong environment)—always go through `./vendor/bin/sail`. If `./vendor/bin/sail` is missing or Docker is down, stop and say so—do not fall back to host PHP.
-- Do **not** write a throwaway `.php` script or a temporary route/command—prefer tinker.
-- Do **not** use tinker for assertions that belong in a test—write a Pest test instead (see custom-php-running-test).
+- If `./vendor/bin/sail` is missing or Docker is down, stop and say so—do not fall back to host PHP.
 - Do **not** run state-mutating code (writes, deletes, jobs, external calls) unless the user asked for it.

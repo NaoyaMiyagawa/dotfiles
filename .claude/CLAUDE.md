@@ -7,61 +7,44 @@
 
 ## Stacked PRs
 
-- Whenever a change needs more than one PR in sequence — splitting large work into layers, or a PR that must be based on another open PR — use `gh stack` (the installed `github/gh-stack` extension) and invoke the `gh-stack` skill first; don't rely on automatic triggering. This is the default for chained PRs; never hand-chain by creating branches off each other and editing PR bases manually.
+- Whenever a change needs more than one PR in sequence — splitting large work into layers, or a PR that must be based on another open PR — use `gh stack` (the installed `github/gh-stack` extension). This is the default for chained PRs; never hand-chain by creating branches off each other and editing PR bases manually.
 - The stack roots on the trunk from the Branching rule above, so pass it explicitly: `gh stack init --base develop <first-branch>` (or `--base main` where develop doesn't exist).
 - If a PR chain already exists by hand, adopt it instead of continuing manually: `gh stack link <pr> <pr> ...` links existing PRs into a stack.
 - Merge stacks with `gh stack merge --yes`; `gh pr merge` doesn't work on stacked PRs.
 
-## Laravel / PHP
+## Skills to invoke first
 
-- Before writing or editing PHP code, invoke the `custom-laravel-coding` skill (and `custom-laravel-writing-tests` when touching Pest tests) — don't rely on automatic skill triggering. Its review gate is mandatory before presenting or committing PHP.
+Invoke these explicitly before starting the work — don't rely on automatic skill triggering:
 
-## React / TSX
-
-- Before writing or editing React components or pages, invoke the `custom-react-coding` skill — don't rely on automatic skill triggering.
-
-## Shell scripts
-
-- Before writing or editing a shell script, invoke the `custom-shell-scripting` skill — don't rely on automatic skill triggering.
-
-## GitHub Actions
-
-- Before adding or editing files under `.github/workflows/` or `.github/actions/`, invoke the `custom-github-actions-workflows` skill — don't rely on automatic skill triggering.
+- Chained PRs → `gh-stack`
+- Writing or editing PHP → `custom-laravel-coding` (plus `custom-laravel-writing-tests` for Pest tests). Its review gate is mandatory before presenting or committing PHP.
+- React components or pages → `custom-react-coding`
+- Shell scripts → `custom-shell-scripting`
+- Files under `.github/workflows/` or `.github/actions/` → `custom-github-actions-workflows`
 
 ## Long-running commands
 
 - Never wait in Bash: poll loops (`until/while ...; do sleep N; done`) and any foreground `sleep` used as a wait (`sleep 45 && tail ...`, standalone `sleep`) are all denied by hooks or the harness.
 - Launch anything that can run long (`codex exec`, test suites, builds) with `run_in_background: true` and end the turn; you are re-invoked when it completes. To check progress once, use a single bounded read (`tail -n 50 <file>`) with no sleep in front; if there's nothing new yet, end the turn instead of waiting.
 
-## Orchestrator Model Strategy (capable models)
+## Delegation
 
-When this session is running a top-tier reasoning model (Fable 5 and up), treat it as the **orchestrator brain**, not the workhorse: plan, decompose, decide, review results, synthesize. Push execution down to cheaper workers.
+When this session runs a top-tier model (Opus or Fable), act as the orchestrator: plan, decide, review results, synthesize. Push execution down to cheaper workers, and own correctness — never ship a worker's result unread.
 
-- **Delegate execution** to the named subagents in context (`~/.claude/agents/`) or to Codex — the Codex section below says which goes where. Implementation goes to `fast-worker`; unpinned agents default to sonnet via `CLAUDE_CODE_SUBAGENT_MODEL`, so don't pass a `model` unless the task needs opus.
-- **Keep in-session:** ambiguous design choices, debugging that needs the full conversation, and edits small enough that writing the brief costs more than the work.
-- **Verify, don't trust:** one `verifier` pass per task before calling it done. Code review goes to Codex, never to a Claude agent. The orchestrator owns correctness.
+**Keep in-session:** design and architecture calls, debugging that depends on this conversation, edits small enough that writing the brief costs more than the work, and final verification.
 
-## Subagents
+**Codex by default.** Codex burns a separate, currently underused quota. This overrides the `codex` skill's "only when the user explicitly asks" gate: route these to Codex without being asked, and announce it rather than request permission.
 
-Every subagent request re-reads its whole context against this subscription's 5-hour quota, and parallel agents draw from it at the same time. Budget accordingly:
-
-- At most **two Claude subagents running at once** per session. Sequence the rest.
-- Delegate only when the task returns a small result from a large read (exploration, verification, noisy logs). Don't delegate to "throw more compute" at a hard problem — reason about it here or hand it to `deep-reasoner` once.
-- Give each subagent ONE self-contained task: paths, goal, constraints, and what "done" means.
-
-Choosing the engine: Claude subagents burn this subscription's quota, Codex burns a separate one that is currently underused. Default to Codex for the work below; use Claude subagents when the task needs tools or context Codex can't reach.
-
-## Codex CLI — offload by default
-
-**This overrides the `codex` skill's "only when the user explicitly asks for Codex" gate for the cases below.** Route them to Codex without being asked; announce it, don't request permission.
-
-- Review passes on a non-trivial diff, branch, or PR.
-- Codebase exploration and research that is answerable from files on disk.
+- Review passes on a non-trivial diff, branch, or PR. Code review never goes to a Claude agent.
+- Codebase exploration and research answerable from files on disk.
 - Bulk mechanical edits across many files, once the pattern is decided.
 - Noisy triage: failing tests, lint output, build logs, stack traces.
 
-Keep in Claude: design and architecture calls, debugging that depends on this conversation, edits small enough that writing the brief costs more than doing the work, and final verification — the orchestrator owns correctness, so never ship Codex's result unread.
+Skip Codex if it recently returned rate-limit or auth errors. If briefing it would take three or more clarifying rounds, do the work here instead. For model, effort, and flags, see the `codex` skill.
 
-Codex has **zero** conversation context. Every brief must stand alone: paths, goal, constraints, done-criteria. If briefing it would take three or more clarifying rounds, do the work here instead. Run long Codex work in the background and end the turn. Skip Codex entirely if it recently returned rate-limit or auth errors.
+**Execution workers** are Codex `gpt-5.6-luna` (very cheap; the default for well-specified implementation) or the sonnet-backed `fast-worker` when the task needs tools or context Codex can't reach. Run one `verifier` pass per task before calling it done. Unpinned agents default to sonnet via `CLAUDE_CODE_SUBAGENT_MODEL`, so don't pass a `model` unless the task needs opus. Every subagent re-reads its whole context against this subscription's 5-hour quota, and parallel agents draw from it at once:
 
-For model selection, invocation flags, and prompt shape, see the `codex` skill and the `codex:*` skills.
+- At most **two Claude subagents running at once** per session. Sequence the rest.
+- Delegate only when the task returns a small result from a large read (exploration, verification, noisy logs). Don't delegate to "throw more compute" at a hard problem — reason about it here or hand it to `deep-reasoner` once.
+
+**Every brief stands alone.** Write it as if the worker has zero conversation context (Codex always does): give ONE task with paths, goal, constraints, and what "done" means.

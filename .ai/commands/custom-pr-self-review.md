@@ -2,7 +2,7 @@
 description: "Self-review current branch PR diffs against Laravel/PHP coding standards (read skills, then audit diffs)"
 ---
 
-PR self-review: verify every line you (or this session) changed matches the coding standards captured in the dotfiles skills below. Cursor does not auto-load skills; you must **read each listed file in full** before judging the diff.
+PR self-review: verify every line you (or this session) changed matches the coding standards captured in the dotfiles skills below. **Read each listed file in full** before judging the diff.
 
 ## Mandatory: load standards from these skill files
 

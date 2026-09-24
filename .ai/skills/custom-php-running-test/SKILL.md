@@ -17,12 +17,7 @@ Omit `{filepath}` to run the full suite, or pass a path or `--filter=` as needed
 
 Before running tests, confirm Sail services are up (e.g. `./vendor/bin/sail ps`). If the stack is down, start **only the services the test run needs**—use `docker-compose.yml` / `compose.yaml` in the project for exact service names.
 
-Typical minimum:
-
-- `app` (required so `sail artisan test` runs in the app container)
-- Any backing services tests hit (often a DB service such as `mysql`, `mariadb`, or `pgsql`; sometimes `redis` or others)
-
-Example (replace names with this project’s services):
+At minimum `app` plus the backing services the tests hit (usually the DB). Example (replace names with this project’s services):
 
 ```bash
 ./vendor/bin/sail up -d app mysql
@@ -34,13 +29,6 @@ If the minimal set is ambiguous, `./vendor/bin/sail up -d` for the default profi
 
 For a run spanning an entire module or the whole repo, prefer committing, pushing, and letting CI run it rather than running it locally — CI shards test execution and finishes noticeably faster than a full local run.
 
-## Do not use (wrong environment)
+## Do not substitute a host runner
 
-Do **not** invoke any of these for this project unless the user explicitly says Sail is not used:
-
-- `pest`, `./vendor/bin/pest`, `php vendor/bin/pest`
-- `php artisan test` (without Sail)
-- `./vendor/bin/phpunit` on the host
-- `composer test` if it maps to raw Pest/PHPUnit on the host
-
-If `./vendor/bin/sail` is missing or Docker is down, stop and say so—do not substitute a host-side test runner.
+Never run `pest`, `phpunit`, `php artisan test`, or `composer test` on the host unless the user says the project doesn't use Sail. If `./vendor/bin/sail` is missing or Docker is down, stop and say so.

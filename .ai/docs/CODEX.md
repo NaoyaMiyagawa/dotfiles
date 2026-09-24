@@ -15,12 +15,11 @@ model. Override per task:
 | Task | Invocation |
 |---|---|
 | Deep reasoning | `codex exec -m gpt-5.5 -c model_reasoning_effort=high "..."` — `xhigh` for the hardest problems |
-| Mechanical execution | `codex exec -m gpt-5.4-mini -c model_reasoning_effort=low "..."` — `gpt-5.4` if mini struggles |
+| Mechanical execution | `codex exec -m gpt-5.6-luna -c model_reasoning_effort=low "..."` — drop `-m` (config default) if luna struggles |
 | Code / cross review | `timeout 600 codex exec review -c model_reasoning_effort=medium -o <file>` (current repo; `high` only for security-sensitive or large refactors) or `codex exec -m gpt-5.5 -c model_reasoning_effort=medium "..."` |
-| Quick lookup / small Q&A | `codex exec -m gpt-5.4-mini -c model_reasoning_effort=minimal "..."` |
+| Quick lookup / small Q&A | `codex exec -m gpt-5.6-luna -c model_reasoning_effort=minimal "..."` |
 
-gpt-5.4-mini has ~3-4× higher rate limits than gpt-5.5 on ChatGPT plans, so
-prefer it for routine work to stretch usage.
+gpt-5.6-luna is the cheapest model, so prefer it for routine work.
 
 Accepted `--effort` values: none, minimal, low, medium, high, xhigh. When a task
 doesn't clearly fit a row, leave the model unset but still pass a medium effort —

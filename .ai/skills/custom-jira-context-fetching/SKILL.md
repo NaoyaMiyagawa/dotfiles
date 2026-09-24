@@ -30,4 +30,3 @@ Reference: [jira-cli getting started](https://github.com/ankitpokhrel/jira-cli#g
 4. Derive branch context carefully (when asked).
    - Prefer the repository's existing branch naming convention if visible in git history or current branches.
    - Otherwise suggest a slug derived from the Jira key and summary, such as `KEY-short-summary`, and state clearly that it is a fallback, not a repo convention.
-   - Do not claim that `jira-cli` itself generates branch names unless the local environment explicitly adds that behavior.
