@@ -153,7 +153,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Return `Illuminate\Database\Eloquent\Collection` when that's what consumers need — push conversion into the producer, don't make every call site re-wrap.
 - Don't span module boundaries with relationships or `withCount()` — query each side independently and pass the needed data explicitly.
 - Push filters into the query (`whereIn`/`where`) instead of fetching a superset and narrowing in PHP with `filter()`/`each()`.
-- Call `pluck()`, `count()`, `exists()` and aggregates on the query, not on a hydrated collection: `$document->histories()->orderBy('id')->pluck('status')`, not `->get()->pluck('status')`.
+- Call `pluck()`, `count()`, `exists()` and aggregates on the query, not on a hydrated collection: `$document->histories()->orderBy('id')->pluck('status')`, not `->get()->pluck('status')`. A per-row count over a relation is `withCount()` or an `addSelect()` subquery, not an eager load counted in PHP.
 - Fold a conditional variant of a query into the same call with `when()` and a nested where group instead of running a second query and merging the results in PHP.
 - In a model scope, qualify columns with `$this->qualifyColumn('status')`, never a hand-written `'table.status'`. When the model already declares the relation, reach the related rows through it (`whereRelation()`, `whereHas()`, a constrained `with()`) rather than a hand-written `join()` that repeats table names; keep the manual join only when a measured query plan shows the relation form is too slow.
 
