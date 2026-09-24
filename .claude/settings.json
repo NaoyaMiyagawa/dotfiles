@@ -1,6 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "advisorModel": "fable",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "autoMode": {
     "soft_deny": [
       "$defaults",
@@ -104,6 +108,16 @@
           }
         ],
         "matcher": "*"
+      },
+      {
+        "hooks": [
+          {
+            "command": "~/.claude/hooks/dependency-assess-reminder.sh",
+            "timeout": 30,
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
       }
     ],
     "PostToolUseFailure": [
@@ -355,7 +369,6 @@
       }
     ]
   },
-  "model": "claude-fable-5-1[1m]",
   "permissions": {
     "allow": [
       "Bash(* | grep*)",

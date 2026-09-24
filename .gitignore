@@ -50,6 +50,7 @@
 !/.claude/settings.json
 !/.claude/hooks/
 !/.claude/hooks/no-poll-loops.sh
+!/.claude/hooks/dependency-assess-reminder.sh
 !/.claude/themes/
 !/.claude/themes/my-theme.json
 !/.claude/scheduled-tasks/
