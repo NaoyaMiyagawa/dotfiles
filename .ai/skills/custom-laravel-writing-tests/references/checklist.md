@@ -74,6 +74,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Use `->forEachSequence()` when every pattern must be covered.
 - Use `->createOne()` / `->createMany()` for better return types; prefer `::factory(x)` over `->count(x)` when creating more than one record.
 - Order a factory chain at the call site: `count()` (where it must appear, e.g. nested inside `->has()`), then relationship states (`->has(...)`, `->forXxx(...)`), then column states (`->active()`, `->withXxx(...)`), then the `create*()` call.
+- Create children from the parent's chain — `Workflow::factory()->hasVersions($versionFactory->draft())` — not the parent first and then each child with `->for($parent)`.
 - Extract the common prefix when several calls to the same factory share it:
 
     ```php
@@ -118,6 +119,7 @@ mock(Xxx::class)
 
 ## Assertion extras
 
+- Don't extract a local closure or helper for assertions when each call spans about as many lines as the inlined assertions it replaces.
 - To assert a record persisted, prefer `$model->refresh()` over `expect($model)->toBeInstanceOf(...)` + `expect($model->exists)->toBeTrue()` — the refresh confirms persistence and surfaces the stored values for further assertions.
 - Use `foreach` over `expect($x)->each()`.
 - Assert datetime values by canonical string, not object instance: compare via `->toDateTimeString()` (or a formatted/ISO string). A mutable vs immutable date class mismatch (after adding an `immutable_datetime` cast) fails an object comparison even when the instant is identical.

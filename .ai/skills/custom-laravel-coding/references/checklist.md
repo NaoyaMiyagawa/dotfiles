@@ -132,6 +132,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## API Resources
 
 - Shape a nested list with a dedicated `JsonResource` + `::collection()`, not an inline `array_map`/`map` closure — one resource class per distinct shape the frontend consumes. A single-action controller's one-off payload is shaped inline in `response()->json([...])`; a resource class earns its place once the shape is reused or nested.
+- Serialize a related model (`published_by`, `created_by`) through a small shared resource (`uuid`, `name`, …) reused by every such field, not a flattened `$this->publishedBy?->name`.
 - When a resource field stops being consumed, remove it plus the FE TypeScript types, mocks, and selectors in the same PR — no dead serialized fields "just in case".
 
 ## Models
@@ -144,6 +145,8 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## Eloquent
 
 - When a query chain spans lines, break after `::query()` too — `Model::query()` alone on the first line, every chained call on its own line below — not `Model::query()->where(...)` on line one with the rest wrapped beneath.
+- Order a query chain by clause: `with()` → `select()`/`addSelect()` (and scopes that only add a column) → `join()` → `where()`/filter scopes → `orderBy()`/`groupBy()` → the terminal call.
+- When a query uses raw SQL (`selectRaw()`, `whereRaw()`), run its tests against every database driver the app supports.
 - Reach related rows through the relation on the instance you already hold — `$parent->children()->update([...])`, `$comment->post()->lockForUpdate()->first()` — not a fresh `Child::query()->where('parent_id', ...)`; never re-fetch a model the route already bound.
 - Fix N+1 loading with eager loading (`with()` / `loadMissing()`), not a cache layer.
 - Don't set `updated_at` manually unless the value must intentionally diverge from "now" (backfills, replication).
@@ -153,7 +156,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Return `Illuminate\Database\Eloquent\Collection` when that's what consumers need — push conversion into the producer, don't make every call site re-wrap.
 - Don't span module boundaries with relationships or `withCount()` — query each side independently and pass the needed data explicitly.
 - Push filters into the query (`whereIn`/`where`) instead of fetching a superset and narrowing in PHP with `filter()`/`each()`.
-- Call `pluck()`, `count()`, `exists()` and aggregates on the query, not on a hydrated collection: `$document->histories()->orderBy('id')->pluck('status')`, not `->get()->pluck('status')`. A per-row count over a relation is `withCount()` or an `addSelect()` subquery, not an eager load counted in PHP.
+- Call `pluck()`, `count()`, `exists()` and aggregates on the query, not on a hydrated collection: `$document->histories()->orderBy('id')->pluck('status')`, not `->get()->pluck('status')`.
 - Fold a conditional variant of a query into the same call with `when()` and a nested where group instead of running a second query and merging the results in PHP.
 - In a model scope, qualify columns with `$this->qualifyColumn('status')`, never a hand-written `'table.status'`. When the model already declares the relation, reach the related rows through it (`whereRelation()`, `whereHas()`, a constrained `with()`) rather than a hand-written `join()` that repeats table names; keep the manual join only when a measured query plan shows the relation form is too slow.
 
