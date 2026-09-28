@@ -137,6 +137,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 ## Models
 
+- Order model members framework-first, then custom: casts → `booted()` → accessors/mutators (`Attribute`) → relations → scopes → other methods.
 - Define query scopes with the `#[Scope]` attribute, not the legacy `scopeXxx()` method.
 - Dispatch domain events from the calling service/action, not inside a model method — side effects belong at the orchestration layer.
 - No `@property`/`@property-read` PHPDoc block on a model — the IDE-helper stubs and casts already supply the types, so a hand-written block only drifts from the schema.
@@ -148,7 +149,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Order a query chain by clause: `with()` → `select()`/`addSelect()` (and scopes that only add a column) → `join()` → `where()`/filter scopes → `orderBy()`/`groupBy()` → the terminal call.
 - When a query uses raw SQL (`selectRaw()`, `whereRaw()`), run its tests against every database driver the app supports.
 - Reach related rows through the relation on the instance you already hold — `$parent->children()->update([...])`, `$comment->post()->lockForUpdate()->first()` — not a fresh `Child::query()->where('parent_id', ...)`; never re-fetch a model the route already bound.
-- Fix N+1 loading with eager loading (`with()` / `loadMissing()`), not a cache layer.
+- Fix N+1 loading with eager loading (`with()` / `loadMissing()`), not a cache layer or `once()` memoization.
 - Don't set `updated_at` manually unless the value must intentionally diverge from "now" (backfills, replication).
 - Prefer time-ordered UUIDs (`Str::orderedUuid()`) populated by a trait/hook, not assigned by hand per record (the bulk-insert path follows the same strategy — core rule *Bulk insert when creating multiple records*).
 - Use `firstOrFail()`/`findOrFail()` when a record's existence is an expected invariant — fail loudly at the fetch, not with `first()` + null-guarding. Never reach for `sole()` for a single expected record; `firstOrFail()` reads clearly, `sole()` obscures intent.

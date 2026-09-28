@@ -105,7 +105,7 @@ Assign @NaoyaMiyagawa.
 Don't request reviewers unless the user names them — the author self-reviews first.
 
 ## Labels
-When it's a refactoring work, tag "Refactoring".
+Tag "Refactoring" (and title it `[REFACTOR]`) only when behaviour is unchanged. A change that alters behaviour, including how the UI looks, is a feature or fix, even if it is mostly restructuring.
 
 ## Code review (local, different model)
 This repo does not use PR review bots — do not post any `@`-mention review trigger on the PR. After creating or editing the PR, run the review **locally with the Codex CLI** — a different model from Claude Code, for an unbiased, different-perspective check. Review against the applicable coding-standard skills under `~/dotfiles/.ai/skills/` (Laravel coding, Laravel tests, PHP linter/static-analysis/test, email templates), not generic advice.
