@@ -104,6 +104,8 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 ## Feature test extras
 
+- No `afterEach()` that undoes app-instance state (`app()->detectEnvironment()`, `config()->set()`, container bindings) — every test boots a fresh application, so the reset changes nothing.
+
 - A response assertion reused across test files (a downloaded-PDF check, a JSON envelope check) becomes a `TestResponse` macro in `tests/Pest.php` so it chains like the built-ins: `post(...)->assertDownloadedPdf()`, not a standalone helper taking `$response`.
 
 ## Mock
@@ -164,7 +166,6 @@ Add one case between `beforeEach()` and the `handle()`-focused cases asserting t
 
 ## Regression tests
 
-- For a fixed 500/error, assert only the success contract (`assertOk()` / page renders) on the route that broke. Don't over-specify with `->missing(...)` checks for fields the PR removes or by asserting the absence of every offending shape — maintenance cost without a stronger guarantee.
 - For a query-count fix (an N+1), assert the count itself — `expectsDatabaseQueryCount(n)` or a `DB::listen()` tally against several records — so the case fails on the unfixed code and stays red if the N+1 returns. A plain `assertOk()` cannot see the extra queries.
 
 ## Contract-drift tests
