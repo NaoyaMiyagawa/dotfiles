@@ -28,7 +28,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
         queue: true,
     );
     ```
-    On a one-line call, name only an argument whose meaning the call doesn't already show — a bare boolean or a magic number. A value that reads as itself stays positional (`setPaper('A4', 'landscape')`, `setOrder(1)`), even when calling into a package.
+    Keep a call that fits on one line on one line — never break a short call just to name its args (`Artisan::call('scout:import', ['model' => Post::class])`). A trailing array or closure argument may open on the call line and span the lines below (`addField($name, [`). On a one-line call, name only an argument whose meaning the call doesn't already show — a bare boolean or a magic number. A value that reads as itself stays positional (`setPaper('A4', 'landscape')`, `setOrder(1)`), even when calling into a package.
 5. Don't wrap instantiation in brackets: `new Xxx()->...`.
 6. Break a long union/intersection type or generic across multiple lines when it's hard to scan.
 7. Switch a long arrow function to a classic closure once the expression no longer fits on one line.
@@ -84,6 +84,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Exception classes carry the `Exception` suffix and extend `Exception` directly; a `RuntimeException` parent or `ShouldntReport` only with a stated reason.
 - Throw the project's `NotImplementedException` for a branch that is deliberately not built yet — not a generic `RuntimeException`/`LogicException` that reads like a real failure.
+- A method that only applies to one variant of a type (one action type, one document type) opens its docblock with that variant (`For SendEmail action.`) and throws when called on any other, instead of returning `null`.
 - A `try`/`catch` is only for a traced, reachable failure; when two sites hit the same operation but only one can fail, guard that one and leave the other bare.
 
 ## Validation
@@ -164,6 +165,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## Migrations
 
 - Backfills and data manipulation use the `DB` facade, never Eloquent models — migrations are time-frozen; models reflect today's schema and will drift.
+- A one-off data or index command that every environment needs (a reindex, a backfill command) runs from a migration's `up()` so deploy applies it everywhere — not as a manual step per environment.
 - Fix a not-yet-merged migration in place; corrective migrations are only for schema already merged or released.
 - Head a data/backfill migration with a comment stating why it's needed and what it does — the schema diff shows the columns, not the reason a one-off backfill exists. When it reshapes or canonicalizes an existing stored structure, show the before→after shape concretely in that comment (or the PR body), not just prose — a reviewer without context can't infer the transformation from words alone.
 - Column order: foreign keys right after the `id`/`uuid` key columns; audit-style FKs (`created_by`, `updated_by`) near `timestamps()`. Mirror that order when populating a new model instance: `->associate()` the owning relations right after `new Xxx()`, audit relations next to the timestamps.

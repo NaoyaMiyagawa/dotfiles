@@ -87,6 +87,8 @@ Next:
 ### Jira ticket link
 If GitHub PR template has a dedicated section for Jira ticket link and you find applicable ticket based on the ticket key in branch name, put a ticket link in the dedicated section in the template. (PR title should still use the **`[KEY] Title`** pattern from the **Title** section when the work is Jira-driven, with `Title` taken from Jira Summary.)
 
+For a Sentry fix, add a short Sentry summary under the Jira link, and put the same summary in the Jira ticket: issue id with link (plus related issues), error type, first and last seen, occurrence count, and affected environments.
+
 ### Validation Run
 If you ran validation commands, put them at the end of the description inside a `<details>` block so they don't dominate the body. If you ran none, omit the block entirely — don't leave an empty placeholder.
 ```md
