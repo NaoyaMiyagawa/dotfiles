@@ -41,7 +41,8 @@ description: Applies React/TSX component conventions — file layout, component 
    of a declaration that already carries the type.
 9. **Name a collection as a plural noun and a lookup by its key.** `availableActions`,
    not `available` (reads as a boolean); `errorsByActionType` for an
-   `{ [actionType]: error }` map.
+   `{ [actionType]: error }` map. Assign a calculation inside a condition to a
+   descriptively named variable first (`const msSinceLastReload = Date.now() - lastReloadedAt`).
 
 ## Props
 

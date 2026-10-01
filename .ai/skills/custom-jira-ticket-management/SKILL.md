@@ -34,8 +34,9 @@ Write descriptions in markdown (jira-cli converts it). Sections, in order — dr
 
 ```markdown
 ## Why
-1–3 sentences: the problem or goal, and why now. Link the source
-(Confluence page, Slack thread, parent ticket) instead of restating it.
+1–3 sentences: the problem or goal, and why now. Link the source the
+task came from (chat message, Confluence page, parent ticket) instead of
+restating it, and put the same link in the PR description.
 
 ## What
 The change in concrete terms: affected flows, code areas, or endpoints.
