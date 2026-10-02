@@ -11,7 +11,7 @@
   window.__flowCursorInstalled = true;
   window.__flowCursorBusyUntil = 0;
 
-  const SETTLE_MS = 50; // pause on the target before a click; CLI round trips add more
+  const SETTLE_MS = 0; // the CLI round trips before a click already read as a settle
   const IDLE_AFTER_MS = 350; // stillness before the idle drift starts
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
   const random = (min, max) => min + Math.random() * (max - min);
@@ -78,7 +78,7 @@
       // the real pointer catching up with where the arrow is already heading
       if (motion && Math.hypot(target.x - rest.x, target.y - rest.y) < 1) return;
       // longer moves take longer, like a hand (Fitts's law), with some variation per move
-      const duration = clamp((260 + distance * 0.5) * random(0.9, 1.15), 280, 1000);
+      const duration = clamp((180 + distance * 0.35) * random(0.9, 1.15), 220, 700);
       startMotion(target, {
         duration,
         bowScale: random(0.06, 0.14),

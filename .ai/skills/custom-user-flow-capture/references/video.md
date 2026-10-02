@@ -10,12 +10,12 @@ Write `flow.sh` to the scratchpad so it can run again unchanged, for example aga
 
 ```zsh
 #!/usr/bin/env zsh
-# Records the <name> flow as a WebM for the PR description, with a screenshot per step for review.
+# Records the <name> flow as a WebM for the PR description.
 #
 # Flow:
 #   1. Set the viewport and log in, before recording.
 #   2. Start recording on the page where the flow begins, then inject the fake cursor.
-#   3. Walk the flow: glide the cursor to each target, click it, wait for the expected state, pause, screenshot.
+#   3. Walk the flow: glide the cursor to each target, click it, wait for the expected state, pause.
 #   4. Stop recording, which writes the WebM.
 #
 # Exit 0 means every expected state appeared and flow.webm was written.
@@ -42,12 +42,13 @@ move_to() {
     const element = [...document.querySelectorAll($(jq -n --arg v "$1" '$v'))]
       .find((candidate) => candidate.offsetParent !== null && candidate.textContent.includes($(jq -n --arg v "${2:-}" '$v')));
     const rect = element.getBoundingClientRect();
-    return { x: Math.round(rect.x + rect.width * (0.35 + Math.random() * 0.3)), y: Math.round(rect.y + rect.height * (0.35 + Math.random() * 0.3)) };
+    const point = { x: Math.round(rect.x + rect.width * (0.35 + Math.random() * 0.3)), y: Math.round(rect.y + rect.height * (0.35 + Math.random() * 0.3)) };
+    // glide the drawn arrow first; the real pointer follows on arrival, so hover starts when the arrow lands
+    window.__flowCursorGlideTo(point.x, point.y);
+    return point;
   })()" --json)
   cursor_x=$(jq -er '.data.result.x' <<< "$center")
   cursor_y=$(jq -er '.data.result.y' <<< "$center")
-  # glide the drawn arrow first; the real pointer follows on arrival, so hover starts when the arrow lands
-  ab eval "window.__flowCursorGlideTo($cursor_x, $cursor_y)" >/dev/null
   wait_for_cursor
   ab mouse move $cursor_x $cursor_y >/dev/null
 }
@@ -87,14 +88,13 @@ ab wait --url '**/dashboard'
 # Step 2: start recording, then show the cursor.
 ab record start "$out/flow.webm"
 ensure_cursor
-ab wait 600
+ab wait 400
 
 # Step 3: walk the flow, one block per step.
 click_at 'a' 'Invoices'
 ab wait --text 'Invoices'
 ensure_cursor
-ab wait 600
-ab screenshot "$out/01-invoices.png"
+ab wait 500
 
 # Step 4: stop recording.
 ab record stop
@@ -109,14 +109,15 @@ ls -l "$out"
 - Move the real pointer only through `move_to` and `click_at`. A raw `ab mouse move` jumps the pointer ahead of the arrow, so hover styles and hover-opened menus show up before the arrow gets there.
 - Click only through `click_at`. Its `assert_cursor_on_target` check fails the run when the drawn arrow didn't reach the target, which is what a click with no visible movement looks like in the video. A raw `ab click` or `ab mouse down` skips that check.
 - Target elements through `move_to`, not agent-browser selectors: `get box` rejects Playwright-only selectors such as `:has-text()`, and `@eN` refs from `snapshot` change between runs.
-- The fixed pauses go against the screenshot rule on purpose: about `wait 250` after a menu or drawer opens on the way to the next click, and `wait 500` to `700` on a state the viewer should read. Longer pauses make the next action feel late. They give the viewer time to read each state, and the idle wander keeps them from looking frozen. Still wait for the expected state first (`wait --text`, `wait --url`, `wait <selector>`), then pause.
+- Don't take screenshots during the recording. Each one stalls the page for about 0.5 s, which shows as a dead stretch in the video. When the PR also needs step screenshots, take them in a separate run.
+- The fixed pauses go against the screenshot rule on purpose: no pause after a menu or drawer opens on the way to the next click, and about `wait 500` on a state the viewer should read. Longer pauses make the next action feel late. They give the viewer time to read each state, and the idle wander keeps them from looking frozen. Still wait for the expected state first (`wait --text`, `wait --url`, `wait <selector>`), then pause.
 - Stop the recording before `close`. The video is written on `record stop`.
 
 Run it with `zsh <scratchpad>/flow.sh <scratchpad>/flow-<name>/after`.
 
 ## Review
 
-You can't watch the WebM. Review the per-step screenshots as in the main workflow, then check the video itself:
+You can't watch the WebM. Extract frames and review them as you would step screenshots:
 
 ```zsh
 ffprobe -v error -show_entries format=duration -of csv=p=0 flow.webm
