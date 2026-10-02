@@ -146,7 +146,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 ## Eloquent
 
-- When a query chain spans lines, break after `::query()` too — `Model::query()` alone on the first line, every chained call on its own line below — not `Model::query()->where(...)` on line one with the rest wrapped beneath.
+- A query chain with more than one `where()` spans lines. When a query chain spans lines, break after `::query()` too — `Model::query()` alone on the first line, every chained call on its own line below — not `Model::query()->where(...)` on line one with the rest wrapped beneath.
 - Order a query chain by clause: `with()` → `select()`/`addSelect()` (and scopes that only add a column) → `join()` → `where()`/filter scopes → `orderBy()`/`groupBy()` → the terminal call.
 - When a query uses raw SQL (`selectRaw()`, `whereRaw()`), run its tests against every database driver the app supports.
 - Reach related rows through the relation on the instance you already hold — `$parent->children()->update([...])`, `$comment->post()->lockForUpdate()->first()` — not a fresh `Child::query()->where('parent_id', ...)`; never re-fetch a model the route already bound.
