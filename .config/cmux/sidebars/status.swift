@@ -90,7 +90,10 @@ VStack(alignment: .leading, spacing: 5) {
                         .lineLimit(1)
                         .truncationMode(.tail)
                     Spacer(minLength: 4)
-                    if w.unread > 0 {
+                    // unread also counts cmux system alerts (e.g. memory pressure)
+                    // that carry no surface, so focusing the workspace never marks
+                    // them read; show the badge only alongside an agent state.
+                    if w.unread > 0 && (isWaiting || isWorking || isDone) {
                         Text("\(w.unread)")
                             .font(.system(size: 9)).bold()
                             .foregroundColor("#FFFFFF")
