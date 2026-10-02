@@ -31,6 +31,7 @@ Prefer fast, purpose-built tools; fall back to a legacy default only when the mo
 - Simple find-and-replace in files → `sd` (not `sed`)
 - Query/edit JSON → `jq`; YAML → `yq`
 - Fetch URLs, call HTTP APIs, extract from pages → `ax` (not `curl` + throwaway parsing scripts); run `ax agent-context` for usage
+- Sentry issue or event → the Sentry MCP (`get_sentry_resource` with the issue URL), not the `sentry` skill's Python script, which the `python*` deny rule blocks in Claude Code
 - Browser checks and screenshots → `ego-browser` skill (ego lite, built for agents), not `playwright-cli` or the built-in browser pane. Repo scripts that call a browser tool on purpose stay as written.
 - Diff → `delta`; benchmark a command → `hyperfine`; quick command examples → `tldr`
 - `fd`/`rg` honor gitignore: `~/.claude` symlinks into the dotfiles repo whose .gitignore covers `/.claude/**`, so searches there silently return nothing — add `--no-ignore` (fd) / `-u` (rg). Diagnose empty results as ignore rules before blaming the filesystem.
