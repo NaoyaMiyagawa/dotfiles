@@ -39,6 +39,7 @@ brew "jira-cli"  # jira — Jira from the terminal
 
 # --- AI agent tooling ---
 brew "rtk"       # Rust Token Killer — token-optimizing CLI proxy
+brew "ffmpeg"    # agent-browser `record` encodes flow videos with it
 
 # --- Infra ---
 tap "hashicorp/tap"
