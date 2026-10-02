@@ -69,10 +69,10 @@ click_at() {
   assert_cursor_on_target
   ab mouse down >/dev/null
   ab mouse up >/dev/null
-  # the arrow eases off the control after a click; bring the real pointer along so hover ends with it
-  wait_for_cursor
+  # the arrow eases off the control after a click; send the real pointer to where it will rest so hover ends
+  # as it leaves, without waiting for the motion, so the next step can start while it still moves
   local at
-  at=$(ab eval '({ x: Math.round(window.__flowCursorAt.x), y: Math.round(window.__flowCursorAt.y) })' --json)
+  at=$(ab eval 'window.__flowCursorRest' --json)
   ab mouse move $(jq -er '.data.result.x' <<< "$at") $(jq -er '.data.result.y' <<< "$at") >/dev/null
 }
 
@@ -93,7 +93,7 @@ ab wait 600
 click_at 'a' 'Invoices'
 ab wait --text 'Invoices'
 ensure_cursor
-ab wait 800
+ab wait 600
 ab screenshot "$out/01-invoices.png"
 
 # Step 4: stop recording.
@@ -109,7 +109,7 @@ ls -l "$out"
 - Move the real pointer only through `move_to` and `click_at`. A raw `ab mouse move` jumps the pointer ahead of the arrow, so hover styles and hover-opened menus show up before the arrow gets there.
 - Click only through `click_at`. Its `assert_cursor_on_target` check fails the run when the drawn arrow didn't reach the target, which is what a click with no visible movement looks like in the video. A raw `ab click` or `ab mouse down` skips that check.
 - Target elements through `move_to`, not agent-browser selectors: `get box` rejects Playwright-only selectors such as `:has-text()`, and `@eN` refs from `snapshot` change between runs.
-- The fixed `wait 600` to `900` pauses go against the screenshot rule on purpose. They give the viewer time to read each state, and the idle wander keeps them from looking frozen. Still wait for the expected state first (`wait --text`, `wait --url`, `wait <selector>`), then pause.
+- The fixed pauses go against the screenshot rule on purpose: about `wait 250` after a menu or drawer opens on the way to the next click, and `wait 500` to `700` on a state the viewer should read. Longer pauses make the next action feel late. They give the viewer time to read each state, and the idle wander keeps them from looking frozen. Still wait for the expected state first (`wait --text`, `wait --url`, `wait <selector>`), then pause.
 - Stop the recording before `close`. The video is written on `record stop`.
 
 Run it with `zsh <scratchpad>/flow.sh <scratchpad>/flow-<name>/after`.

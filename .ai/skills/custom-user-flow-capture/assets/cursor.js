@@ -1,9 +1,11 @@
 // Draws a fake mouse cursor for headless flow recordings, which have no OS cursor.
 // It moves like a hand: curved paths with a fast start and long slowdown, a slight overshoot,
-// an idle drift while the page is being read, and a ripple on mousedown.
+// an idle drift while the page is being read, and a ripple on press. It listens for pointerdown because a
+// control that calls preventDefault() on pointerdown, such as a Radix menu trigger, suppresses mousedown.
 // window.__flowCursorGlideTo(x, y) glides the arrow while the real pointer stays put, so hover states only
 // appear once the script moves the real pointer onto the arrow. window.__flowCursorBusyUntil marks when the
-// current motion ends, and window.__flowCursorAt is where the arrow is drawn.
+// current motion ends, window.__flowCursorAt is where the arrow is drawn, and window.__flowCursorRest is where
+// the arrow comes to rest after a click.
 (() => {
   if (window.__flowCursorInstalled) return;
   window.__flowCursorInstalled = true;
@@ -73,6 +75,8 @@
     const glideTo = (target) => {
       const distance = Math.hypot(target.x - position.x, target.y - position.y);
       if (distance < 1) return;
+      // the real pointer catching up with where the arrow is already heading
+      if (motion && Math.hypot(target.x - rest.x, target.y - rest.y) < 1) return;
       // longer moves take longer, like a hand (Fitts's law), with some variation per move
       const duration = clamp((260 + distance * 0.5) * random(0.9, 1.15), 280, 1000);
       startMotion(target, {
@@ -135,7 +139,7 @@
     });
 
     window.addEventListener(
-      "mousedown",
+      "pointerdown",
       (event) => {
         // the drawn arrow may be mid-drift; put it where the real click lands
         motion = null;
@@ -148,9 +152,10 @@
         const duration = random(450, 750);
         window.__flowCursorBusyUntil = performance.now() + pressMs + duration;
         lastActivity = window.__flowCursorBusyUntil;
+        const away = { x: position.x + random(-30, 30), y: position.y + random(12, 40) };
+        rest = away;
+        window.__flowCursorRest = { x: Math.round(away.x), y: Math.round(away.y) };
         setTimeout(() => {
-          const away = { x: position.x + random(-30, 30), y: position.y + random(12, 40) };
-          rest = away;
           startMotion(away, {
             duration,
             bowScale: random(0.1, 0.25),
