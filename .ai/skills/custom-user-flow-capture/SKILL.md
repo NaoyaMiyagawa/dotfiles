@@ -19,7 +19,7 @@ When the user wants a video, or the point is the navigation between pages rather
 
 ## Output
 
-Give a table: step, screenshot path, verdict (and the matching before path when you captured one). Put defects first. If the user wants the images or video in a PR, give the paths. Attaching them is up to the user.
+Give a table: step, screenshot path, verdict (and the matching before path when you captured one). Put defects first. If the user asks to put the images or video in the PR, attach them with `gh pr edit <pr> --attach '<path>#<alt text>'`. Otherwise give the paths.
 
 ## Rules
 

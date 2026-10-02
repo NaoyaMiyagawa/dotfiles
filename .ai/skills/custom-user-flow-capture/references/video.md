@@ -76,7 +76,7 @@ The duration should match the script's waits. Read a few of the extracted frames
 
 ## Attach
 
-GitHub plays `.webm` and `.mp4` inline in a PR description. Files must be under 10 MB on free plans. `gh` can't upload attachments, so give the user the path to drag into the PR editor. If the file is too big, shrink it:
+GitHub plays `.webm` and `.mp4` inline in a PR description. Files must be under 10 MB on free plans. When the user asks to put it in the PR, upload it with `gh pr edit <pr> --attach '<path>#<alt text>'` (gh 2.102+). Without a body flag gh appends the video to the existing body. To place it at a spot in the body, reference it as `![alt](./flow.webm)` and pass `--body-file` with the same `--attach`; gh rewrites the link to the uploaded asset. If the file is too big, shrink it first:
 
 ```zsh
 ffmpeg -i flow.webm -vf scale=960:-2 -c:v libx264 -crf 28 -an flow.mp4
