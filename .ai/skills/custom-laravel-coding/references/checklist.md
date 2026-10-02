@@ -28,7 +28,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
         queue: true,
     );
     ```
-    Keep a call that fits on one line on one line — never break a short call just to name its args (`Artisan::call('scout:import', ['model' => Post::class])`). A trailing array or closure argument may open on the call line and span the lines below (`addField($name, [`). On a one-line call, name only an argument whose meaning the call doesn't already show — a bare boolean or a magic number. A value that reads as itself stays positional (`setPaper('A4', 'landscape')`, `setOrder(1)`), even when calling into a package.
+    A call with named args puts one arg per line, even when it would fit on one line (never `new Foo(id: 1, name: 'a')`). The exception is a PHP built-in function, which keeps a named flag inline (`json_decode($json, flags: JSON_THROW_ON_ERROR)`). Keep a positional call that fits on one line on one line (`Artisan::call('scout:import', ['model' => Post::class])`). A trailing array or closure argument may open on the call line and span the lines below (`addField($name, [`). Name only an argument whose meaning the call doesn't already show — a bare boolean or a magic number. A value that reads as itself stays positional (`setPaper('A4', 'landscape')`, `setOrder(1)`), even when calling into a package.
 5. Don't wrap instantiation in brackets: `new Xxx()->...`.
 6. Break a long union/intersection type or generic across multiple lines when it's hard to scan.
 7. Switch a long arrow function to a classic closure once the expression no longer fits on one line.

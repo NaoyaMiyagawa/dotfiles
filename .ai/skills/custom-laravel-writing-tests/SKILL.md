@@ -59,12 +59,18 @@ Before refactoring a code path with no direct coverage, first write a **characte
     });
     ```
 
-10. **AAA markers in every case you write**, even when the surrounding cases in an older file lack them; `// Act & Assert` only for compact tests. A bare `//` comment in a test body is reserved for the three markers — every other comment (a sub-step under a section, a note on a line) carries the `- ` prefix so the structure scans at a glance:
+10. **AAA markers in every case you write**, even when the surrounding cases in an older file lack them; `// Act & Assert` only for compact tests. A bare `//` comment on its own line in a test body is reserved for the three markers — every other comment on its own line (a sub-step under a section, a note on the next line) carries the `- ` prefix so the structure scans at a glance; a trailing comment on a code line stays plain `//`. When a mock expectation or an assertion carries several values but only one matters to the case, comment that one value — trailing when the line has room, otherwise a `// - ` line before it:
 
     ```php
     // Arrange
     // - create the workflow run
     // - upload the failing document
+
+    // - only title is searchable
+    ->andReturn(new SearchColumns(
+        indexColumns: 'title',
+        sortableColumns: '', // no sorting in this case
+    ));
     ```
 
 11. **Feature request shape.** Build URLs with `route('...')`, never a path literal. Pass a request body as a multi-line array literal in the call's second argument and chain the assertions directly off it — don't hoist the payload into a local variable or cram it onto one line (a dataset argument is fine). One chained call per line: `withToken()`, the request, and each `assertXxx()` each get their own line, and the first assertion breaks onto its own line even when it is the only one (`])` then `->assertOk();`). Keep the `route()` call on one line unless it carries more than one route or query parameter. Reach for the dedicated helper before hand-rolling it: `withToken()` over a hand-built `Authorization` header, `assertInvalid()` over `assertSessionHasErrors()`, `assertRedirectBack()` over `assertRedirect(route(...))` when the redirect is back, `assertInertia()` over an `X-Inertia` header plus `assertJson*()` on a page (non-API) route, `createOneQuietly()` over building a model by hand, the model class over the table-name string in every `assertDatabase*()` (`assertDatabaseCount(Model::class)`, not `'models'`).
