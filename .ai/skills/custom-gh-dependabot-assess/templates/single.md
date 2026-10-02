@@ -3,16 +3,13 @@
 
 <details><summary><b>Details</b></summary>
 
-**What it does**
+- **What it does**:
 {{what_it_does}}
-
-**Where it's used**
+- **Where it's used**:
 {{where_used}}
-
-**What changed**
+- **What changed**:
 {{what_changed}}
-
-**Risk**
+- **Risk**:
 {{risk_reasoning}}
 </details>
 

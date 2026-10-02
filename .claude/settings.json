@@ -29,12 +29,14 @@
   },
   "extraKnownMarketplaces": {
     "crit": {
+      "autoUpdate": true,
       "source": {
         "repo": "tomasz-tomczyk/crit",
         "source": "github"
       }
     },
     "openai-codex": {
+      "autoUpdate": true,
       "source": {
         "repo": "openai/codex-plugin-cc",
         "source": "github"
@@ -368,6 +370,11 @@
         "matcher": "*"
       }
     ]
+  },
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    }
   },
   "permissions": {
     "allow": [

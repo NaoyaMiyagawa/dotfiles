@@ -87,7 +87,21 @@ Next:
 ### Jira ticket link
 If GitHub PR template has a dedicated section for Jira ticket link and you find applicable ticket based on the ticket key in branch name, put a ticket link in the dedicated section in the template. (PR title should still use the **`[KEY] Title`** pattern from the **Title** section when the work is Jira-driven, with `Title` taken from Jira Summary.)
 
-For a Sentry fix, add a short Sentry summary under the Jira link, and put the same summary in the Jira ticket: issue id with link (plus related issues), error type, first and last seen, occurrence count, and affected environments.
+For a Sentry fix, put a Sentry summary under the Jira link, and put the same block in the Jira ticket (without the ticket line). Bold every label. Pull the figures from Sentry itself. The issue's environment tag distribution gives the per-environment split; don't copy numbers from an old report.
+
+```md
+- **Ticket:** https://<org>.atlassian.net/browse/PROJ-1234
+
+**Sentry:** APP-294 (https://<org>.sentry.io/issues/APP-294)
+- **Type:** N+1 Query (performance issue, not an exception)
+- **Endpoint:** GET `/workflows/{workflow}/runs` (workflow runs index)
+- **Repeated query:** `select * from document_templates where id = ? ...`
+- **First seen:** 2026-09-11 · **Last seen:** 2026-09-24
+- **Occurrences:** 3 (UAT 2, Staging 1); none in Production; 0 users impacted
+- **Impact:** one extra query per run on the page, so 10 on a default page
+```
+
+Fit the lines to the issue type rather than forcing every one. An exception names the error message instead of **Repeated query**, and a frontend issue names the page or browser instead of **Endpoint**. Add a **Related Sentry:** line for each linked issue. **Impact** says how the cost or failure scales or who it hits; the occurrence count alone doesn't show that.
 
 ### Validation Run
 If you ran validation commands, put them at the end of the description inside a `<details>` block so they don't dominate the body. If you ran none, omit the block entirely — don't leave an empty placeholder.

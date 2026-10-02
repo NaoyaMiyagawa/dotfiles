@@ -1,6 +1,6 @@
 ---
 name: custom-react-coding
-description: Applies React/TSX component conventions — file layout, component boundaries, and JSX formatting. Use when implementing or refactoring React components, pages, or their types.
+description: Applies React/TSX component conventions — file layout, component boundaries, and JSX formatting. Use when implementing or refactoring React components, pages, or their types, or when checking a design or CSS fix in the browser.
 ---
 
 # React Coding Conventions
@@ -87,7 +87,22 @@ description: Applies React/TSX component conventions — file layout, component 
     (`{ blankLine: "always", prev: "*", next: "return" }`, under `@stylistic` on
     ESLint 9) — enable it where the repo lints TS rather than fixing it by hand.
 
+## Checking a design fix in the browser
+
+15. **Load the page past every cache, then confirm which build it loaded.** A stale
+    copy looks exactly like a fix that didn't work. A hard reload is not enough: it
+    skips the cache only for the top page, not for an iframe whose `src` script sets
+    later, which is how rendered certificates and embeds load.
+    - Before judging the result, open the page in a fresh or private profile, or
+      with DevTools "Disable cache" ticked for the whole session. When asking the
+      user to check, tell them to use a private window.
+    - Confirm the frame that shows the design loaded the new build: its hashed CSS/JS
+      filename, or a rule you just added, read from that frame's own document.
+    - For a deployed check, first confirm the server sends the new build.
+      `curl -sI` each path and compare `last-modified` and `x-cache`. A CDN can keep
+      serving an old `index.html` that has no `Cache-Control`.
+
 ## Tests
 
-15. **AAA comments in every spec.** Each test body carries `// Arrange`, `// Act`,
+16. **AAA comments in every spec.** Each test body carries `// Arrange`, `// Act`,
     `// Assert` markers, same as the Laravel test convention.

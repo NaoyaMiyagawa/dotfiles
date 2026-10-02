@@ -10,8 +10,10 @@
 +{{indirect_count}} transitive packages not assessed.
 
 **`{{package}}` {{from}} → {{to}}** _(one block per major or breaking package)_
-_What changed:_ {{what_changed}}
-_Risk:_ {{risk_reasoning}}
+- **What changed**:
+{{what_changed}}
+- **Risk**:
+{{risk_reasoning}}
 </details>
 
 <sub>Posted by {{tool}} ({{model}}) at {{datetime}}</sub>

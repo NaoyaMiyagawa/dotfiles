@@ -7,6 +7,7 @@
 // custom settings, run `zed: open default settings` from the
 // command palette
 {
+    "ui_font_weight": 400.0,
     "scrollbar": {
         "git_diff": true
     },
@@ -23,8 +24,8 @@
     "diff_view_style": "split",
     "ui_font_family": ".ZedSans",
     "tab_size": 4,
-    "agent_buffer_font_size": 12.0,
-    "agent_ui_font_size": 12.0,
+    "agent_buffer_font_size": 14.0,
+    "agent_ui_font_size": 14.0,
     "active_pane_modifiers": {
         "border_size": 0.0,
     },
@@ -35,6 +36,7 @@
         "include_ignored": true,
     },
     "agent": {
+        "threads_sidebar_default_width": 300.0,
         "default_model": {
             "provider": "copilot_chat",
             "model": "gpt-4.1",
@@ -161,8 +163,8 @@
         "diagnostics": false,
         "metrics": false,
     },
-    "ui_font_size": 13.0,
-    "buffer_font_size": 13.0,
+    "ui_font_size": 15.0,
+    "buffer_font_size": 15.0,
     "theme": {
         "mode": "dark",
         "light": "One Dark",
