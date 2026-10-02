@@ -9,7 +9,7 @@
   window.__flowCursorInstalled = true;
   window.__flowCursorBusyUntil = 0;
 
-  const SETTLE_MS = 120; // pause on the target before a click
+  const SETTLE_MS = 50; // pause on the target before a click; CLI round trips add more
   const IDLE_AFTER_MS = 350; // stillness before the idle drift starts
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
   const random = (min, max) => min + Math.random() * (max - min);
@@ -120,7 +120,7 @@
         };
         const duration = random(500, 1100);
         startMotion(target, { duration, bowScale: random(0.1, 0.3) });
-        nextDriftAt = now + duration + random(150, 700);
+        nextDriftAt = now + duration + random(0, 200);
       }
       requestAnimationFrame(tick);
     };
@@ -142,9 +142,24 @@
         position = { x: event.clientX, y: event.clientY };
         rest = { ...position };
         draw();
-        // after the click the hand eases off the control a little
-        lastActivity = performance.now() + 250;
-        nextDriftAt = 0;
+        // the hand eases off the control right after the press instead of waiting for the mouseup round trip,
+        // then drifts on without stopping
+        const pressMs = random(70, 110);
+        const duration = random(450, 750);
+        window.__flowCursorBusyUntil = performance.now() + pressMs + duration;
+        lastActivity = window.__flowCursorBusyUntil;
+        setTimeout(() => {
+          const away = { x: position.x + random(-30, 30), y: position.y + random(12, 40) };
+          rest = away;
+          startMotion(away, {
+            duration,
+            bowScale: random(0.1, 0.25),
+            onDone: () => {
+              lastActivity = performance.now() - IDLE_AFTER_MS;
+              nextDriftAt = performance.now() + random(100, 250);
+            },
+          });
+        }, pressMs);
 
         const ripple = document.createElement("div");
         Object.assign(ripple.style, {
@@ -165,20 +180,6 @@
           ripple.style.opacity = "0";
         });
         setTimeout(() => ripple.remove(), 450);
-      },
-      { capture: true, passive: true },
-    );
-
-    window.addEventListener(
-      "mouseup",
-      () => {
-        const away = { x: position.x + random(-30, 30), y: position.y + random(12, 40) };
-        rest = away;
-        const duration = random(450, 750);
-        startMotion(away, { duration, bowScale: random(0.1, 0.25) });
-        window.__flowCursorBusyUntil = performance.now() + duration;
-        lastActivity = performance.now() + 750;
-        nextDriftAt = lastActivity + random(300, 800);
       },
       { capture: true, passive: true },
     );
