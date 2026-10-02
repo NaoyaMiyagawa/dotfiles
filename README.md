@@ -1,5 +1,17 @@
 # dotfiles
 
+## Repo layout
+
+| Path | What it holds |
+|------|---------------|
+| `.ai/AGENTS.md` | Global rules for coding agents (Claude Code and Codex) |
+| `.ai/skills/` | Agent skills. `~/.claude/skills` and `~/.codex/skills` symlink here. `custom-*` are maintained in this repo; the other entries are symlinks to third-party skills, so don't edit them here |
+| `.claude/` | `~/.claude` symlinks here. Gitignored except for files that are added on purpose (`settings.json`, `scheduled-tasks/`) |
+| `.claude/scheduled-tasks/<name>/` | Scheduled agent tasks: `SKILL.md` plus helper `scripts/` |
+| `.config/` | App configs (git, cmux, …) |
+| `Brewfile` | Homebrew packages |
+| `Makefile` | `make install` / `make list` |
+
 ## How to install
 
 ```bash
