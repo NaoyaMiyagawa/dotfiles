@@ -124,6 +124,7 @@ mock(Xxx::class)
 - Don't extract a local closure or helper for assertions when each call spans about as many lines as the inlined assertions it replaces.
 - To assert a record persisted, prefer `$model->refresh()` over `expect($model)->toBeInstanceOf(...)` + `expect($model->exists)->toBeTrue()` — the refresh confirms persistence and surfaces the stored values for further assertions.
 - Use `foreach` over `expect($x)->each()`.
+- When a test simulates an intermediate event (another request re-caching mid-transaction, a concurrent write), assert the state right before and right after it, so the reader can see the simulated step changed what it claims to.
 - Assert datetime values by canonical string, not object instance: compare via `->toDateTimeString()` (or a formatted/ISO string). A mutable vs immutable date class mismatch (after adding an `immutable_datetime` cast) fails an object comparison even when the instant is identical.
 
     ```php
@@ -175,4 +176,4 @@ When a test guards a method whose whole purpose is pinning an external-facing sh
 ## Test target exclusion
 
 - Don't test framework or library behaviour — e.g. that a config override flows through the framework's plumbing. If the test would still pass with your own code deleted, it tests nothing you wrote.
-- No tests for: Resource, DTO, Event. Policy — the controller tests' `authorization` block covers it; a separate policy test earns its place only when controller tests mock the policy or assert just that it is wired.
+- No tests for: Resource, DTO, Event, Seeder, ServiceProvider. Policy — the controller tests' `authorization` block covers it; a separate policy test earns its place only when controller tests mock the policy or assert just that it is wired.

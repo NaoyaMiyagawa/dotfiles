@@ -166,6 +166,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Backfills and data manipulation use the `DB` facade, never Eloquent models — migrations are time-frozen; models reflect today's schema and will drift.
 - A one-off data or index command that every environment needs (a reindex, a backfill command) runs from a migration's `up()` so deploy applies it everywhere — not as a manual step per environment.
+- Several migrations added in one PR share one date prefix with a sequential index (`2026_10_01_000001_…`, `2026_10_01_000002_…`) so they sort next to each other.
 - Fix a not-yet-merged migration in place; corrective migrations are only for schema already merged or released.
 - Head a data/backfill migration with a comment stating why it's needed and what it does — the schema diff shows the columns, not the reason a one-off backfill exists. When it reshapes or canonicalizes an existing stored structure, show the before→after shape concretely in that comment (or the PR body), not just prose — a reviewer without context can't infer the transformation from words alone.
 - Column order: foreign keys right after the `id`/`uuid` key columns; audit-style FKs (`created_by`, `updated_by`) near `timestamps()`. Mirror that order when populating a new model instance: `->associate()` the owning relations right after `new Xxx()`, audit relations next to the timestamps.
