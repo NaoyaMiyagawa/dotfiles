@@ -63,7 +63,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 ## Factory
 
-- Derive a factory default with the same rule production uses. When a column is computed from another field (a type/key derived from a path or parent), apply the real derivation, not a shortcut that happens to pass for simple cases — a diverging default seeds inconsistent data and lets bugs slip past green tests.
+- Test data takes the shapes production actually produces. Use the enum case or the real key format a caller sends, never an invented string that only resembles one. Derive a factory default with the same rule production uses: when a column is computed from another field (a type/key derived from a path or parent), apply the real derivation, not a shortcut that happens to pass for simple cases. Diverging data lets bugs slip past green tests.
 - States that persist related records go in `afterCreating()`, not `afterMaking()`. `Model::factory()->someState()->make()` must stay database-free: assign only explicitly-provided associations during `make()`/`state()` and defer default related records to `afterCreating()`.
 - A state method returns `$this->state(fn () => [...])` — no return type on the closure. The per-key lazy form `'key' => fn () => ...` belongs in `definition()` only.
 - Prefer factory state methods over hardcoding column keys at the call site (`withStatus(XxxStatus $status)` for a `status` column); add the state when it doesn't exist. Order state methods in the factory class:
