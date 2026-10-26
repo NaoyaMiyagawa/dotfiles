@@ -39,7 +39,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## PHP — comments
 
 11. A comment about one step of a fluent chain or one entry of an array literal goes on its own line above it, never trailing after it (`// wide enough for the longest header label` above `'D' => 23,`) — a trailing note pushes the line past the ceiling and hides which line it explains.
-12. Let a comment line run to ~120–130 chars before wrapping; don't hard-wrap it earlier at 80.
+12. Wrap any line, code or comment, past ~120–130 chars; don't hard-wrap a comment earlier at 80.
 13. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables. Prefix a contextual aside (a temporary limitation, a scope note) with `NOTE:`; a why-comment stays bare.
 
 ## PHP — expressions and null handling
@@ -59,7 +59,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 24. Name a variable that holds a map keyed by a field after that key (`xxxById`, `xxxByKey`) — the name tells the reader the structure at every later use. Applies to plain arrays and `keyBy(...)` results alike.
 25. On a class that isn't a value object, a method returning a derived value is `getXxx()` (`getBirthdate()`); bare noun names are for VO properties (core rule *Value holders are `final readonly` with `public readonly` properties*).
-26. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`). Name any variable for what it holds, not for its relation to the surrounding code — `$dateValue`, not `$value`; `$testsForThisShard`, not `$mine`.
+26. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`). Name any variable for what it holds, not for its relation to the surrounding code — `$dateValue`, not `$value`; `$testsForThisShard`, not `$mine`. Spell out the full model or class it refers to: `$documentPagePropsService`, not `$pagePropsService`; `$organizationGroupIds`, not `$groupIds`.
 27. A variable or constant holding a measurement carries its unit (`$cellPaddingInPoints`, `TIMEOUT_IN_SECONDS`) — a bare `$padding` leaves the reader guessing px vs pt.
 
 ## PHP — design and structure
@@ -95,6 +95,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - `prepareForValidation()` only transforms input into the shape `rules()` can validate; don't throw from it — anything still malformed is `rules()`'s job to reject.
 - Don't scaffold optional hooks you won't use — no empty `authorize()` returning `true`.
 - Extract non-trivial or reusable validation into a dedicated `Rule` class named for what it checks (`Base64EncodedImage`); reserve inline rules for simple built-in cases.
+- Start every field's rule list with `bail`.
 - Express a conditional rule inline in the rules array (`Rule::prohibitedIf(...)`, `Rule::requiredIf(...)`, `bail`), not by wrapping the field's rules in `Rule::when()`.
 
 ## Class organization
@@ -108,7 +109,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - A service takes the values it needs (an enum, an array) as arguments, not the model that holds them — the caller shouldn't write state onto a model just so the callee can read it back, and the service stays free of the model.
 - Route a cross-cutting concern such as flow logging through named methods on a dedicated service (`app(ImportFlowLogger::class)->fileAccepted(...)`) with a shared message prefix, not scattered `Log::` calls — call sites are then found by reference.
 - When a controller fetches or resolves a collaborator only to pass it into an action, move that call into the action — controllers pass through request-derived input, not pre-resolved dependencies the action can obtain itself.
-- Extract shared/cross-cutting logic into the repo's designated helper location; don't duplicate the same snippet per call site.
+- Extract shared/cross-cutting logic into the repo's designated helper location; don't duplicate the same snippet per call site. Until a second caller exists, keep the logic inline in its one caller, and when extracting, move only the part the callers share.
 - A value object owns its own hydration and behaviour — parse a raw array into it via a `fromArray()` named constructor, and put logic that operates on its data on the VO, not inlined in each action/service that consumes it. A second consumer needing the same VO logic is the signal to move it onto the VO.
 - A value object/DTO enforces its own invariants in the constructor — throw when a required argument is empty or invalid rather than accepting it or giving it a permissive default (e.g. don't default a must-be-non-empty array to `[]`; drop the default and validate). A required argument carrying no default also sorts ahead of the optional ones.
 - Match the declared namespace to the file's directory — check every added file, not just the one under discussion.
@@ -180,6 +181,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Name a controller for the specific operation it performs, not a generic catch-all (`ResendInvoiceEmailController`, not `InvoiceController`); keep route, controller, directory, and test file names in sync.
 - Register a single-action controller with the array callable `[Controller::class, '__invoke']`, not the bare class string.
 - Give every controller action a `Request $request` (or a dedicated `FormRequest`) as its first parameter, even when the body doesn't read it — don't omit it. Break the parameter list across lines.
+- Type a route segment that holds an enum value as that enum in the action signature (implicit enum binding) so the framework 404s an unknown value; don't validate it by hand.
 - Resource route paths and their route names are plural — `/tokens`, not `/token`; keep path and name in sync.
 - Routes that share a leading path segment go under one `Route::prefix('/tokens')` group instead of repeating the segment on each route.
 - Register routes in the app's existing route files (`web.php`/`api.php`); don't add a new custom route file for a feature.
