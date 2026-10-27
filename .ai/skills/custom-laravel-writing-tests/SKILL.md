@@ -95,7 +95,7 @@ Before refactoring a code path with no direct coverage, first write a **characte
     expect($response->json('data.id'))->toBeInt();
     ```
 
-12. **Assertions.** One `expect()` per subject: chain every matcher for that subject off it and start a new `expect()` when the subject changes — never `->and()`. `toBe` for scalars and enums; `toEqual` for arrays and objects where key order and instance identity aren't part of the contract (JSON columns round-tripped through the DB reorder keys). Assert a validation failure with the full expected message map (`assertInvalid(['file' => 'The file field is required.'])`), never the field-only form. Assert the resolved, human-readable string, never a translation key or `__('key')` — comparing against the same translation call the code uses passes even when the translation is missing.
+12. **Assertions.** One `expect()` per subject: chain every matcher for that subject off it and start a new `expect()` when the subject changes — never `->and()`. `toBe` for scalars and enums; pass an enum case to `assertJsonPath()` as is, without `->value` (`AssertableJsonString::assertPath()` compares `enum_value($expect)`); `toEqual` for arrays and objects where key order and instance identity aren't part of the contract (JSON columns round-tripped through the DB reorder keys). Assert a validation failure with the full expected message map (`assertInvalid(['file' => 'The file field is required.'])`), never the field-only form. Assert the resolved, human-readable string, never a translation key or `__('key')` — comparing against the same translation call the code uses passes even when the translation is missing.
 
     ```php
     expect($signer->request['Message'])

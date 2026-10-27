@@ -53,9 +53,12 @@ description: Applies React/TSX component conventions — file layout, component 
 
 11. **Branch on the fetch hook's lifecycle flags.** Render loading, error, and
     success states from what the data hook already exposes (`isLoading`, `isError`,
-    `data`) — `isLoading && <Spinner />`, `data && <Content />`. Don't derive a
-    parallel status from the presence or absence of fields; when the render logic
-    follows the data lifecycle it reads top to bottom.
+    `data`). Rename them to their subject as you destructure
+    (`{ data: invoice, isLoading: isLoadingInvoice }`), so the JSX reads
+    `isLoadingInvoice && <Spinner />`, `invoice && <Content />` — a bare `data`
+    hides what it holds. Don't derive a parallel status from the presence or
+    absence of fields; when the render logic follows the data lifecycle it reads
+    top to bottom.
 
 ## Unavailable states
 
@@ -82,8 +85,10 @@ description: Applies React/TSX component conventions — file layout, component 
 </div>
 ```
 
-14. **Blank line before `return`.** When statements precede a `return`, separate them
-    with one blank line. This is ESLint `padding-line-between-statements`
+14. **Blank lines mark sections.** Set a group of statements that belong together
+    (a hook call and the consts derived from it) apart from its neighbours with one
+    blank line above and below. When statements precede a `return`, separate them
+    with one blank line. The `return` case is ESLint `padding-line-between-statements`
     (`{ blankLine: "always", prev: "*", next: "return" }`, under `@stylistic` on
     ESLint 9) — enable it where the repo lints TS rather than fixing it by hand.
 

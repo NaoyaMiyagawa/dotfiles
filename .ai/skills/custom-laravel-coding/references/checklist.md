@@ -38,7 +38,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 ## PHP — comments
 
-11. A comment about one step of a fluent chain or one entry of an array literal goes on its own line above it, never trailing after it (`// wide enough for the longest header label` above `'D' => 23,`) — a trailing note pushes the line past the ceiling and hides which line it explains.
+11. A comment about one step of a fluent chain or one entry of an array literal trails that line when the line stays under the ceiling (`'invoices', // for the billing summary`). A comment on its own line above one entry reads as covering the entries below it too. Move it above only when trailing would push the line past the ceiling.
 12. Wrap any line, code or comment, past ~120–130 chars; don't hard-wrap a comment earlier at 80.
 13. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables. Prefix a contextual aside (a temporary limitation, a scope note) with `NOTE:`; a why-comment stays bare.
 

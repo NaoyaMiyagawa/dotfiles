@@ -121,6 +121,7 @@ mock(Xxx::class)
 
 ## Assertion extras
 
+- When a response includes a list or a loaded relation, seed at least one record for it and assert its contents. An empty list passes even when the list is wrong.
 - Don't extract a local closure or helper for assertions when each call spans about as many lines as the inlined assertions it replaces.
 - To assert a record persisted, prefer `$model->refresh()` over `expect($model)->toBeInstanceOf(...)` + `expect($model->exists)->toBeTrue()` — the refresh confirms persistence and surfaces the stored values for further assertions.
 - Use `foreach` over `expect($x)->each()`.
