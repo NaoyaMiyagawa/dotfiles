@@ -77,6 +77,23 @@ click_at() {
   ab mouse move $(jq -er '.data.result.x' <<< "$at") $(jq -er '.data.result.y' <<< "$at") >/dev/null
 }
 
+# Points the viewer at the first visible <selector> (optionally containing <text>): glides to its left edge,
+# then loops twice, fast, around it.
+# e.g. look_at '[data-testid=document-id]'
+look_at() {
+  local box
+  box=$(ab eval "(() => {
+    const element = [...document.querySelectorAll($(jq -n --arg v "$1" '$v'))]
+      .find((candidate) => candidate.offsetParent !== null && candidate.textContent.includes($(jq -n --arg v "${2:-}" '$v')));
+    const rect = element.getBoundingClientRect();
+    return { x: Math.round(rect.x - 8), y: Math.round(rect.y + rect.height / 2), rx: Math.round(rect.width / 2) + 8, ry: Math.round(rect.height / 2) + 10 };
+  })()" --json)
+  ab eval "window.__flowCursorGlideTo($(jq -er '.data.result.x' <<< "$box"), $(jq -er '.data.result.y' <<< "$box"))" >/dev/null
+  wait_for_cursor
+  ab eval "window.__flowCursorCircle($(jq -er '.data.result.rx' <<< "$box"), $(jq -er '.data.result.ry' <<< "$box"))" >/dev/null
+  wait_for_cursor
+}
+
 # Step 1: viewport and login, not recorded.
 ab set viewport 1280 800
 ab open http://localhost:8000/login
@@ -111,6 +128,8 @@ ls -l "$out"
 - Target elements through `move_to`, not agent-browser selectors: `get box` rejects Playwright-only selectors such as `:has-text()`, and `@eN` refs from `snapshot` change between runs.
 - Don't take screenshots during the recording. Each one stalls the page for about 0.5 s, which shows as a dead stretch in the video. When the PR also needs step screenshots, take them in a separate run.
 - The fixed pauses go against the screenshot rule on purpose: no pause after a menu or drawer opens on the way to the next click, and about `wait 500` on a state the viewer should read. Longer pauses make the next action feel late. They give the viewer time to read each state, and the idle wander keeps them from looking frozen. Still wait for the expected state first (`wait --text`, `wait --url`, `wait <selector>`), then pause.
+- Point the viewer at what changed. After a step changes content somewhere other than where the click landed (a details panel that switched to the new record, a status badge, a newly selected row), call `look_at` on it: the arrow glides there and loops twice fast, which reads as "look here". Loop around the one or two things the step is about, not every changed element.
+- Move the arrow off a list row after selecting it when the row's hover color would cover the selected color; otherwise the selection looks like it didn't happen.
 - Stop the recording before `close`. The video is written on `record stop`.
 
 Run it with `zsh <scratchpad>/flow.sh <scratchpad>/flow-<name>/after`.
@@ -124,7 +143,9 @@ ffprobe -v error -show_entries format=duration -of csv=p=0 flow.webm
 ffmpeg -v error -i flow.webm -vf fps=1 frame-%03d.png
 ```
 
-The duration should match the script's waits. Read a few of the extracted frames to confirm the video shows the flow and not a blank page.
+The duration should match the script's waits. Read a few of the extracted frames to confirm the video shows the flow and not a blank page. On agent-browser 0.36 one recording came out 1.9 s long for a 10 s flow and stopped at the first page; when the duration is far short, record the same steps with Playwright's `recordVideo` context option (`@playwright/test` from the repo's `node_modules`) and inject `cursor.js` with `context.addInitScript`.
+
+Check the cursor too: it should never jump. Push the arrow's position into an array on every animation frame during the run and print the largest move between frames; a normal glide or loop stays near 50 px, and a jump is hundreds.
 
 ## Attach
 

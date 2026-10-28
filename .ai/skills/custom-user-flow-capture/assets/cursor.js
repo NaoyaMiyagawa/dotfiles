@@ -5,7 +5,8 @@
 // window.__flowCursorGlideTo(x, y) glides the arrow while the real pointer stays put, so hover states only
 // appear once the script moves the real pointer onto the arrow. window.__flowCursorBusyUntil marks when the
 // current motion ends, window.__flowCursorAt is where the arrow is drawn, and window.__flowCursorRest is where
-// the arrow comes to rest after a click.
+// the arrow comes to rest after a click. window.__flowCursorCircle(rx, ry) loops the arrow twice, fast, around
+// the area to its right, to point the viewer at a change ("look here").
 (() => {
   if (window.__flowCursorInstalled) return;
   window.__flowCursorInstalled = true;
@@ -42,6 +43,8 @@
     let motion = null; // { from, c1, c2, to, startedAt, duration, overshoot?, onDone? }
     let lastActivity = performance.now();
     let nextDriftAt = 0;
+    let pressDriftTimer = null; // the ease-off a click schedules; a newer glide cancels it
+    let orbit = null; // { center, rx, ry, startedAt, duration, turns }
 
     const draw = () => {
       window.__flowCursorAt = { ...position };
@@ -73,6 +76,9 @@
     };
 
     const glideTo = (target) => {
+      // a glide sent right after a click wins over the click's pending ease-off, which would pull the arrow back
+      clearTimeout(pressDriftTimer);
+      orbit = null;
       const distance = Math.hypot(target.x - position.x, target.y - position.y);
       if (distance < 1) return;
       // the real pointer catching up with where the arrow is already heading
@@ -90,7 +96,20 @@
     };
 
     const tick = (now) => {
-      if (motion) {
+      if (orbit) {
+        const t = clamp((now - orbit.startedAt) / orbit.duration, 0, 1);
+        // starts and ends at the center, the left edge of the loop, so the arrow returns where it began
+        const angle = Math.PI + easeInOut(t) * orbit.turns * 2 * Math.PI;
+        position = {
+          x: orbit.center.x + orbit.rx + orbit.rx * Math.cos(angle),
+          y: orbit.center.y + orbit.ry * Math.sin(angle),
+        };
+        if (t >= 1) {
+          position = { ...orbit.center };
+          orbit = null;
+        }
+        draw();
+      } else if (motion) {
         const t = clamp((now - motion.startedAt) / motion.duration, 0, 1);
         const glideShare = motion.landing.x === motion.to.x && motion.landing.y === motion.to.y ? 1 : 0.85;
         if (t >= 1) {
@@ -132,6 +151,14 @@
     draw();
     requestAnimationFrame(tick);
     window.__flowCursorGlideTo = (x, y) => glideTo({ x, y });
+    window.__flowCursorCircle = (rx, ry, turns = 2, msPerTurn = 500) => {
+      clearTimeout(pressDriftTimer);
+      motion = null;
+      orbit = { center: { ...position }, rx, ry, startedAt: performance.now(), duration: turns * msPerTurn, turns };
+      rest = { ...position };
+      window.__flowCursorBusyUntil = orbit.startedAt + orbit.duration;
+      lastActivity = window.__flowCursorBusyUntil;
+    };
 
     window.addEventListener("mousemove", (event) => glideTo({ x: event.clientX, y: event.clientY }), {
       capture: true,
@@ -143,6 +170,7 @@
       (event) => {
         // the drawn arrow may be mid-drift; put it where the real click lands
         motion = null;
+        orbit = null;
         position = { x: event.clientX, y: event.clientY };
         rest = { ...position };
         draw();
@@ -155,7 +183,8 @@
         const away = { x: position.x + random(-30, 30), y: position.y + random(12, 40) };
         rest = away;
         window.__flowCursorRest = { x: Math.round(away.x), y: Math.round(away.y) };
-        setTimeout(() => {
+        clearTimeout(pressDriftTimer);
+        pressDriftTimer = setTimeout(() => {
           startMotion(away, {
             duration,
             bowScale: random(0.1, 0.25),

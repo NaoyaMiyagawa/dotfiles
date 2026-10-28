@@ -1,6 +1,6 @@
 ---
 name: custom-react-coding
-description: Applies React/TSX component conventions — file layout, component boundaries, and JSX formatting. Use when implementing or refactoring React components, pages, or their types, or when checking a design or CSS fix in the browser.
+description: Applies React/TSX component conventions — file layout, component boundaries, and JSX formatting. Use when implementing or refactoring React components, pages, their types, or their specs, or when checking a design or CSS fix in the browser.
 ---
 
 # React Coding Conventions
@@ -111,3 +111,9 @@ description: Applies React/TSX component conventions — file layout, component 
 
 16. **AAA comments in every spec.** Each test body carries `// Arrange`, `// Act`,
     `// Assert` markers, same as the Laravel test convention.
+17. **Drive interactions through `userEvent.setup()`.** Create the instance in the
+    Arrange step (`const user = userEvent.setup();`, before `render`) and call
+    `user.click()`, `user.type()`, `user.hover()` on it. Never call
+    `userEvent.click()` directly. Each direct call builds its own fresh session,
+    so pointer and keyboard state does not carry from one step to the next. When you add a test to a file whose older tests call `userEvent.*`
+    directly, use `setup()` in the new test and leave the old tests alone.
