@@ -158,12 +158,13 @@ Run it with `zsh <scratchpad>/flow.sh <scratchpad>/flow-<name>/after`.
 A headless recording shows the page only, so the viewer can't see which URL each page is on. [../assets/address-bar.mjs](../assets/address-bar.mjs) adds a Chrome-like bar on top (back, forward, reload, and the URL in a rounded box with a lock), switching URLs at the times `flow-navs.json` logged. Run it from the repo root, since it renders the bar with the repo's Playwright Chromium:
 
 ```zsh
-node ~/.claude/skills/custom-user-flow-capture/assets/address-bar.mjs <scratchpad>/flow-<name>/after/flow.webm
+node ~/.claude/skills/custom-user-flow-capture/assets/address-bar.mjs \
+  <scratchpad>/flow-<name>/after/flow.webm <scratchpad>/flow-<name>/after/<flow-name>.webm
 ```
 
-It writes `flow-chrome.webm` next to the video, 52 px taller. Attach that one.
+It writes the second path, 52 px taller. Attach that one. GitHub shows the uploaded file name as the video's title, so name it after the user flow it captures, e.g. `custom-view-to-workflow-run.webm`, not after the tooling (`flow-chrome.webm`).
 
-`log_url` runs after the new page shows, so the script moves each URL change 0.5 s earlier, to when a browser would change its bar. Check the frames on either side of each change: the URL should switch after the click and no later than the new page. If it trails the page, pass a larger lead as the second argument (`… flow.webm 0.8`); if it switches before the click, a smaller one. A Playwright `recordVideo` run that logs `framenavigated` needed 0.8 s, because its video starts before the script's clock.
+`log_url` runs after the new page shows, so the script moves each URL change 0.5 s earlier, to when a browser would change its bar. Check the frames on either side of each change: the URL should switch after the click and no later than the new page. If it trails the page, pass a larger lead as the third argument (`… <flow-name>.webm 0.8`); if it switches before the click, a smaller one. A Playwright `recordVideo` run that logs `framenavigated` needed 0.8 s, because its video starts before the script's clock.
 
 ## Review
 

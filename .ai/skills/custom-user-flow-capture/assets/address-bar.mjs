@@ -4,16 +4,16 @@
 // t in seconds from the start of the recording.
 //
 // Run it from a repo that has @playwright/test or playwright installed; it renders the bar with that Chromium.
-//   node ~/.claude/skills/custom-user-flow-capture/assets/address-bar.mjs <flow.webm> [lead-seconds]
-// It writes <flow>-chrome.webm next to the video.
+//   node ~/.claude/skills/custom-user-flow-capture/assets/address-bar.mjs <flow.webm> <output.webm> [lead-seconds]
+// GitHub shows the uploaded file name as the video title, so name <output.webm> after the flow it shows.
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 
-const [videoPath, leadArg] = process.argv.slice(2);
-if (!videoPath) {
-  console.error("usage: address-bar.mjs <flow.webm> [lead-seconds]");
+const [videoPath, outputPath, leadArg] = process.argv.slice(2);
+if (!videoPath || !outputPath) {
+  console.error("usage: address-bar.mjs <flow.webm> <output.webm> [lead-seconds]");
   process.exit(5);
 }
 const base = videoPath.replace(/\.webm$/, "");
@@ -87,9 +87,9 @@ execFileSync("ffmpeg", [
   "-map", `[v${bars.length}]`,
   "-t", String(duration),
   "-c:v", "libvpx-vp9", "-b:v", "0", "-crf", "32", "-row-mt", "1", "-deadline", "good", "-cpu-used", "4",
-  `${base}-chrome.webm`,
+  outputPath,
 ]);
 
 console.log("--------- Result ---------");
-console.log(`${base}-chrome.webm`);
+console.log(outputPath);
 segments.forEach((segment) => console.log(`${segment.start.toFixed(1)}s ${segment.url}`));
