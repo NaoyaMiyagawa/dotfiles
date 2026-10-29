@@ -16,10 +16,11 @@ Write `flow.sh` to the scratchpad so it can run again unchanged, for example aga
 #   1. Set the viewport and log in, before recording.
 #   2. Start recording on the page where the flow begins, then inject the fake cursor.
 #   3. Walk the flow: glide the cursor to each target, click it, wait for the expected state, pause.
-#   4. Stop recording, which writes the WebM.
+#   4. Stop recording, which writes the WebM, and write the URL log next to it.
 #
-# Exit 0 means every expected state appeared and flow.webm was written.
+# Exit 0 means every expected state appeared and flow.webm and flow-navs.json were written.
 set -euo pipefail
+zmodload zsh/datetime
 
 out=${1:?usage: flow.sh <output-dir>}
 cursor_script=~/.claude/skills/custom-user-flow-capture/assets/cursor.js
@@ -32,6 +33,18 @@ trap 'ab record stop >/dev/null 2>&1; ab close >/dev/null 2>&1' EXIT
 # Injects the fake cursor; a no-op when the page already has it.
 ensure_cursor() {
   ab eval "$(cat "$cursor_script")" >/dev/null
+}
+
+# Logs the current URL with its time from the recording start, for the address bar address-bar.mjs draws.
+navs=()
+log_url() {
+  navs+=("$(jq -nc --argjson t $(( EPOCHREALTIME - record_started )) --arg url "$(ab get url)" '{t: $t, url: $url}')")
+}
+
+# Goes back in history, sliding a back-arrow badge in first so the video doesn't show an unexplained jump.
+go_back() {
+  ab eval 'window.__flowCursorBack()' >/dev/null
+  ab back >/dev/null
 }
 
 # Glides the cursor to a random point in the middle of the first visible <selector> element, optionally containing <text>.
@@ -104,17 +117,21 @@ ab wait --url '**/dashboard'
 
 # Step 2: start recording, then show the cursor.
 ab record start "$out/flow.webm"
+record_started=$EPOCHREALTIME
 ensure_cursor
+log_url
 ab wait 400
 
 # Step 3: walk the flow, one block per step.
 click_at 'a' 'Invoices'
-ab wait --text 'Invoices'
+ab wait --url '**/invoices'
+log_url
 ensure_cursor
 ab wait 500
 
-# Step 4: stop recording.
+# Step 4: stop recording and write the URL log.
 ab record stop
+printf '%s\n' "${navs[@]}" | jq -s . > "$out/flow-navs.json"
 
 echo '--------- Result ---------'
 ls -l "$out"
@@ -130,9 +147,23 @@ ls -l "$out"
 - The fixed pauses go against the screenshot rule on purpose: no pause after a menu or drawer opens on the way to the next click, and about `wait 500` on a state the viewer should read. Longer pauses make the next action feel late. They give the viewer time to read each state, and the idle wander keeps them from looking frozen. Still wait for the expected state first (`wait --text`, `wait --url`, `wait <selector>`), then pause.
 - Point the viewer at what changed. After a step changes content somewhere other than where the click landed (a details panel that switched to the new record, a status badge, a newly selected row), call `look_at` on it: the arrow glides there and loops twice fast, which reads as "look here". Loop around the one or two things the step is about, not every changed element.
 - Move the arrow off a list row after selecting it when the row's hover color would cover the selected color; otherwise the selection looks like it didn't happen.
+- Call `log_url` right after the wait for every step that changes the URL, including client-side route changes and `go_back`.
+- Go back through `go_back`, not a raw `ab back`. Without the badge the viewer sees the page jump with no click.
 - Stop the recording before `close`. The video is written on `record stop`.
 
 Run it with `zsh <scratchpad>/flow.sh <scratchpad>/flow-<name>/after`.
+
+## Address bar
+
+A headless recording shows the page only, so the viewer can't see which URL each page is on. [../assets/address-bar.mjs](../assets/address-bar.mjs) adds a Chrome-like bar on top (back, forward, reload, and the URL in a rounded box with a lock), switching URLs at the times `flow-navs.json` logged. Run it from the repo root, since it renders the bar with the repo's Playwright Chromium:
+
+```zsh
+node ~/.claude/skills/custom-user-flow-capture/assets/address-bar.mjs <scratchpad>/flow-<name>/after/flow.webm
+```
+
+It writes `flow-chrome.webm` next to the video, 52 px taller. Attach that one.
+
+`log_url` runs after the new page shows, so the script moves each URL change 0.5 s earlier, to when a browser would change its bar. Check the frames on either side of each change: the URL should switch after the click and no later than the new page. If it trails the page, pass a larger lead as the second argument (`… flow.webm 0.8`); if it switches before the click, a smaller one. A Playwright `recordVideo` run that logs `framenavigated` needed 0.8 s, because its video starts before the script's clock.
 
 ## Review
 
@@ -149,7 +180,7 @@ Check the cursor too: it should never jump. Push the arrow's position into an ar
 
 ## Attach
 
-GitHub plays `.webm` and `.mp4` inline in a PR description. Files must be under 10 MB on free plans. When the user asks to put it in the PR, upload it with `gh pr edit <pr> --attach '<path>#<alt text>'` (gh 2.102+). Without a body flag gh appends the video to the existing body. To place it at a spot in the body, reference it as `![alt](./flow.webm)` and pass `--body-file` with the same `--attach`; gh rewrites the link to the uploaded asset. If the file is too big, shrink it first:
+GitHub plays `.webm` and `.mp4` inline in a PR description. Files must be under 10 MB on free plans. When the user asks to put it in the PR, upload it with `gh pr edit <pr> --attach '<path>'` (gh 2.102+). Leave off the `#<alt text>` suffix and use an empty `![](./flow.webm)` ref: gh refuses alt text on a video ("cannot set alt text on video"). Without a body flag gh appends the video to the existing body. To place it at a spot in the body, reference it as `![](./flow.webm)` and pass `--body-file` with the same `--attach`; gh rewrites the link to the uploaded asset. If the file is too big, shrink it first:
 
 ```zsh
 ffmpeg -i flow.webm -vf scale=960:-2 -c:v libx264 -crf 28 -an flow.mp4

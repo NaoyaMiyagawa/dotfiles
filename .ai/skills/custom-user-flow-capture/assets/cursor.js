@@ -6,7 +6,9 @@
 // appear once the script moves the real pointer onto the arrow. window.__flowCursorBusyUntil marks when the
 // current motion ends, window.__flowCursorAt is where the arrow is drawn, and window.__flowCursorRest is where
 // the arrow comes to rest after a click. window.__flowCursorCircle(rx, ry) loops the arrow twice, fast, around
-// the area to its right, to point the viewer at a change ("look here").
+// the area to its right, to point the viewer at a change ("look here"). window.__flowCursorBack() slides a
+// back-arrow badge in from the left edge, like a browser swipe-back; await it before a browser back, which the
+// recording would otherwise show as an unexplained page jump.
 (() => {
   if (window.__flowCursorInstalled) return;
   window.__flowCursorInstalled = true;
@@ -151,13 +153,47 @@
     draw();
     requestAnimationFrame(tick);
     window.__flowCursorGlideTo = (x, y) => glideTo({ x, y });
-    window.__flowCursorCircle = (rx, ry, turns = 2, msPerTurn = 500) => {
+    window.__flowCursorCircle = (rx, ry, turns = 2, msPerTurn = 350) => {
       clearTimeout(pressDriftTimer);
       motion = null;
       orbit = { center: { ...position }, rx, ry, startedAt: performance.now(), duration: turns * msPerTurn, turns };
       rest = { ...position };
       window.__flowCursorBusyUntil = orbit.startedAt + orbit.duration;
       lastActivity = window.__flowCursorBusyUntil;
+    };
+    window.__flowCursorBack = (ms = 700) => {
+      const badge = document.createElement("div");
+      badge.innerHTML =
+        '<svg width="28" height="28" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      Object.assign(badge.style, {
+        position: "fixed",
+        left: "0",
+        top: `${window.innerHeight / 2 - 28}px`,
+        width: "56px",
+        height: "56px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "50%",
+        background: "rgba(17, 17, 17, 0.75)",
+        zIndex: "2147483647",
+        pointerEvents: "none",
+        transform: "translateX(-64px)",
+        transition: "transform 300ms ease-out",
+      });
+      document.documentElement.appendChild(badge);
+      requestAnimationFrame(() => {
+        badge.style.transform = "translateX(24px)";
+      });
+
+      return new Promise((resolve) =>
+        setTimeout(() => {
+          // an SPA back keeps this document, so slide the badge out instead of leaving it on the previous page
+          badge.style.transform = "translateX(-64px)";
+          setTimeout(() => badge.remove(), 300);
+          resolve();
+        }, ms),
+      );
     };
 
     window.addEventListener("mousemove", (event) => glideTo({ x: event.clientX, y: event.clientY }), {
