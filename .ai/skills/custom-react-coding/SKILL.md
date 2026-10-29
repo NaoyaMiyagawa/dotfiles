@@ -71,9 +71,10 @@ description: Applies React/TSX component conventions — file layout, component 
 
 13. **Blank line between sibling elements.** Separate adjacent tags at the same
     nesting level with one blank line, including after a closing `)}` of a
-    conditional. This is `react/jsx-newline` (`{"prevent": false}`) in
-    eslint-plugin-react — enable it where the repo lints JSX rather than fixing it
-    by hand.
+    conditional. Elements that render as one unit (a visual badge and its sr-only
+    text) sit together with no blank line. This is `react/jsx-newline`
+    (`{"prevent": false}`) in eslint-plugin-react — enable it where the repo lints
+    JSX rather than fixing it by hand.
 
 ```tsx
 <Typography component="h6">{label}</Typography>
