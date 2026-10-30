@@ -50,6 +50,13 @@ The repro is the user flow a reviewer clicks through, or for backend-only code t
 command (`POST /orders with qty=0 → 500`). Mark it `verified` only if you ran it; otherwise
 `not run`.
 
+Rate each finding that has a failure path (Bug, Security, Data) by impact, independent of
+which section it lands in:
+
+- **High** — hits a common flow, loses or exposes data, or stops a user from finishing a task.
+- **Medium** — wrong result in a reachable but uncommon case, or a common case with a workaround.
+- **Low** — rare edge case, or the effect is cosmetic or corrects itself on retry.
+
 **Codex pass:** run a Codex review of the same diff per the `codex` skill. Give it the diff
 only, no PR body and no summary, so it judges the code unprimed. Confirm each Codex finding
 against the code before merging it in; drop duplicates and say in `Not checked` if Codex
@@ -96,7 +103,7 @@ Start reading at: `app/Services/OrderService.php`
 ## Findings
 ### Blocking
 **Bug**
-1. `path/file.ext:42` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why the change does this>. (introduced)
+1. [High] `path/file.ext:42` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why the change does this>. (introduced)
 
 ### Should fix
 **Standards**

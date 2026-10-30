@@ -16,6 +16,7 @@ Turn work into Jira tickets that a teammate with zero conversation context can p
    - `jira issue create -t Task -s "Summary" -T /path/to/body.md --no-input`
    - Children of an epic: add `-P EPIC-KEY`. Sub-tasks require `-P`.
    - If auth or config fails, report it and stop; setup is described in the context-fetching skill.
+   - When you will also work on the ticket in this session (fix, PR), assign it to the user and move it to In Progress right after creating it: `jira issue assign KEY "$(jira me)"` then `jira issue move KEY "In Progress"`.
 5. **Link** after creation: `jira issue link KEY-1 KEY-2 Blocks` (link types vary per instance — if a link type is rejected, list valid ones rather than guessing synonyms).
 6. **Report** every created key with its URL and the link structure, so the user can verify in one glance.
 

@@ -415,6 +415,8 @@
       "Bash(git *)",
       "Bash(grep *)",
       "Bash(head *)",
+      "Bash(jira issue link:*)",
+      "Bash(jira issue move:*)",
       "Bash(jira issue view *)",
       "Bash(jq *)",
       "Bash(less *)",
