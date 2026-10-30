@@ -153,6 +153,35 @@ ls -l "$out"
 
 Run it with `zsh <scratchpad>/flow.sh <scratchpad>/flow-<name>/after`.
 
+## Playwright
+
+When the repo has `@playwright/test` (or `playwright`), record with [../assets/playwright-flow.mjs](../assets/playwright-flow.mjs) instead of agent-browser. It logs in outside the recording, injects `cursor.js` into every new document, logs each URL for the address bar, and gives the same moves as `flow.sh`: `moveTo`, `clickOn`, `lookAt`, `goBack`, plus `download(locator)`, which waits for the file and shows a download bubble with its real name and size, since a headless video has no download UI. Write a small script that imports it by absolute path and holds only the app's steps:
+
+```js
+// <scratchpad>/flow.mjs — run from the repo root: node <scratchpad>/flow.mjs <scratchpad>/flow-<name>/after
+import { homedir } from "node:os";
+
+const { startFlow } = await import(`${homedir()}/.claude/skills/custom-user-flow-capture/assets/playwright-flow.mjs`);
+const [out] = process.argv.slice(2);
+const { page, clickOn, lookAt, download, finish } = await startFlow({
+  out,
+  login: async (page) => {
+    // log in here; this page is not recorded
+  },
+});
+
+await page.goto("http://localhost:8000/invoices/7");
+await page.getByText("Invoice #7").waitFor();
+await page.waitForTimeout(800);
+await download(page.getByRole("button", { name: "Download" }));
+await page.waitForTimeout(2000);
+await finish(); // writes <out>/flow.webm and <out>/flow-navs.json
+```
+
+Run it from the repo root: the module resolves Playwright from the working directory, so the skill folder needs no `node_modules`. A failed step writes `<out>/flow-failed.png` before exiting. The cursor skips iframes, so an embedded viewer doesn't draw a second arrow. `startFlow` records at 1440×900 unless you pass `viewport`; keep it the same across before and after runs. The rules in the list above apply here too: wait for each expected state, then pause; no screenshots during the recording.
+
+Use a lead of 0.8 for the address bar with this recorder (see below).
+
 ## Address bar
 
 A headless recording shows the page only, so the viewer can't see which URL each page is on. [../assets/address-bar.mjs](../assets/address-bar.mjs) adds a Chrome-like bar on top (back, forward, reload, and the URL in a rounded box with a lock), switching URLs at the times `flow-navs.json` logged. Run it from the repo root, since it renders the bar with the repo's Playwright Chromium:
@@ -175,7 +204,7 @@ ffprobe -v error -show_entries format=duration -of csv=p=0 flow.webm
 ffmpeg -v error -i flow.webm -vf fps=1 frame-%03d.png
 ```
 
-The duration should match the script's waits. Read a few of the extracted frames to confirm the video shows the flow and not a blank page. On agent-browser 0.36 one recording came out 1.9 s long for a 10 s flow and stopped at the first page; when the duration is far short, record the same steps with Playwright's `recordVideo` context option (`@playwright/test` from the repo's `node_modules`) and inject `cursor.js` with `context.addInitScript`.
+The duration should match the script's waits. Read a few of the extracted frames to confirm the video shows the flow and not a blank page. On agent-browser 0.36 one recording came out 1.9 s long for a 10 s flow and stopped at the first page; when the duration is far short, record the same steps with the Playwright recorder above.
 
 Check the cursor too: it should never jump. Push the arrow's position into an array on every animation frame during the run and print the largest move between frames; a normal glide or loop stays near 50 px, and a jump is hundreds.
 

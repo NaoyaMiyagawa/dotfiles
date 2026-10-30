@@ -9,8 +9,11 @@
 // the area to its right, to point the viewer at a change ("look here"). window.__flowCursorBack() slides a
 // back-arrow badge in from the left edge, like a browser swipe-back; await it before a browser back, which the
 // recording would otherwise show as an unexplained page jump.
+// window.__flowCursorDownloaded(name, size) shows a Chrome-like download bubble at the top right, since a
+// headless recording has no download UI; pass the real file name and size from the download event.
 (() => {
-  if (window.__flowCursorInstalled) return;
+  // an init script also runs in iframes, such as an embedded document viewer, which must not draw a second arrow
+  if (window.__flowCursorInstalled || window !== window.top) return;
   window.__flowCursorInstalled = true;
   window.__flowCursorBusyUntil = 0;
 
@@ -194,6 +197,42 @@
           resolve();
         }, ms),
       );
+    };
+
+    window.__flowCursorDownloaded = (name, size) => {
+      const bubble = document.createElement("div");
+      const icon =
+        '<svg width="22" height="22" viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="#1a73e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      const label = document.createElement("div");
+      label.innerHTML = `<div style="font-weight:600"></div><div style="color:#5f6368;font-size:12px"></div>`;
+      label.children[0].textContent = name;
+      label.children[1].textContent = `${size} \u2022 Done`;
+      bubble.innerHTML = icon;
+      bubble.appendChild(label);
+      Object.assign(bubble.style, {
+        position: "fixed",
+        right: "16px",
+        top: "12px",
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        padding: "12px 16px",
+        borderRadius: "8px",
+        background: "#fff",
+        color: "#202124",
+        font: "13px/1.4 system-ui, sans-serif",
+        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.25)",
+        zIndex: "2147483647",
+        pointerEvents: "none",
+        opacity: "0",
+        transform: "translateY(-8px)",
+        transition: "opacity 200ms ease-out, transform 200ms ease-out",
+      });
+      document.documentElement.appendChild(bubble);
+      requestAnimationFrame(() => {
+        bubble.style.opacity = "1";
+        bubble.style.transform = "translateY(0)";
+      });
     };
 
     window.addEventListener("mousemove", (event) => glideTo({ x: event.clientX, y: event.clientY }), {
