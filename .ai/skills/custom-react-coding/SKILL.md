@@ -29,7 +29,10 @@ description: Applies React/TSX component conventions — file layout, component 
    module imports those types.
 6. **Export only what another module imports.** A helper used in one file stays
    module-private. Put a new helper next to its siblings of the same shape, not at
-   the end of the file.
+   the end of the file. A helper or hook that builds translated labels gets the
+   translator itself (the shared `i18n.t("ns:key")` in a plain function, the
+   translation hook in a hook) instead of taking `t` as a parameter, so callers
+   pass only data.
 
 ## Types and naming
 
@@ -43,6 +46,8 @@ description: Applies React/TSX component conventions — file layout, component 
    not `available` (reads as a boolean); `errorsByActionType` for an
    `{ [actionType]: error }` map. Assign a calculation inside a condition to a
    descriptively named variable first (`const msSinceLastReload = Date.now() - lastReloadedAt`).
+   Group related top-level values under one named object (`resources.backendModules`,
+   `storageKeys.lastReload`) rather than a run of standalone consts.
 
 ## Props
 

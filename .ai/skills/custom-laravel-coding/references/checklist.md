@@ -51,7 +51,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 18. Treat a nullable return type as a contract to guard at every call site: `?->` or an explicit null check everywhere, with a sensible default for the absent case. A mix of guarded and bare dereferences of the same nullable accessor is a latent null crash.
 19. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
 20. `->reject(fn ($x) => $x === null)` over `->filter(fn ($x) => $x !== null)` — don't negate a predicate inside `filter()`.
-21. Assign a non-trivial expression to a named variable before passing it as an argument or chaining off it; don't chain off a custom method's return unless it's designed for chaining (returns `$this`).
+21. Datetime columns cast `immutable_datetime` by default; reach for the mutable `datetime` cast only when a column genuinely needs in-place mutation.
 22. Choose a value by case with `match(true)` whose arms are named predicates — `$this->isImageAttribute($attribute) => …, default => …` — not a ternary on a raw `===` comparison; when the concept has no model/enum home, the predicate is a private method on the class.
 23. Name each operand of a compound condition as a boolean before the `if` — `$isMdoc = …; $isApiCall = …; if ($isMdoc && ! $isApiCall)` — rather than inlining two method calls into one condition.
 
@@ -90,6 +90,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## Validation
 
 - Name a `FormRequest` for the action it validates, mirroring the REST verb: `Store{X}Request`, `Update{X}Request`.
+- A `FormRequest` validates and hands over the input; fetching the model an ID points to belongs in the controller action or its service, not in a request helper method.
 - Order `FormRequest` methods by processing phase: `prepareForValidation()` → `rules()` → `failedValidation()` → accessor helpers.
 - Read request input through the typed accessors — `$request->string('q')`, `->integer()`, `->boolean()`, `->enum('status', Status::class)`, `->collect('ids')` — not `$request->input()` followed by a cast.
 - `prepareForValidation()` only transforms input into the shape `rules()` can validate; don't throw from it — anything still malformed is `rules()`'s job to reject.
