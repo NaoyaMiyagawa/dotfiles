@@ -59,4 +59,4 @@ Keep instruction files lean: don't restate what a capable model already does by 
   - Stay within scope; if you can't finish, return partial findings, not a promise to continue.
 
 ## Report
-End with a short summary: what was adopted (destination file + the verbatim evidence quote), what was added to or promoted from the ledger, and what was rejected (one-line reason each).
+Leave changes to style guides and coding standards (AGENTS.md, the `custom-*-coding`, `custom-*-writing-tests`, `custom-shell-scripting` and `custom-github-actions-workflows` skills, `tooling-candidates.md`) uncommitted; I review and commit those myself. Commit any other change. End with a short summary: what was adopted (destination file + the verbatim evidence quote), what was added to or promoted from the ledger, and what was rejected (one-line reason each).
