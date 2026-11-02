@@ -20,6 +20,7 @@
     "mattpocock-skills@claude-plugins-official": true,
     "php-lsp@claude-plugins-official": false,
     "ponytail@ponytail": true,
+    "postman@claude-plugins-official": true,
     "qmd@qmd": false,
     "swift-lsp@claude-plugins-official": false
   },
