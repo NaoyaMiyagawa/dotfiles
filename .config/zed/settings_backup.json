@@ -1,0 +1,216 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette
+{
+    "cli_default_open_behavior": "new_window",
+    "ui_font_weight": 400.0,
+    "scrollbar": {
+        "git_diff": true
+    },
+    "show_completions_on_input": true,
+    "show_signature_help_after_edits": true,
+    "completion_detail_alignment": "left",
+    "completion_menu_scrollbar": "always",
+    "completions": {
+        "lsp_fetch_timeout_ms": 2000,
+        "words_min_length": 3,
+        "words": "fallback",
+    },
+    "completion_menu_item_kind": "symbol",
+    "diff_view_style": "split",
+    "ui_font_family": ".ZedSans",
+    "tab_size": 4,
+    "agent_buffer_font_size": 14.0,
+    "agent_ui_font_size": 14.0,
+    "active_pane_modifiers": {
+        "border_size": 0.0,
+    },
+    "centered_layout": {
+        "left_padding": 0.2,
+    },
+    "search": {
+        "include_ignored": true,
+    },
+    "agent": {
+        "threads_sidebar_default_width": 300.0,
+        "default_model": {
+            "provider": "copilot_chat",
+            "model": "gpt-4.1",
+            "enable_thinking": false,
+        },
+        "sidebar_side": "right",
+        "dock": "right",
+        "favorite_models": [],
+        "model_parameters": [],
+    },
+    "git_panel": {
+        "tree_view": true,
+        "dock": "left",
+    },
+    "outline_panel": {
+        "dock": "right",
+    },
+    "collaboration_panel": {
+        "dock": "right",
+    },
+    "session": {
+        "trust_all_worktrees": true,
+    },
+    "terminal": {
+        "font_weight": 400.0,
+        "dock": "left",
+        "env": {
+            "Q_NEW_SESSION": "\"1\"",
+            "FIG_NEW_SESSION": "\"1\"",
+            "CW_NEW_SESSION": "\"1\"",
+        },
+        "font_size": 12.0,
+        "copy_on_select": true,
+    },
+    "project_panel": {
+        "hide_root": false,
+        "default_width": 240.0,
+        "dock": "left",
+        "auto_fold_dirs": false,
+    },
+    "git": {
+        "inline_blame": {
+            "enabled": true,
+        },
+    },
+    "base_keymap": "Cursor",
+    "preview_tabs": {
+        "enable_preview_from_file_finder": true,
+    },
+    "tabs": {
+        "git_status": false,
+        "activate_on_close": "left_neighbour",
+    },
+    "sticky_scroll": {
+        "enabled": true,
+    },
+    "minimap": {
+        "show": "never",
+        "thumb": "always",
+    },
+    "cursor_shape": "hollow",
+    "cursor_blink": true,
+    "buffer_font_fallbacks": ["FiraCode Nerd Font Mono"],
+    "buffer_font_family": "FiraCode Nerd Font",
+    "file_types": {
+        "github-actions-workflow": [".github/**/*.yml"],
+        "env": [".env", ".env*"],
+        "jsonc": ["*.json"],
+        "json": ["*.oa", "*.opencert"],
+        "jade": ["*.pug"],
+        "properties": ["*.toml"],
+        "blade": ["*.blade.php"],
+        "ruby": ["*.po"],
+        "tailwindcss": ["*.css"],
+        "yaml": ["*.neon", "*.yml"],
+        "javascriptreact": ["*.tsx"],
+        "html": ["*.html"],
+        "php": ["*.ctp", "*.php"],
+        "vba": ["*.bas", "*.cls"],
+    },
+    "colorize_brackets": true,
+    "show_whitespaces": "all",
+    "show_edit_predictions": true,
+    "ensure_final_newline_on_save": true,
+    "wrap_guides": [80],
+    "preferred_line_length": 120,
+    "soft_wrap": "none",
+    "edit_predictions": {
+        "provider": "copilot",
+        "disabled_globs": [
+            ".serena",
+            ".cocoindex_code",
+            "public/build",
+            "coverage*",
+            "storybook-static",
+            "vite.config.ts.*",
+            "storage/logs",
+            "storage/clockwork",
+            "storage/framework",
+        ],
+    },
+    "file_scan_exclusions": ["vendor/accredify/**"],
+    "agent_servers": {
+        "github-copilot-cli": {
+            "type": "registry",
+        },
+        "cursor": {
+            "type": "registry",
+        },
+        "codex-acp": {
+            "type": "registry",
+        },
+        "claude-acp": {
+            "default_config_options": {
+                "fast": "off",
+                "model": "default",
+                "effort": "high",
+            },
+            "type": "registry",
+        },
+    },
+    "icon_theme": "VSCode Icons for Zed (Dark Official Icons)",
+    "telemetry": {
+        "diagnostics": false,
+        "metrics": false,
+    },
+    "ui_font_size": 15.0,
+    "buffer_font_size": 15.0,
+    "theme": {
+        "mode": "dark",
+        "light": "One Dark",
+        "dark": "One Dark",
+    },
+    "lsp": {
+        "phpantom": {
+            // PHPantom ships via Zed's official PHP extension (the bespoke
+            // extension was removed upstream); server id is "phpantom".
+            // Explicit path to the `cargo install`ed binary — the extension
+            // would also find `phpantom_lsp` on PATH, but Zed launched from
+            // the GUI doesn't always inherit the full shell PATH.
+            "binary": {
+                "path": "~/.cargo/bin/phpantom_lsp",
+            },
+        },
+        "tailwindcss-language-server": {
+            "settings": {
+                "includeLanguages": {
+                    "blade": "html",
+                },
+            },
+        },
+    },
+    "languages": {
+        "JSON": {
+            "tab_size": 2,
+        },
+        "PHP": {
+            "colorize_brackets": true,
+            "show_whitespaces": "all",
+            "show_edit_predictions": true,
+            "ensure_final_newline_on_save": true,
+            "wrap_guides": [80],
+            "preferred_line_length": 120,
+            "language_servers": ["phpantom", "!intelephense", "!phpactor", "!phptools", "..."],
+            "formatter": {
+                "language_server": { "name": "phpantom" },
+            },
+            // "language_servers": ["intelephense", "!phpantom", "!phpactor", "!phptools", "..."],
+            "soft_wrap": "none",
+            "format_on_save": "on",
+        },
+        "Blade": {
+            "language_servers": ["tailwindcss-language-server", "..."],
+        },
+    },
+}

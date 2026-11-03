@@ -123,3 +123,5 @@ description: Applies React/TSX component conventions — file layout, component 
     `userEvent.click()` directly. Each direct call builds its own fresh session,
     so pointer and keyboard state does not carry from one step to the next. When you add a test to a file whose older tests call `userEvent.*`
     directly, use `setup()` in the new test and leave the old tests alone.
+18. **Use a shared fixture by its own name.** Reference an imported mock directly;
+    don't rebind it to a local alias (`const mockPdfContent = mockSignedDocument;`).
