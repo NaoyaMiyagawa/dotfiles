@@ -37,13 +37,12 @@
         "include_ignored": true,
     },
     "agent": {
-        "threads_sidebar_default_width": 300.0,
+        "default_width": 300.0,
         "default_model": {
             "provider": "copilot_chat",
             "model": "gpt-4.1",
             "enable_thinking": false,
         },
-        "sidebar_side": "right",
         "dock": "right",
         "favorite_models": [],
         "model_parameters": [],
@@ -154,7 +153,7 @@
             "default_config_options": {
                 "fast": "off",
                 "model": "default",
-                "effort": "high",
+                "effort": "medium",
             },
             "type": "registry",
         },

@@ -71,6 +71,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
     - relationships: `forXxx($modelOrFactory)` when the relationship name must be passed to `->for()`; `hasXxx($modelOrFactory)` likewise for `->has()`
     - states: `xxx()` — higher-level API setting one or more columns (`pending()`); `withXxx($value)` — low-level API for one column
 - Never pass a literal relationship-key string at the call site (`->for($model, 'reviewer')`) — wrap it in a `forXxx()` state, adding one if missing. Its body is `return $this->for($owner, 'owner');` when the model declares the relationship, not a `state()` closure writing the raw `owner_id` column.
+- A helper that configures another model's factory (`optional()`, `withLabel()` on a child config) is a state on that model's own factory, not a private method in the parent factory that builds it.
 - Use `->forEachSequence()` when every pattern must be covered.
 - Use `->createOne()` / `->createMany()` for better return types; prefer `::factory(x)` over `->count(x)` when creating more than one record.
 - Order a factory chain at the call site: `count()` (where it must appear, e.g. nested inside `->has()`), then relationship states (`->has(...)`, `->forXxx(...)`), then column states (`->active()`, `->withXxx(...)`), then the `create*()` call.
