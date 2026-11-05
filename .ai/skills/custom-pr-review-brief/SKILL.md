@@ -95,36 +95,36 @@ findings by impact, High first. Mark findings that came from Codex with `(codex)
 
 The terminal renders every heading level and `**bold**` alike, so section and severity
 headings are UPPERCASE with the emoji below, each summary concern is a `###` heading so it
-reads as its own block, each summary label is bold on its own line with a blank line between
-labels, and nothing else is bold.
+reads as its own block, each summary label is a bold paragraph line, not a bullet, because the
+renderer drops blank lines between list items, and nothing else is bold.
 
 ````markdown
 ## 📋 SUMMARY
 ### 1. <concern title>
-- **Why**:
-  ...
+**Why:**
+...
 
-- **Currently**:
-  ...
+**Currently:**
+...
 
-- **After this PR**:
-  ...
+**After this PR:**
+...
 
-- **Files**:
-  `a.php`, `b.tsx`
+**Files:**
+`a.php`, `b.tsx`
 
 ### 2. <concern title>
-- **Why**:
-  ...
+**Why:**
+...
 
-- **Currently**:
-  ...
+**Currently:**
+...
 
-- **After this PR**:
-  ...
+**After this PR:**
+...
 
-- **Files**:
-  `c.php`
+**Files:**
+`c.php`
 
 Also touched (no review needed): lockfile, generated types.
 Start reading at: `app/Services/OrderService.php`
