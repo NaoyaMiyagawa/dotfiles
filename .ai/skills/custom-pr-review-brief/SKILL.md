@@ -89,7 +89,8 @@ Posting goes through `difit-review` or `custom-gh-address-comments`, only when a
 
 Categories: Bug, Security, Data, Tests, Standards, Alternative, Readability. Add another only
 when none fit. Put the number and the bracketed category on their own line and the finding on
-the next, sorted by category within a severity. Mark findings that came from Codex with `(codex)`.
+the next, with a blank line between findings. Within a severity, sort by category, then rated
+findings by impact, High first. Mark findings that came from Codex with `(codex)`.
 
 The terminal renders every heading level and `**bold**` alike, so section and severity
 headings are UPPERCASE with the emoji below, each summary concern is a `###` heading so it
@@ -133,11 +134,17 @@ Start reading at: `app/Services/OrderService.php`
    `path/file.ext:42` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why the change does this>. (introduced)
 
 ### 🟡 SHOULD FIX
-2. [Standards]
+2. [Bug] [🟧 Medium]
+   `path/file.ext:51` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why>. (introduced)
+
+3. [Bug] [🟦 Low]
+   `path/file.ext:57` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why>. (introduced)
+
+4. [Standards]
    `path/file.ext:60` — <rule broken> (`custom-laravel-coding`). (introduced)
 
 ### ⚪ OPTIONAL
-3. [Alternative]
+5. [Alternative]
    `path/file.ext:88` — <suggestion>. Gain: <concrete gain>.
    ```lang
    // current → proposed, a few lines each
