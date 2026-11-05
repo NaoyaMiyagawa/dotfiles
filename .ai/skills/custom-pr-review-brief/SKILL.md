@@ -87,16 +87,15 @@ Posting goes through `difit-review` or `custom-gh-address-comments`, only when a
 - **Optional** — alternatives and better ways to write that don't fix a defect.
 
 Categories: Bug, Security, Data, Tests, Standards, Alternative, Readability. Add another only
-when none fit. Put the category in brackets at the start of each finding, sorted by category
-within a severity. Mark findings that came from Codex with `(codex)`.
+when none fit. Put the number and the bracketed category on their own line and the finding on
+the next, sorted by category within a severity. Mark findings that came from Codex with `(codex)`.
 
 The terminal renders every heading level and `**bold**` alike, so section and severity
-headings are UPPERCASE with the emoji below, concern titles start with `▸`, and nothing else
-is bold.
+headings are UPPERCASE with the emoji below, and nothing else is bold.
 
 ````markdown
 ## 📋 SUMMARY
-▸ 1. <concern title>
+1. <concern title>
 - Currently: ...
 - After this PR: ...
 - Why: ...
@@ -107,13 +106,16 @@ Start reading at: `app/Services/OrderService.php`
 
 ## 🔍 FINDINGS
 ### 🔴 BLOCKING
-1. [Bug] [High] `path/file.ext:42` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why the change does this>. (introduced)
+1. [Bug] [High]
+   `path/file.ext:42` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why the change does this>. (introduced)
 
 ### 🟡 SHOULD FIX
-2. [Standards] `path/file.ext:60` — <rule broken> (`custom-laravel-coding`). (introduced)
+2. [Standards]
+   `path/file.ext:60` — <rule broken> (`custom-laravel-coding`). (introduced)
 
 ### ⚪ OPTIONAL
-3. [Alternative] `path/file.ext:88` — <suggestion>. Gain: <concrete gain>.
+3. [Alternative]
+   `path/file.ext:88` — <suggestion>. Gain: <concrete gain>.
    ```lang
    // current → proposed, a few lines each
    ```
