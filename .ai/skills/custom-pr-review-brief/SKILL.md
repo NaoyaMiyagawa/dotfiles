@@ -25,9 +25,9 @@ Start the Codex pass from section 3 now, in the background, so it runs while you
 Split the diff into concerns (one behavior, fix, refactor, or migration each; may span
 files). For each concern:
 
+- **Why:** from the PR body (`gh pr view <n> --json body`, read now, after the diff), commit messages, or linked ticket. If none of those say it, write `Why (inferred):` and your best reading.
 - **Currently:** what the system does today, in user or caller terms.
 - **After this PR:** what it does after merge.
-- **Why:** from the PR body (`gh pr view <n> --json body`, read now, after the diff), commit messages, or linked ticket. If none of those say it, write `Why (inferred):` and your best reading.
 
 Plain words, one or two sentences per line. Name the files only in a trailing
 `Files:` line. Skip concerns that are pure noise (lockfile churn, generated code) but list
@@ -99,29 +99,29 @@ labels, and nothing else is bold.
 ````markdown
 ## 📋 SUMMARY
 ### 1. <concern title>
-- **Currently**
+- **Why**:
   ...
 
-- **After this PR**
+- **Currently**:
   ...
 
-- **Why**
+- **After this PR**:
   ...
 
-- **Files**
+- **Files**:
   `a.php`, `b.tsx`
 
 ### 2. <concern title>
-- **Currently**
+- **Why**:
   ...
 
-- **After this PR**
+- **Currently**:
   ...
 
-- **Why**
+- **After this PR**:
   ...
 
-- **Files**
+- **Files**:
   `c.php`
 
 Also touched (no review needed): lockfile, generated types.
