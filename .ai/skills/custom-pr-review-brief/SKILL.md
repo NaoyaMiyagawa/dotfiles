@@ -89,7 +89,7 @@ Posting goes through `difit-review` or `custom-gh-address-comments`, only when a
 
 Categories: Bug, Security, Data, Tests, Alternative, Readability. Add another only
 when none fit. Standards findings go last in their own STANDARDS section, numbered on from the
-rest, one line each with no category. Put the number and the bracketed category on their own line and the finding on
+rest, with no category line. Put the number and the bracketed category on their own line and the finding on
 the next, with a blank line between findings. Within a severity, sort by category, then rated
 findings by impact, High first. Mark findings that came from Codex with `(codex)`.
 
