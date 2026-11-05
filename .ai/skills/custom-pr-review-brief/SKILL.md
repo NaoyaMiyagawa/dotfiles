@@ -87,11 +87,15 @@ Posting goes through `difit-review` or `custom-gh-address-comments`, only when a
 - **Optional** — alternatives and better ways to write that don't fix a defect.
 
 Categories: Bug, Security, Data, Tests, Standards, Alternative, Readability. Add another only
-when none fit. Mark findings that came from Codex with `(codex)`.
+when none fit. Put the category in brackets at the start of each finding, sorted by category
+within a severity. Mark findings that came from Codex with `(codex)`.
+
+The terminal renders every heading level and `**bold**` alike, so headings carry the emoji
+or `▸` marker below, a `---` rule separates the top sections, and nothing else is bold.
 
 ````markdown
-## Summary
-**1. <concern title>**
+## 📋 Summary
+▸ 1. <concern title>
 - Currently: ...
 - After this PR: ...
 - Why: ...
@@ -100,23 +104,22 @@ when none fit. Mark findings that came from Codex with `(codex)`.
 Also touched (no review needed): lockfile, generated types.
 Start reading at: `app/Services/OrderService.php`
 
-## Findings
-### Blocking
-**Bug**
-1. [High] `path/file.ext:42` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why the change does this>. (introduced)
+---
+## 🔍 Findings
+### 🔴 Blocking
+1. [Bug] [High] `path/file.ext:42` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why the change does this>. (introduced)
 
-### Should fix
-**Standards**
-2. `path/file.ext:60` — <rule broken> (`custom-laravel-coding`). (introduced)
+### 🟡 Should fix
+2. [Standards] `path/file.ext:60` — <rule broken> (`custom-laravel-coding`). (introduced)
 
-### Optional
-**Alternative**
-3. `path/file.ext:88` — <suggestion>. Gain: <concrete gain>.
+### ⚪ Optional
+3. [Alternative] `path/file.ext:88` — <suggestion>. Gain: <concrete gain>.
    ```lang
    // current → proposed, a few lines each
    ```
 
-## Not checked
+---
+## ⚠️ Not checked
 <what you skipped: tests not run, dynamic callers not traced, files too large to read>
 ````
 
