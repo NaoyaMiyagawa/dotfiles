@@ -39,8 +39,9 @@ End with one `Start reading at:` line naming the file the rest of the diff follo
 
 **Standards:** before judging, read the coding skill for each changed file type and its
 `references/checklist.md` when present: `custom-laravel-coding` for PHP,
-`custom-laravel-writing-tests` for Pest tests, `custom-react-coding` for React/TSX. A
-violation of those rules is a finding; cite the rule.
+`custom-laravel-writing-tests` for Pest tests, `custom-react-coding` for React/TSX. These
+rules are the user's own preferences, not the PR author's, so a violation (test-style rules
+included) goes in the separate STANDARDS section, never in a severity; cite the rule.
 
 **Bugs:** run steps 1–6 of the `evidence-code-review` workflow on the diff to find and
 validate defects; section 4 below replaces its output contract. Its style filter applies to
@@ -69,8 +70,7 @@ suggestion qualifies only when it does at least one of:
 - removes code or a branch,
 - reuses a helper, component, or pattern already in this repo (name it with `file:line`),
 - uses a platform or installed-library feature that replaces hand-written code,
-- handles an edge case the current version misses,
-- follows a rule from the standards skills above that the diff breaks.
+- handles an edge case the current version misses.
 
 State the concrete gain. "Cleaner" or "more idiomatic" alone is not a gain; drop it.
 
@@ -84,11 +84,12 @@ across the whole list (1, 2, 3, …) so the user can follow up with "explain #3"
 Posting goes through `difit-review` or `custom-gh-address-comments`, only when asked.
 
 - **Blocking** — breaks behavior, loses or exposes data, or fails in production.
-- **Should fix** — wrong in an edge case, missing test for new logic, a standards violation, or a reuse that avoids a real divergence.
+- **Should fix** — wrong in an edge case, missing test for new logic, or a reuse that avoids a real divergence.
 - **Optional** — alternatives and better ways to write that don't fix a defect.
 
-Categories: Bug, Security, Data, Tests, Standards, Alternative, Readability. Add another only
-when none fit. Put the number and the bracketed category on their own line and the finding on
+Categories: Bug, Security, Data, Tests, Alternative, Readability. Add another only
+when none fit. Standards findings go last in their own STANDARDS section, numbered on from the
+rest, one line each with no category. Put the number and the bracketed category on their own line and the finding on
 the next, with a blank line between findings. Within a severity, sort by category, then rated
 findings by impact, High first. Mark findings that came from Codex with `(codex)`.
 
@@ -140,15 +141,17 @@ Start reading at: `app/Services/OrderService.php`
 3. [Bug] [🟦 Low]
    `path/file.ext:57` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why>. (introduced)
 
-4. [Standards]
-   `path/file.ext:60` — <rule broken> (`custom-laravel-coding`). (introduced)
-
 ### ⚪ OPTIONAL
-5. [Alternative]
+4. [Alternative]
    `path/file.ext:88` — <suggestion>. Gain: <concrete gain>.
    ```lang
    // current → proposed, a few lines each
    ```
+
+### 📏 STANDARDS
+5. `path/file.ext:60` — <rule broken> (`custom-laravel-coding`). (introduced)
+
+6. `tests/FooTest.php:12` — <rule broken> (`custom-laravel-writing-tests`). (introduced)
 
 ## ⚠️ NOT CHECKED
 <what you skipped: tests not run, dynamic callers not traced, files too large to read>
