@@ -92,35 +92,35 @@ the next, sorted by category within a severity. Mark findings that came from Cod
 
 The terminal renders every heading level and `**bold**` alike, so section and severity
 headings are UPPERCASE with the emoji below, each summary concern is a `###` heading so it
-reads as its own block, each summary label sits on its own line with a blank line between
+reads as its own block, each summary label is bold on its own line with a blank line between
 labels, and nothing else is bold.
 
 ````markdown
 ## 📋 SUMMARY
 ### 1. <concern title>
-- Currently
+- **Currently**
   ...
 
-- After this PR
+- **After this PR**
   ...
 
-- Why
+- **Why**
   ...
 
-- Files
+- **Files**
   `a.php`, `b.tsx`
 
 ### 2. <concern title>
-- Currently
+- **Currently**
   ...
 
-- After this PR
+- **After this PR**
   ...
 
-- Why
+- **Why**
   ...
 
-- Files
+- **Files**
   `c.php`
 
 Also touched (no review needed): lockfile, generated types.
