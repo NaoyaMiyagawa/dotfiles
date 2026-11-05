@@ -1,13 +1,13 @@
 ---
 name: custom-pr-review-brief
-description: Brief a human reviewer on a PR, branch, or diff before or during their manual review — a plain-language "currently / after this PR / why" summary per change, then bugs, simpler alternatives, and better ways to write it, grouped by severity and category in chat. Use when the user is about to review or is reviewing a PR and asks what it changes, wants a summary before reviewing, asks to "brief me on", "walk me through", or "pre-review" a PR, asks what changed since their last review, or asks for bugs and alternatives in someone else's change. Not for posting comments on the PR or for an HTML report (use custom-code-review-html).
+description: Brief a human reviewer on a PR, branch, or diff before or during their manual review — a plain-language "currently / after this PR / why" summary per change, then bugs, simpler alternatives, and better ways to write it, grouped by severity and category in chat, or as an HTML page when asked. Use when the user is about to review or is reviewing a PR and asks what it changes, wants a summary before reviewing, asks to "brief me on", "walk me through", or "pre-review" a PR, asks what changed since their last review, or asks for bugs and alternatives in someone else's change. Not for posting comments on the PR, or for a full HTML code review that is not a pre-review brief (use custom-code-review-html).
 ---
 
 # PR Review Brief
 
 The reader is about to review this change by hand. Give them two things: what the change
 does in words they can check against the code, and what they should look at hard. Output
-goes in chat only; never post to the PR.
+goes in chat, or as a page in HTML mode (section 5); never post to the PR.
 
 ## 1. Scope
 
@@ -158,3 +158,22 @@ Start reading at: `app/Services/OrderService.php`
 ````
 
 If there are no findings, say so in one line under `## 🔍 FINDINGS`. Don't pad.
+
+## 5. HTML mode
+
+When the user passes `html` or asks for the brief as a page, do sections 1–3 as above, then
+build the page with steps 6–7 of `custom-code-review-html` (its template, checker, and
+publish step). That skill's steps 1–5 are replaced by this one, and so is its ranking: keep
+this brief's order. Fill the template like this:
+
+- **What it does** → one block per summary concern with its Why, Currently, After this PR,
+  and Files, then the `Start reading at` line. Drop the diagram unless a concern has a
+  control flow worth seeing.
+- **Findings** → one article per Blocking, Should fix, and Optional finding, in that order.
+  `data-sev`: Blocking `critical`, Should fix `high`, Optional `low`. Put the category and
+  impact rating at the start of the title, like `[Bug] [🟧 Medium]`.
+- **Nits** → retitle it Standards and list the standards findings there.
+- **What the change gets right** → replace it with Not checked.
+
+Write it in English only unless the user asks for Japanese (that skill's Bilingual pages). In chat, give only the page link and
+the top finding.
