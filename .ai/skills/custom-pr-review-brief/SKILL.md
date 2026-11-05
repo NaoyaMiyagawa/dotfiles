@@ -91,15 +91,22 @@ when none fit. Put the number and the bracketed category on their own line and t
 the next, sorted by category within a severity. Mark findings that came from Codex with `(codex)`.
 
 The terminal renders every heading level and `**bold**` alike, so section and severity
-headings are UPPERCASE with the emoji below, and nothing else is bold.
+headings are UPPERCASE with the emoji below, each summary concern is a `###` heading so it
+reads as its own block, and nothing else is bold.
 
 ````markdown
 ## 📋 SUMMARY
-1. <concern title>
+### 1. <concern title>
 - Currently: ...
 - After this PR: ...
 - Why: ...
 - Files: `a.php`, `b.tsx`
+
+### 2. <concern title>
+- Currently: ...
+- After this PR: ...
+- Why: ...
+- Files: `c.php`
 
 Also touched (no review needed): lockfile, generated types.
 Start reading at: `app/Services/OrderService.php`
