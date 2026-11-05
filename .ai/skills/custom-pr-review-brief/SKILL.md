@@ -90,11 +90,12 @@ Categories: Bug, Security, Data, Tests, Standards, Alternative, Readability. Add
 when none fit. Put the category in brackets at the start of each finding, sorted by category
 within a severity. Mark findings that came from Codex with `(codex)`.
 
-The terminal renders every heading level and `**bold**` alike, so headings carry the emoji
-or `▸` marker below, a `---` rule separates the top sections, and nothing else is bold.
+The terminal renders every heading level and `**bold**` alike, so section and severity
+headings are UPPERCASE with the emoji below, concern titles start with `▸`, and nothing else
+is bold.
 
 ````markdown
-## 📋 Summary
+## 📋 SUMMARY
 ▸ 1. <concern title>
 - Currently: ...
 - After this PR: ...
@@ -104,23 +105,21 @@ or `▸` marker below, a `---` rule separates the top sections, and nothing else
 Also touched (no review needed): lockfile, generated types.
 Start reading at: `app/Services/OrderService.php`
 
----
-## 🔍 Findings
-### 🔴 Blocking
+## 🔍 FINDINGS
+### 🔴 BLOCKING
 1. [Bug] [High] `path/file.ext:42` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why the change does this>. (introduced)
 
-### 🟡 Should fix
+### 🟡 SHOULD FIX
 2. [Standards] `path/file.ext:60` — <rule broken> (`custom-laravel-coding`). (introduced)
 
-### ⚪ Optional
+### ⚪ OPTIONAL
 3. [Alternative] `path/file.ext:88` — <suggestion>. Gain: <concrete gain>.
    ```lang
    // current → proposed, a few lines each
    ```
 
----
-## ⚠️ Not checked
+## ⚠️ NOT CHECKED
 <what you skipped: tests not run, dynamic callers not traced, files too large to read>
 ````
 
-If there are no findings, say so in one line under `## Findings`. Don't pad.
+If there are no findings, say so in one line under `## 🔍 FINDINGS`. Don't pad.
