@@ -51,11 +51,12 @@ command (`POST /orders with qty=0 → 500`). Mark it `verified` only if you ran 
 `not run`.
 
 Rate each finding that has a failure path (Bug, Security, Data) by impact, independent of
-which section it lands in:
+which section it lands in. Write the rating with its square, like `[🟧 Medium]`; squares keep
+it apart from the circle severity headings:
 
-- **High** — hits a common flow, loses or exposes data, or stops a user from finishing a task.
-- **Medium** — wrong result in a reachable but uncommon case, or a common case with a workaround.
-- **Low** — rare edge case, or the effect is cosmetic or corrects itself on retry.
+- 🟥 **High** — hits a common flow, loses or exposes data, or stops a user from finishing a task.
+- 🟧 **Medium** — wrong result in a reachable but uncommon case, or a common case with a workaround.
+- 🟦 **Low** — rare edge case, or the effect is cosmetic or corrects itself on retry.
 
 **Codex pass:** run a Codex review of the same diff per the `codex` skill. Give it the diff
 only, no PR body and no summary, so it judges the code unprimed. Confirm each Codex finding
@@ -128,7 +129,7 @@ Start reading at: `app/Services/OrderService.php`
 
 ## 🔍 FINDINGS
 ### 🔴 BLOCKING
-1. [Bug] [High]
+1. [Bug] [🟥 High]
    `path/file.ext:42` — <one-line claim>. Repro (not run): <flow or request>. Cause: <why the change does this>. (introduced)
 
 ### 🟡 SHOULD FIX
