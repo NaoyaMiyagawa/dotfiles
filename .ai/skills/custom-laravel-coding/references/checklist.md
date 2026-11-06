@@ -184,6 +184,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Give every controller action a `Request $request` (or a dedicated `FormRequest`) as its first parameter, even when the body doesn't read it — don't omit it. Break the parameter list across lines.
 - Type a route segment that holds an enum value as that enum in the action signature (implicit enum binding) so the framework 404s an unknown value; don't validate it by hand.
 - Resource route paths and their route names are plural — `/tokens`, not `/token`; keep path and name in sync.
+- Match a request by route name (`$request->routeIs('organizations.did')`), not by path pattern (`$request->is('organizations/*/did.json')`). `routeIs()` returns false before routing resolves the route, so global middleware still has to use `is()`.
 - Routes that share a leading path segment go under one `Route::prefix('/tokens')` group instead of repeating the segment on each route.
 - Register routes in the app's existing route files (`web.php`/`api.php`); don't add a new custom route file for a feature.
 - Build JSON responses with the `response()->json(...)` helper rather than instantiating `JsonResponse` by hand — applies in controllers and in response/exception classes that emit JSON.
