@@ -106,7 +106,7 @@ Before refactoring a code path with no direct coverage, first write a **characte
     expect($signer->request['KeyId'])->toBe($keyId);
     ```
 
-13. **Datasets.** Use `->with()` when cases can be combined; keep the `it()` closure's arguments multi-line even for one argument; in each row, assign the values to variables named like the arguments so rows read against the signature:
+13. **Datasets.** Use `->with()` when cases can be combined; keep the `it()` closure's arguments multi-line even for one argument; in each row, assign the values to variables named like the arguments so rows read against the signature. A row with one value stays on one line; a row with several values puts one per line:
 
     ```php
     it('transitions the status', function (
@@ -114,9 +114,8 @@ Before refactoring a code path with no direct coverage, first write a **characte
     ) {
         // ...
     })->with([
-        'pending' => [
-            $status = XxxStatus::Pending,
-        ],
+        'pending' => [$status = XxxStatus::Pending],
+        'approved' => [$status = XxxStatus::Approved],
     ]);
     ```
 
