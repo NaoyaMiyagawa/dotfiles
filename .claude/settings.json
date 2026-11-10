@@ -20,7 +20,7 @@
     "mattpocock-skills@claude-plugins-official": true,
     "php-lsp@claude-plugins-official": false,
     "ponytail@ponytail": true,
-    "postman@claude-plugins-official": true,
+    "postman@claude-plugins-official": false,
     "qmd@qmd": false,
     "swift-lsp@claude-plugins-official": false
   },
@@ -158,12 +158,11 @@
       {
         "hooks": [
           {
-            "command": "~/.claude/hooks/sonar-secrets/build-scripts/pretool-secrets.sh",
-            "timeout": 60,
+            "command": "rtk hook claude",
             "type": "command"
           }
         ],
-        "matcher": "Read"
+        "matcher": "Bash"
       },
       {
         "hooks": [
@@ -177,10 +176,6 @@
           },
           {
             "command": "~/.claude/hooks/prefer-rg-fd.sh",
-            "type": "command"
-          },
-          {
-            "command": "~/.claude/hooks/rtk-rewrite.sh",
             "type": "command"
           }
         ],
@@ -478,6 +473,7 @@
     "ccc": "off",
     "claude": "off",
     "close-spec": "off",
+    "cmux": "off",
     "compare-screenshots": "off",
     "custom-email-html-template-review": "off",
     "custom-install-all-dependencies": "off",
@@ -485,15 +481,20 @@
     "explore-unknowns": "off",
     "figma": "off",
     "figma-implement-design": "off",
+    "find-docs": "off",
     "find-skills": "off",
+    "gh-fix-ci": "off",
     "implement-spec": "off",
     "implement-spec-with-codex": "off",
+    "llm-wiki": "off",
     "playwright": "off",
+    "playwright-cli": "off",
     "playwright-interactive": "off",
     "preview-shots": "off",
     "refactor-clean": "off",
     "renderer": "off",
     "screenshot-critique": "off",
+    "sentry": "off",
     "sentry-cli": "off",
     "write-docs": "off",
     "write-spec": "off",

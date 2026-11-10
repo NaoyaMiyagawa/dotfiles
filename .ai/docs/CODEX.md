@@ -1,9 +1,12 @@
-# Codex model → task mapping
+# Codex: local rules
 
-Tracked copy of the mapping that lives in the `codex` skill
-(`~/.agents/skills/codex/SKILL.md`, symlinked as `.ai/skills/codex/`). That
-directory is outside this repo, so this file is the version-controlled record —
-keep the two in sync when either changes.
+Local rules for running Codex. They win over the `codex` skill where the two
+disagree. The skill is third-party (`dzhng/skills`) and `npx skills update -g`
+overwrites it, so local rules live here, not in the skill.
+
+- Delegate without being asked, per the Delegation section of `~/.claude/CLAUDE.md`; the skill's "explicit ask only" gate does not apply.
+- Pin model and effort per the table below; the skill says to leave both at their defaults.
+- Done = process exited and the `-o` file is non-empty.
 
 Run from the repo root: `cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"`.
 Plain `codex exec "..."` inherits the `~/.codex/config.toml` defaults, and
@@ -21,7 +24,7 @@ model. Override per task:
 
 gpt-5.6-luna is the cheapest model, so prefer it for routine work.
 
-Accepted `--effort` values: none, minimal, low, medium, high, xhigh. When a task
+Accepted `model_reasoning_effort` values: none, minimal, low, medium, high, xhigh. When a task
 doesn't clearly fit a row, leave the model unset but still pass a medium effort —
 the config default has changed before, so an unset effort is not a neutral choice.
 

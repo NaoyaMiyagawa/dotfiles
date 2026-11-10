@@ -43,9 +43,10 @@ End with one `Start reading at:` line naming the file the rest of the diff follo
 rules are the user's own preferences, not the PR author's, so a violation (test-style rules
 included) goes in the separate STANDARDS section, never in a severity; cite the rule.
 
-**Bugs:** run steps 1–6 of the `evidence-code-review` workflow on the diff to find and
-validate defects; section 4 below replaces its output contract. Its style filter applies to
-this bug pass only, not to the alternatives below. Keep only findings with a concrete failure
+**Bugs:** map what the diff changes, then trace each changed behavior through its callers,
+data, and error paths, highest-risk areas first. Confirm every candidate against the code
+before reporting it, and drop style-only or speculative ones; that filter applies to this
+bug pass only, not to the alternatives below. Keep only findings with a concrete failure
 path: inputs or state → wrong behavior. Give each bug a repro and why the change causes it.
 The repro is the user flow a reviewer clicks through, or for backend-only code the request or
 command (`POST /orders with qty=0 → 500`). Mark it `verified` only if you ran it; otherwise
