@@ -3,3 +3,4 @@
 #   git config --global filter.jsonsort.clean "jq -S 'walk(if type==\"array\" then sort else . end)'"
 # ) so diffs only show real changes.
 /.claude/settings.json filter=jsonsort
+.claude/settings.json filter=strip-adrafinil
