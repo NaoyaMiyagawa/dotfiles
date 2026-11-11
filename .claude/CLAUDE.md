@@ -10,6 +10,7 @@
 Invoke these explicitly before starting the work — don't rely on automatic skill triggering:
 
 - Chained PRs → `gh-stack`. Root the stack on the trunk from the Branching rule: `gh stack init --base develop <first-branch>` (or `--base main`). Adopt a hand-made chain with `gh stack link <pr> <pr> ...`.
+- A question about what a project or module does, or its requirements, business rules, or flows → `custom-obsidian-wiki-query` before reading the code. The wiki holds the work projects' specs and decisions that the code doesn't state.
 - Writing or editing PHP → `custom-laravel-coding` (plus `custom-laravel-writing-tests` for Pest tests). Its review gate is mandatory before presenting or committing PHP.
 - React components or pages → `custom-react-coding`
 - Shell scripts → `custom-shell-scripting`
