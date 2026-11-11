@@ -1,6 +1,6 @@
 ---
 name: custom-gh-dependabot-assess
-description: Assess dependency bump PRs — Dependabot's or a dev's own — and post a short risk comment on each: what the package does, where the repo uses it, what the bump changes, and whether merging can break the app. Use when the user asks to assess, review, or check Dependabot PRs, asks what's in the Dependabot queue, passes PR numbers with "reassess", or has just created a PR that changes package.json, composer.json, or a lockfile.
+description: Assess dependency bump PRs — Dependabot's or a dev's own — and post a short risk comment on each — what the package does, where the repo uses it, what the bump changes, and whether merging can break the app. Use when the user asks to assess, review, or check Dependabot PRs, asks what's in the Dependabot queue, passes PR numbers with "reassess", or has just created a PR that changes package.json, composer.json, or a lockfile.
 metadata:
   short-description: Post a short risk assessment comment on Dependabot PRs
 ---

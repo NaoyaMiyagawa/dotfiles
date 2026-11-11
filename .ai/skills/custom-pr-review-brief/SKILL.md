@@ -1,6 +1,7 @@
 ---
 name: custom-pr-review-brief
 description: Brief a human reviewer on a PR, branch, or diff before or during their manual review — a plain-language "currently / after this PR / why" summary per change, then bugs, simpler alternatives, and better ways to write it, grouped by severity and category in chat, or as an HTML page when asked. Use when the user is about to review or is reviewing a PR and asks what it changes, wants a summary before reviewing, asks to "brief me on", "walk me through", or "pre-review" a PR, asks what changed since their last review, or asks for bugs and alternatives in someone else's change. Not for posting comments on the PR, or for a full HTML code review that is not a pre-review brief (use custom-code-review-html).
+model: opus
 ---
 
 # PR Review Brief
