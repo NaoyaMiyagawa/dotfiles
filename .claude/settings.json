@@ -438,7 +438,6 @@
       "Bash(rg *)",
       "Bash(rtk *)",
       "Bash(sed -n *)",
-      "Bash(serena:*)",
       "Bash(sort *)",
       "Bash(tail *)",
       "Bash(test *)",
@@ -457,8 +456,7 @@
       "Read(~/.claude/*)",
       "Read(~/.zshrc)",
       "Read(~/dotfiles/.ai/skills/**)",
-      "TodoWrite(**)",
-      "mcp__serena"
+      "TodoWrite(**)"
     ],
     "defaultMode": "auto",
     "deny": [
