@@ -27,7 +27,9 @@ rather than pushing through.
 Prefer fast, purpose-built tools; fall back to a legacy default only when the modern tool genuinely can't do the job.
 - Search file contents → `rg` (not `grep`)
 - Find files by name → `fd` (not `find`)
-- Search/rewrite code by syntax, not text → `ast-grep` / `sg`
+- Find or rewrite code by shape (every call to a method, every class extending a base) → `ast-grep run -l php -p '$OBJ->middleware($$$)' app`. `$NAME` matches one node, `$$$` any number. Reach for it when `rg` on the name also returns comments, strings, and unrelated methods.
+- Find code by what it does, when you have no name to search for → `ccc search --lang php "<what the code does>"`, only in a repo that has a `.cocoindex_code/` directory. Pass `--lang`: unfiltered results are mostly JSON and text files. Add `--refresh` after large changes. Hits are leads; confirm them with `rg` before relying on one.
+- Search the Obsidian vault's notes and specs → `qmd query "<question>" -c obsidian`. qmd indexes Markdown notes, not code; the `custom-obsidian-wiki-query` skill covers query craft.
 - Simple find-and-replace in files → `sd` (not `sed`)
 - Query/edit JSON → `jq`; YAML → `yq`
 - Fetch URLs, call HTTP APIs, extract from pages → `ax` (not `curl` + throwaway parsing scripts); run `ax agent-context` for usage
