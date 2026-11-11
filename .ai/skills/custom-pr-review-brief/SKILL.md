@@ -38,7 +38,7 @@ End with one `Start reading at:` line naming the file the rest of the diff follo
 ## 3. Findings
 
 **Standards:** before judging, read the coding skill for each changed file type and its
-`references/checklist.md` when present: `custom-laravel-coding` for PHP,
+`references/checklist.md` when present: `custom-general-coding` for any code, `custom-laravel-coding` for PHP,
 `custom-laravel-writing-tests` for Pest tests, `custom-react-coding` for React/TSX. These
 rules are the user's own preferences, not the PR author's, so a violation (test-style rules
 included) goes in the separate STANDARDS section, never in a severity; cite the rule.

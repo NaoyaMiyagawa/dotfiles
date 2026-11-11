@@ -123,13 +123,13 @@ def gh_pr_view_json(fields: str) -> dict[str, Any]:
 def get_current_pr_ref() -> tuple[str, str, int]:
     """
     Resolve the PR for the current branch (whatever gh considers associated).
-    Works for cross-repo PRs too, by reading head repository owner/name.
+    Owner and repo come from the PR URL, so a fork PR resolves to the repository
+    the PR lives in, not the fork.
     """
-    pr = gh_pr_view_json("number,headRepositoryOwner,headRepository")
-    owner = pr["headRepositoryOwner"]["login"]
-    repo = pr["headRepository"]["name"]
-    number = int(pr["number"])
-    return owner, repo, number
+    pr = gh_pr_view_json("number,url")
+    # e.g. (in) "https://github.com/acme/app/pull/7" → (out) ("acme", "app")
+    owner, repo = pr["url"].split("/")[3:5]
+    return owner, repo, int(pr["number"])
 
 
 def gh_api_graphql(
@@ -175,6 +175,7 @@ def fetch_all(owner: str, repo: str, number: int) -> dict[str, Any]:
     comments_cursor: str | None = None
     reviews_cursor: str | None = None
     threads_cursor: str | None = None
+    comments_done = reviews_done = threads_done = False
 
     pr_meta: dict[str, Any] | None = None
 
@@ -206,15 +207,22 @@ def fetch_all(owner: str, repo: str, number: int) -> dict[str, Any]:
         r = pr["reviews"]
         t = pr["reviewThreads"]
 
-        conversation_comments.extend(c.get("nodes") or [])
-        reviews.extend(r.get("nodes") or [])
-        review_threads.extend(t.get("nodes") or [])
+        # A finished connection keeps its last cursor: resetting it to None would
+        # restart that connection from page one and duplicate its nodes.
+        if not comments_done:
+            conversation_comments.extend(c.get("nodes") or [])
+            comments_done = not c["pageInfo"]["hasNextPage"]
+            comments_cursor = c["pageInfo"]["endCursor"]
+        if not reviews_done:
+            reviews.extend(r.get("nodes") or [])
+            reviews_done = not r["pageInfo"]["hasNextPage"]
+            reviews_cursor = r["pageInfo"]["endCursor"]
+        if not threads_done:
+            review_threads.extend(t.get("nodes") or [])
+            threads_done = not t["pageInfo"]["hasNextPage"]
+            threads_cursor = t["pageInfo"]["endCursor"]
 
-        comments_cursor = c["pageInfo"]["endCursor"] if c["pageInfo"]["hasNextPage"] else None
-        reviews_cursor = r["pageInfo"]["endCursor"] if r["pageInfo"]["hasNextPage"] else None
-        threads_cursor = t["pageInfo"]["endCursor"] if t["pageInfo"]["hasNextPage"] else None
-
-        if not (comments_cursor or reviews_cursor or threads_cursor):
+        if comments_done and reviews_done and threads_done:
             break
 
     assert pr_meta is not None

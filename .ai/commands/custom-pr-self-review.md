@@ -8,6 +8,10 @@ PR self-review: verify every line you (or this session) changed matches the codi
 
 Read **every** path below (full file). Treat them as the source of truth for review criteria—not memory or generic Laravel/PHP advice.
 
+**All code**
+
+- `~/dotfiles/.ai/skills/custom-general-coding/SKILL.md`
+
 **Laravel**
 
 - `~/dotfiles/.ai/skills/custom-laravel-coding/SKILL.md`
@@ -21,8 +25,6 @@ Read **every** path below (full file). Treat them as the source of truth for rev
 - `~/dotfiles/.ai/skills/custom-php-running-static-analysis/SKILL.md`
 - `~/dotfiles/.ai/skills/custom-php-running-test/SKILL.md`
 
-**Utils**
-- `~/dotfiles/.ai/skills/ccc/SKILL.md`
 
 **Other applicable standards (read when the diff touches them)**
 - Blade email templates → `~/dotfiles/.ai/skills/custom-email-html-template-review/SKILL.md`
@@ -40,7 +42,7 @@ Scope the review to **files touched in that diff**. If the user’s intent is �
 In the **application repository** (the repo whose PR you are reviewing), when PHP is in scope for that project and `phpstan` is available:
 
 1. Follow `~/dotfiles/.ai/skills/custom-php-running-static-analysis/SKILL.md` for **how** to invoke PHPStan (e.g. Sail vs plain `vendor/bin/phpstan`).
-2. Run analysis on an appropriate scope for this change set (at minimum: all PHP files touched in the branch diff vs base; use the skill’s file-targeted command when possible instead of full-app unless you need it).
+2. Run analysis on an appropriate scope for this change set (at minimum: all PHP files touched in the branch diff vs base; use the skill’s file-targeted command; run full-app analysis only when the user explicitly asks).
 3. **Requirement**: PHPStan must complete with **no errors** (exit zero, no reported issues at the configured baseline/level). If it fails, treat that as **blocking**: overall summary is **fail**, list PHPStan findings first under **Findings**, and do not imply the branch passes review until those are resolved or you explicitly note why PHPStan could not be run (e.g. workspace is dotfiles-only, no `vendor`, or project does not use PHPStan).
 
 ## Self-review (your own work)

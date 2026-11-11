@@ -31,6 +31,7 @@ def split(src):
 
 def check_tags(body):
     stack, errors = [], []
+    body = re.sub(r"<!--.*?-->", "", body, flags=re.S)
     for m in re.finditer(r"<(/?)([a-zA-Z][\w-]*)([^>]*?)(/?)>", body):
         closing, name, selfclose = m.group(1), m.group(2).lower(), m.group(4)
         if name in VOID or selfclose:
@@ -58,7 +59,8 @@ def check_lang(body):
     errors = []
     pat = lambda v: re.findall(r'<(\w+)[^>]*?(?<![-\w])lang="%s"' % v, body)
     en, ja = Counter(pat("en")), Counter(pat("ja"))
-    if not en and not ja:
+    # An English-only report has no ja markup to pair.
+    if not ja:
         return []
     for tag in set(en) | set(ja):
         if en.get(tag, 0) != ja.get(tag, 0):

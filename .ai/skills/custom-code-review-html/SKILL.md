@@ -17,7 +17,7 @@ displace reading the diff.
 
 ### 1. Establish scope from the diff, not the description
 
-PR → `gh pr diff <n>` plus `gh pr view <n> --json title,body,baseRefName,additions,deletions,changedFiles`.
+PR → `gh pr diff <n>` plus `gh pr view <n> --json baseRefName,additions,deletions,changedFiles`. Fetch the title and body only after the blind pass.
 Branch → `git diff <base>...HEAD`. That diff is the entire review scope; local
 working-tree changes are out of scope unless the user says otherwise.
 
@@ -130,6 +130,7 @@ Done when the checker exits 0 and the user has both the link and the headline fi
 
 Only when the user wants a second language. Both languages ship as real `lang="en"` /
 `lang="ja"` markup with one hidden by CSS — never machine-translated at view time.
+For an English-only report, remove the template's `lang="ja"` markup and the language switch.
 
 The whole risk here is **layout drift**: if the column or the type metrics change with
 the language, the passage under the reader's eye moves and switching becomes

@@ -66,14 +66,14 @@ If you assert a spec MUST/SHOULD, the sentence should carry the deep link to tha
 
 1. Find prior summaries and their delta boundary:
    ```bash
-   gh pr view <n> --json comments \
-     --jq '.comments[] | select(.body | contains("<!-- pr-change-summary -->")) | {id, createdAt, body: (.body[0:80])}'
+   gh api --paginate "repos/{owner}/{repo}/issues/<n>/comments" \
+     --jq '.[] | select(.body | contains("<!-- pr-change-summary -->")) | {id, created_at, body: (.body[0:80])}'
    ```
-   The newest one is the previous summary. Its `id` gives the `#issuecomment-<id>` link; its `createdAt` (or a commit SHA it named) bounds the delta.
-2. Scope the new comment to **changes since that boundary** — e.g. `git log --oneline <sha-or-since>..HEAD` and the corresponding diff. Don't re-describe changes an earlier summary already covered.
+   The newest one is the previous summary. Its numeric `id` gives the `#issuecomment-<id>` link; a commit SHA it named, or else its `created_at`, bounds the delta.
+2. Scope the new comment to **changes since that boundary** — `git log --oneline <sha>..HEAD`, or `git log --oneline --since=<created_at>` when it named no SHA, and the corresponding diff. Don't re-describe changes an earlier summary already covered.
 3. Open with `Since [previous summary](#issuecomment-<id>).` so the chain is navigable both directions. Omit for the first summary on the PR.
 
-If the user asks to **update/revise** the latest summary instead of adding a new one, edit it: `gh api -X PATCH /repos/{owner}/{repo}/issues/comments/<id> -f body=@<file>`.
+If the user asks to **update/revise** the latest summary instead of adding a new one, edit it: `gh api -X PATCH /repos/{owner}/{repo}/issues/comments/<id> -F body=@<file>`.
 
 ## Posting
 

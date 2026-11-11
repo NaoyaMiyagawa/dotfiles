@@ -17,16 +17,19 @@ Examples:
 
 ```bash
 # Inspect a model
-./vendor/bin/sail artisan tinker --execute="User::count();"
+./vendor/bin/sail artisan tinker --execute='dump(User::count());'
 
 # Check a value / call a service
 ./vendor/bin/sail artisan tinker --execute="dump(config('app.timezone')); dump(app(SomeService::class)->compute());"
 ```
 
-For multi-line snippets, pass them with newlines inside the quotes, or pipe via stdin:
+For multi-line snippets, pass them with newlines inside a single-quoted `--execute` argument, so the shell leaves PHP variables alone:
 
 ```bash
-echo '$u = User::factory()->make(); dump($u->toArray());' | ./vendor/bin/sail artisan tinker
+./vendor/bin/sail artisan tinker --execute='
+$u = User::factory()->make();
+dump($u->toArray());
+'
 ```
 
 Use `dump()` / `dd()` to surface values—a bare expression is not echoed in non-interactive mode.

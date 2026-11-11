@@ -1,6 +1,6 @@
 ---
 name: custom-obsidian-wiki-query
-description: Answer domain or codebase questions from the personal Obsidian knowledge wiki. Use when the user asks what a project or module does, its requirements, specs, business rules, flows, or architecture ("how does the billing service auth work", "what does the wiki say about verification"), or references the Obsidian vault/wiki. Read-only. NOT for the LLM Wiki desktop app (`llm-wiki` skill).
+description: Answer domain or codebase questions from the personal Obsidian knowledge wiki. Use when the user asks what a project or module does, its requirements, specs, business rules, flows, or architecture ("how does the billing service auth work", "what does the wiki say about verification"), or references the Obsidian vault/wiki. Read-only. NOT for the LLM Wiki desktop app.
 ---
 
 # Custom Obsidian Wiki Query
@@ -11,7 +11,7 @@ Implements the **query** workflow of the vault's LLM Wiki method. The vault's ow
 ## Scope
 
 - Use for domain / spec / architecture / codebase questions that a project wiki may already answer.
-- Skip if the user wants a fresh code search unrelated to documented knowledge, or names the **LLM Wiki** app (that's the separate `llm-wiki` skill).
+- Skip if the user wants a fresh code search unrelated to documented knowledge, or names the **LLM Wiki** app (outside this skill's scope).
 - Read-only by default. Only write pages back when the user asks or confirms.
 
 ## Vault layout
@@ -47,4 +47,4 @@ If a model-backed command fails (models/GPU unavailable), fall back to `qmd sear
 2. **Find relevant pages.** Run `qmd query` (see above) with intent tuned to the project/topic. Skim the project `index.md` for the catalog when useful, then `qmd get`/`multi-get` the top hits for full content.
 3. **Answer with citations.** Synthesize from the wiki content. Cite the pages used as `[[Page]]`, and pass through the repo paths / source pages those pages themselves cite. Distinguish documented fact from inference, and surface any relevant `> [!question] Open questions`.
 4. **Handle gaps honestly.** If the wiki doesn't cover it, say so — do not fabricate. Offer to **ingest**: read the actual codebase/source (the repo you're working in) to answer now and, if useful, write a new page per the method.
-5. **Optionally file back** (only on request/confirmation). Create or update a page under `projects/<name>/wiki/` using the vault conventions (frontmatter, `[[wikilinks]]`), add it to `index.md`, bump `updated:`, and append a `## [DATE] query | ...` line to `log.md`. Then re-index so it's searchable: `qmd update -c obsidian && qmd embed` (see the `custom-obsidian-wiki-write` skill for the full file-back workflow).
+5. **Optionally file back** (only on request/confirmation). Invoke `custom-obsidian-wiki-write`; it owns page creation, the index, the log, and re-indexing.
