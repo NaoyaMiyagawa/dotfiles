@@ -4,15 +4,21 @@
 /*
 /.**
 
+!.gitignore
+
 # starship.toml
 !starship.toml
 
 # karabiner
-!karabiner/*.json
+!karabiner/
+karabiner/*
+!karabiner/karabiner.json
 !karabiner/assets
 !karabiner/assets/**
 
 # iterm2
+!iterm2/
+iterm2/*
 !iterm2/com.googlecode.iterm2.plist
 
 # lazygit
@@ -24,10 +30,6 @@
 !git/**
 # work identity holds an employer email address — keep it out of this public repo
 git/conf.d/work.conf
-
-# opencode
-!opencode/oh-my-opencode.json
-!opencode/opencode.json
 
 # tmux
 !tmux/
@@ -51,6 +53,7 @@ cmux/*
 
 # zed (config only — not caches/embeddings/conversations)
 !zed/
+zed/*
 !zed/settings.json
 !zed/keymap.json
 !zed/tasks.json

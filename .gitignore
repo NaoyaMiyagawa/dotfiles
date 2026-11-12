@@ -51,6 +51,8 @@
 !/.claude/hooks/
 !/.claude/hooks/no-poll-loops.sh
 !/.claude/hooks/dependency-assess-reminder.sh
+!/.claude/hooks/prefer-python3.sh
+!/.claude/hooks/prefer-rg-fd.sh
 !/.claude/themes/
 !/.claude/themes/my-theme.json
 !/.claude/scheduled-tasks/
@@ -72,7 +74,3 @@
 
 # linter
 !/.stylelintrc.js
-
-# Zed local databases
-.config/zed/embeddings/
-.config/zed/prompts/

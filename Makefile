@@ -1,12 +1,11 @@
 DOTPATH    := $(realpath $(dir $(lastword $(MAKEFILE_LIST))))
 CANDIDATES := $(wildcard .??*)
-EXCLUSIONS := .DS_Store .git .gitmodules .travis.yml .gitignore
+# Repo-only entries: linking them into ~ would, e.g., point ~/.vscode (VS Code's extensions dir) at this repo.
+EXCLUSIONS := .DS_Store .git .gitignore .gitattributes .ai .vscode
 DOTFILES   := $(filter-out $(EXCLUSIONS), $(CANDIDATES))
 PLISTS     := $(notdir $(wildcard $(DOTPATH)/.config/cmux/*.plist))
 
 .DEFAULT_GOAL := help
-
-all:
 
 list: ## Show dot files in this repo
 	@$(foreach val, $(DOTFILES), /bin/ls -dF $(val);)

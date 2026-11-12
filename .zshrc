@@ -27,9 +27,6 @@ bindkey "[C" forward-word
 # Ctrl-U: fuzzy search of recently-visited dirs (peco-cdr, defined in function.zsh).
 # Must come after `bindkey -e`, which otherwise resets ^U to kill-whole-line.
 bindkey '^U' peco-cdr
-# # Enable Alt+Left/Right to navigate through words
-# bindkey "\e\e[D" backward-word
-# bindkey "\e\e[C" forward-word
 
 ## If a command takes 3 seconds or more to run,
 ## automatically display timing statistics.
@@ -74,13 +71,11 @@ setopt list_types         #
 setopt magic_equal_subst  # Allow completion for options like --prefix=/usr
 setopt mark_dirs          # Add a trailing slash to directory completions
 setopt numeric_glob_sort  # Sort numbers numerically
-#setopt correct            # Handle spelling mistakes
 
 # ----------------------------------------------------------------------------
 # History
 
 # History | Various settings
-# setopt append_history          # Append to the history file instead of overwriting it, useful when using multiple zsh sessions
 setopt auto_pushd             # Run pushd automatically when using cd
 setopt extended_history       # Record timestamps and durations in $HISTFILE
 setopt hist_expand            # Automatically expand history during completion
@@ -104,8 +99,6 @@ setopt share_history          # Share history across other terminals
 zstyle ":history-search-multi-word" page-size "30"                   # Number of displayed lines
 zstyle ":history-search-multi-word" highlight-color "fg=yellow,bold" # Style for matching text
 zstyle ":plugin:history-search-multi-word" active "bg=blue"          # Style for the selected line
-# bindkey "^R" history-incremental-search-backward
-# bindkey "^S" history-incremental-search-forward
 
 # ----------------------------------------------------------------------------
 # Reset completion
@@ -154,13 +147,6 @@ source $DOTFILES_PATH/.config/zsh/prompt_theme.zsh
 # ----------------------------------------------------------------------------
 # New
 # ----------------------------------------------------------------------------
-
-# Load tmux if it's the first shell
-# if [ $SHLVL = 1 ]; then
-#     if command -v tmux &>/dev/null; then
-#         tmux attach -t default || tmux new -s default
-#     fi
-# fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 

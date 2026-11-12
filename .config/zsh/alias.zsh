@@ -14,7 +14,6 @@ alias -g G='| grep'   # grep
 # become interactive when overwriting
 alias cp='cp -i'
 alias mv='mv -i'
-# alias rm='rm -i'
 
 alias l='ls'
 alias ll='ls -l'
@@ -36,8 +35,6 @@ alias gs='git switch'
 alias gsm='git switch master'
 alias grs='git restore'
 alias gop='git open'
-# commitizen
-alias gcz='git cz'
 # lazygit
 alias lg='lazygit'
 # git town
@@ -104,17 +101,8 @@ alias fzf='fzf --reverse'
 # tmux
 alias tm='tmux'
 
-# multipass
-alias mp='multipass'
-
 # vscode
 alias c.='code .'
-
-# workaround for brew doctor warnings caused by xxenv
-# alias brew="PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin brew"
-
-# submit command for submitting as pypy with atcoder-cli
-alias accs='acc s --skip-filename -- --guess-python-interpreter pypy'
 
 # zsh-benchmark
 alias zsh-benchmark='for i in {1..5}; do time zsh -ic exit; done'

@@ -25,8 +25,6 @@
 # - zsh-users/zsh-autosuggestions                   : suggest commands as you type based on history
 # - zdharma-continuum/fast-syntax-highlighting      : syntax highlighting
 # - OMZ::lib/clipboard.zsh                          : absorb clipboard differences between OSs
-# - OMZ::lib/completion.zsh                         : make zsh completions easier to use
-# - OMZ::lib/compfix.zsh                            : make zsh completions easier to use
 # - OMZ::plugins/gnu-utils/gnu-utils.plugin.zsh     : make non-GNU OSes use GNU tools without prefix
 # - OMZ::plugins/dotenv/dotenv.plugin.zsh           : automatically load .env files if they exist
 
@@ -38,9 +36,8 @@ zinit wait lucid blockf light-mode for \
     @'OMZ::plugins/dotenv/dotenv.plugin.zsh'
 
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#55aa55,bg=white,underline"
-# - comment out because amazon q gives error (e.g. _zsh_highlight_widget_orig-s000-r305-accept-line:9: maximum nested...)
-# zinit wait lucid light-mode atload'_zsh_autosuggest_start' for \
-#     @'zsh-users/zsh-autosuggestions'
+# Loaded eagerly: turbo mode (wait + atload'_zsh_autosuggest_start') errors with Amazon Q
+# (_zsh_highlight_widget_orig-...-accept-line: maximum nested function level reached).
 zinit light 'zsh-users/zsh-autosuggestions'
 
 # ----------------------------------------------------------------------------
@@ -79,17 +76,13 @@ zinit wait lucid for \
 
 export ZSH_PLUGINS_ALIAS_TIPS_TEXT='----- alias-tips: '
 
-# enhancd | enhanced `cd`
-# zinit wait lucid pick'init.sh' nocompile'!' for 'babarot/enhancd'
-# export ENHANCD_FILTER=fzf:peco:fzy
-
 # NOTE: CLI binaries (peco, fzf, bat, eza, ripgrep, delta) are managed by
 # Homebrew via the repo Brewfile (`make brew`), not zinit. Homebrew puts them
 # on PATH for ALL shells — including non-interactive ones (agents, scripts,
 # CI) — whereas zinit's `wait` turbo-loads them only after an interactive
 # prompt renders, leaving them invisible to those shells.
 
-if is_osx; then
+if [[ "$OSTYPE" == darwin* ]]; then
     # AWS CLI v2 completion.
     # requires AWS CLI v2
     # Turbo-deferred: bashcompinit must run before the completer script loads

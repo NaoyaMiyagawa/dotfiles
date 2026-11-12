@@ -3,68 +3,6 @@
 ##############################################################################
 
 # ----------------------------------------------------------------------------
-# OS branching for dotfiles
-# ----------------------------------------------------------------------------
-# ostype returns the lowercase OS name
-ostype() {
-    uname | tr "[:upper:]" "[:lower:]"
-}
-
-# os_detect export the PLATFORM variable as you see fit
-os_detect() {
-    case "$(ostype)" in
-        *'linux'*)  PLATFORM='linux'   ;;
-        *'darwin'*) PLATFORM='osx'     ;;
-        *'bsd'*)    PLATFORM='bsd'     ;;
-        *)          PLATFORM='unknown' ;;
-    esac
-
-    # Reference: [Switching behavior by distribution - Qiita](https://qiita.com/taishin/items/a7e0c3e25616325a02a6)
-    if [ "$PLATFORM" = "linux" ]; then
-        RELEASE_FILE=/etc/os-release
-        if grep -e '^NAME="CentOS' $RELEASE_FILE >/dev/null; then
-            PLATFORM='centos'
-        elif grep -e '^NAME="Amazon' $RELEASE_FILE >/dev/null; then
-            PLATFORM='amazonlinux'
-        elif grep -e '^NAME="Ubuntu' $RELEASE_FILE >/dev/null; then
-            PLATFORM='ubuntu'
-        else
-
-        fi
-    fi
-
-    export PLATFORM
-}
-
-# is_osx returns true if running OS is Macintosh
-is_osx() {
-    if [ -z $PLATFORM ]; then os_detect; fi
-    TARGET='osx'
-    if [ "$PLATFORM" = $TARGET ]; then return 0; else return 1; fi
-}
-
-# is_amazonlinux returns true if running OS is AmazonLinux
-is_amazonlinux() {
-    if [ -z $PLATFORM ]; then os_detect; fi
-    TARGET='amazonlinux'
-    if [ "$PLATFORM" = $TARGET ]; then return 0; else return 1; fi
-}
-
-# is_centos returns true if running OS is CentOS
-is_centos() {
-    if [ -z $PLATFORM ]; then os_detect; fi
-    TARGET='centos'
-    if [ "$PLATFORM" = $TARGET ]; then return 0; else return 1; fi
-}
-
-# is_ubuntu returns true if running OS is Ubuntu
-is_ubuntu() {
-    if [ -z $PLATFORM ]; then os_detect; fi
-    TARGET='ubuntu'
-    if [ "$PLATFORM" = $TARGET ]; then return 0; else return 1; fi
-}
-
-# ----------------------------------------------------------------------------
 # zsh hooks
 # ----------------------------------------------------------------------------
 
@@ -97,7 +35,7 @@ cmux-restore-dir() {
 # control commands to record in history
 zshaddhistory() {
     local line="${1%%$'\n'}"
-    local lsCmds="ls|ll|lla|ls"
+    local lsCmds="ls|ll|lla"
     local gitCmds="ga|gd|gds|gf|gst"
     local lazygitCmds="lazygit|lg"
 
