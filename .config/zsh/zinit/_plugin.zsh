@@ -91,7 +91,7 @@ if [[ "$OSTYPE" == darwin* ]]; then
     # when reordered.
     zinit wait lucid light-mode \
         atinit'autoload -Uz bashcompinit && bashcompinit' \
-        atload'complete -C /usr/local/bin/aws_completer aws' \
+        atload'complete -C aws_completer aws' \
         for @'drgr33n/oh-my-zsh_aws2-plugin'
 fi
 
