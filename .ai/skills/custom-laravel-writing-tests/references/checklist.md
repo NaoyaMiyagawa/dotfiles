@@ -151,7 +151,7 @@ mock(Xxx::class)
     ->where('editor.version.name', 'Course Completion')
     ```
 
-- Add a blank line when the asserted entity changes:
+- Add a blank line when the entity changes — between each entity's creation in Arrange, and when the asserted entity changes:
 
     ```php
     expect($submission->status)->toBe(WorkflowReviewSubmissionStatus::Pending);
@@ -170,6 +170,7 @@ Add one case between `beforeEach()` and the `handle()`-focused cases asserting t
 ## Regression tests
 
 - For a query-count fix (an N+1), assert the count itself — `expectsDatabaseQueryCount(n)` or a `DB::listen()` tally against several records — so the case fails on the unfixed code and stays red if the N+1 returns. A plain `assertOk()` cannot see the extra queries.
+- For a known bug deferred to a later change, write the case asserting the correct behaviour and mark it `->fails()`, with a `// TODO:` above linking the tracking issue. Don't assert the buggy behaviour as passing: `->fails()` breaks the suite once the fix lands, so the marker gets removed.
 
 ## Contract-drift tests
 

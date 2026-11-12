@@ -211,5 +211,8 @@
         "Blade": {
             "language_servers": ["tailwindcss-language-server", "..."],
         },
+        "JavaScript": {
+            "preferred_line_length": 120
+        }
     },
 }

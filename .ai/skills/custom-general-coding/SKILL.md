@@ -17,6 +17,7 @@ description: Language-agnostic coding rules — which comments to keep, guards, 
 
 - **Merge Helpers Always Called Together**: When two complementary helpers are only ever called as a pair from the same site, make them one function returning both results (`{ available, unavailable }`) instead of two calls the reader has to correlate.
 - **Name Reflects Behavior, Not Assumption**: When a method or variable's real behavior doesn't match what its name implies — a qualifier it doesn't actually check, a filter it silently applies that the name doesn't mention, a descriptor that overstates precision (`getLatestX` with no such ordering) — rename it to match the real behavior instead of leaving the mismatch for the next reader to trip over. A function that returns a boolean only answers its question: a write it seems to need (storage, a counter, state) goes in the caller. Name complementary helpers as an antonym pair (`getAvailableX` / `getUnavailableX`), not two unrelated synonyms.
+- **Widen The Helper, Not The Callers**: When a shared helper's parameter type forces callers to reshape what they already hold (unwrap a model to its ID, reindex a map into a list), widen the helper to accept that form too, so existing call sites stay untouched and the diff stays in one place.
 - **Copy Stable Keys, Not Mutable Labels**: A denormalized copy (search index, snapshot, cache) stores a related record's ID, not its display name; resolve the name at read time, since the name can change outside the copy's lifecycle.
 
 ## Dependencies and swaps
