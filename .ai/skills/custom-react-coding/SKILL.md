@@ -47,12 +47,20 @@ description: Applies React/TSX component conventions — file layout, component 
    `{ [actionType]: error }` map. Assign a calculation inside a condition to a
    descriptively named variable first (`const msSinceLastReload = Date.now() - lastReloadedAt`).
    Group related top-level values under one named object (`resources.backendModules`,
-   `storageKeys.lastReload`) rather than a run of standalone consts.
+   `storageKeys.lastReload`) rather than a run of standalone consts. Name a helper
+   that decides what the UI does `shouldX` (`shouldLockAction`, `shouldShowAction`);
+   keep `isX` for a plain state predicate.
+   - **Type an API payload after the backend resource that sends it.** The interface
+     takes the resource's class name (`OrderDetailResource` ↔ `OrderDetailResource`)
+     and lists fields in the resource's key order, so a reader can map one to the
+     other line by line.
 
 ## Props
 
 10. **Defaulted props last.** In a props type and its destructuring, required
-    props come first and any prop with a default value sits at the end.
+    props come first and any prop with a default value sits at the end. A component
+    that reads several fields of one entity takes the entity as one prop, typed by
+    its resource interface, not each field picked out by the parent.
 
 ## Data lifecycle
 

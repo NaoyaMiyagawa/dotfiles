@@ -136,6 +136,10 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Shape a nested list with a dedicated `JsonResource` + `::collection()`, not an inline `array_map`/`map` closure — one resource class per distinct shape the frontend consumes. A single-action controller's one-off payload is shaped inline in `response()->json([...])`; a resource class earns its place once the shape is reused or nested.
 - Serialize a related model (`published_by`, `created_by`) through a small shared resource (`uuid`, `name`, …) reused by every such field, not a flattened `$this->publishedBy?->name`.
+- Send a record's identifier as its UUID under a `uuid` / `*_uuid` key; never expose a sequential integer id. A table with no UUID column yet sends `id` with a comment saying so.
+- Wrap every relation in `->whenLoaded()`, even one the controller always eager-loads, so a caller that forgets the load gets a missing key instead of an N+1.
+- Call model methods and attributes through the resource proxy (`$this->isIssued()`), not `$this->resource->isIssued()`, and keep each key on one line.
+- Order resource keys: own attributes, then relations, then the `can` permission map last.
 - When a resource field stops being consumed, remove it plus the FE TypeScript types, mocks, and selectors in the same PR — no dead serialized fields "just in case".
 
 ## Models

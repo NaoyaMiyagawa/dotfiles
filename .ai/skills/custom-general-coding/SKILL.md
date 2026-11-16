@@ -12,9 +12,11 @@ description: Language-agnostic coding rules — which comments to keep, guards, 
 ## Guards
 
 - **Prove It Before Guarding**: Typical unreachable guards: an optional constructor arg the caller never omits, a null check on a non-nullable value, a re-read of data nothing else mutates, a `catch` on a path that can't throw. Unreachable defensive code is dead weight that misdirects the next reader about where the real risk is.
+- **Cheap Check First**: A check that can end the work early (a feature flag, a field already in memory) runs before the query or fetch it would make unnecessary, not after it.
 
 ## Structure and naming
 
+- **Extract A Repeated Call Pattern**: When the same call with the same options shows up at several sites (a config namespace read, a router call with fixed flags, a permission check), move it into one named helper or small module and put its why-comment there. Look for an existing utility that already does it before writing a new one.
 - **Merge Helpers Always Called Together**: When two complementary helpers are only ever called as a pair from the same site, make them one function returning both results (`{ available, unavailable }`) instead of two calls the reader has to correlate.
 - **Name Reflects Behavior, Not Assumption**: When a method or variable's real behavior doesn't match what its name implies — a qualifier it doesn't actually check, a filter it silently applies that the name doesn't mention, a descriptor that overstates precision (`getLatestX` with no such ordering) — rename it to match the real behavior instead of leaving the mismatch for the next reader to trip over. A function that returns a boolean only answers its question: a write it seems to need (storage, a counter, state) goes in the caller. Name complementary helpers as an antonym pair (`getAvailableX` / `getUnavailableX`), not two unrelated synonyms.
 - **Widen The Helper, Not The Callers**: When a shared helper's parameter type forces callers to reshape what they already hold (unwrap a model to its ID, reindex a map into a list), widen the helper to accept that form too, so existing call sites stay untouched and the diff stays in one place.
