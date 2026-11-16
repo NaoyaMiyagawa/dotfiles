@@ -189,6 +189,10 @@
             },
         },
     },
+    "inlay_hints": {
+        "enabled": true,
+        "show_parameter_hints": false,
+    },
     "languages": {
         "JSON": {
             "tab_size": 2,
