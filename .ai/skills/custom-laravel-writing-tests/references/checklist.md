@@ -111,7 +111,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 ## Mock
 
-Always use `mock()` from Pest (`use function Pest\Laravel\mock;`) and chain the expectations. Hold the mock in a variable only when defining it in `beforeEach()` or when it carries several `->shouldReceive()` calls.
+Always use `mock()` from Pest (`use function Pest\Laravel\mock;`) and chain the expectations. Hold the mock in a variable only when defining it in `beforeEach()` or when it expects several methods; then give each expected method its own statement off the variable (`$mock->expects('a')->...;` then `$mock->expects('b')->...;`), not one long chain.
 
 ```php
 mock(Xxx::class)

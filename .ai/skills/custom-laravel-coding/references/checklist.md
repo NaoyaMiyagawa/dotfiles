@@ -28,17 +28,17 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
         queue: true,
     );
     ```
-    A call with named args puts one arg per line, even when it would fit on one line (never `new Foo(id: 1, name: 'a')`). The exceptions are a call with a single short named arg (`$session->regenerate(destroy: true)`) and a PHP built-in function, which keeps a named flag inline (`json_decode($json, flags: JSON_THROW_ON_ERROR)`). Keep a positional call that fits on one line on one line (`Artisan::call('scout:import', ['model' => Post::class])`). A trailing array or closure argument may open on the call line and span the lines below (`addField($name, [`). Name only an argument whose meaning the call doesn't already show — a bare boolean or a magic number. A value that reads as itself stays positional (`setPaper('A4', 'landscape')`, `setOrder(1)`), even when calling into a package.
+    A call with named args puts one arg per line, even when it would fit on one line (never `new Foo(id: 1, name: 'a')`). The exceptions are a call with a single short named arg (`$session->regenerate(destroy: true)`) and a PHP built-in function, which keeps a named flag inline (`json_decode($json, flags: JSON_THROW_ON_ERROR)`). Keep a positional call that fits on one line on one line (`Artisan::call('scout:import', ['model' => Post::class])`). A trailing array or closure argument may open on the call line and span the lines below (`addField($name, [`). Named args are all or nothing: once a call names one argument, it names every argument (the PHP built-in exception above aside). A one-line call whose values read as themselves stays fully positional (`setPaper('A4', 'landscape')`, `setOrder(1)`), even when calling into a package.
 5. Don't wrap instantiation in brackets: `new Xxx()->...`.
-6. Break a long union/intersection type or generic across multiple lines when it's hard to scan.
-7. Switch a long arrow function to a classic closure once the expression no longer fits on one line.
+6. Break a long union/intersection type or generic across multiple lines when it's hard to scan. When a boolean expression breaks across lines, start each continuation line with its `&&`/`||`, not end the previous line with it.
+7. Switch a long arrow function to a classic closure once the expression no longer fits on one line. The exception is an arrow function that returns an array literal (a `map()`/`mapWithKeys()` row): it stays an arrow function, with `=> [` on the arrow line and one entry per line below.
 8. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line.
 9. Give each case in a multi-case `match` arm its own line rather than extending the existing one.
 10. Don't annotate a return type the reader can see at a glance — a factory state closure, a one-line `fn () => [...]`.
 
 ## PHP — comments
 
-11. A comment about one step of a fluent chain or one entry of an array literal trails that line when the line stays under the ceiling (`'invoices', // for the billing summary`). A comment on its own line above one entry reads as covering the entries below it too. Move it above only when trailing would push the line past the ceiling.
+11. A comment about one short statement, one step of a fluent chain, or one entry of an array literal trails that line when the line stays under the ceiling (`'invoices', // for the billing summary`). Never trail a comment on an `if`/`foreach`/`match` line; put it on its own line above. A comment on its own line above one entry reads as covering the entries below it too. Move it above only when trailing would push the line past the ceiling.
 12. Wrap any line, code or comment, past ~120–130 chars; don't hard-wrap a comment earlier at 80.
 13. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables. Prefix a contextual aside (a temporary limitation, a scope note) with `NOTE:`; a why-comment stays bare.
 
@@ -50,7 +50,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 17. Use `empty()` to check a nullable array or string for emptiness, not `=== null`.
 18. Treat a nullable return type as a contract to guard at every call site: `?->` or an explicit null check everywhere, with a sensible default for the absent case. A mix of guarded and bare dereferences of the same nullable accessor is a latent null crash.
 19. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
-20. `->reject(fn ($x) => $x === null)` over `->filter(fn ($x) => $x !== null)` — don't negate a predicate inside `filter()`.
+20. `->reject(fn ($x) => $x === null)` over `->filter(fn ($x) => $x !== null)` — don't negate a predicate inside `filter()`. Run a side effect per item (printing a line, saving, dispatching) in a `foreach`, not `->each()`; collection methods are for transforms that return a value.
 21. Datetime columns cast `immutable_datetime` by default; reach for the mutable `datetime` cast only when a column genuinely needs in-place mutation.
 22. Choose a value by case with `match(true)` whose arms are named predicates — `$this->isImageAttribute($attribute) => …, default => …` — not a ternary on a raw `===` comparison; when the concept has no model/enum home, the predicate is a private method on the class.
 23. Name each operand of a compound condition as a boolean before the `if` — `$isMdoc = …; $isApiCall = …; if ($isMdoc && ! $isApiCall)` — rather than inlining two method calls into one condition.
@@ -152,7 +152,9 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 ## Eloquent
 
-- A query chain with more than one `where()` spans lines. When a query chain spans lines, break after `::query()` too — `Model::query()` alone on the first line, every chained call on its own line below — not `Model::query()->where(...)` on line one with the rest wrapped beneath.
+- A query chain with more than one `where()` spans lines. When a query or collection chain spans lines, put the receiver alone on the first line (`Model::query()`, `$users`) and every chained call on its own line below — not `Model::query()->where(...)` on line one with the rest wrapped beneath, and not `])->all()` hanging off a closing bracket.
+- End a query at its terminal call (`->get()`) and assign the result; run collection transforms (`map()`, `mapWithKeys()`) on that variable in a separate statement, so the database query and the in-memory reshaping read apart.
+- Wrap `where(...)->orWhere(...)` alternatives in a closure group (`->where(function (Builder $query) { ... })`) so every top-level condition sits at the same level; a bare `orWhere()` beside other `where()`s ORs against all of them.
 - Order a query chain by clause: `with()` → `select()`/`addSelect()` (and scopes that only add a column) → `join()` → `where()`/filter scopes → `orderBy()`/`groupBy()` → the terminal call.
 - When a query uses raw SQL (`selectRaw()`, `whereRaw()`), run its tests against every database driver the app supports.
 - Reach related rows through the relation on the instance you already hold — `$parent->children()->update([...])`, `$comment->post()->lockForUpdate()->first()` — not a fresh `Child::query()->where('parent_id', ...)`; never re-fetch a model the route already bound.

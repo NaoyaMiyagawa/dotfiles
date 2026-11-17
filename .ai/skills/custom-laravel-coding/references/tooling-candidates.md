@@ -21,7 +21,7 @@ Enforcement names below are candidates to verify against current tool docs, not 
 | Line length ceiling (~120–130 chars, code and comments; no early comment wrap at 80) | custom rule/formatter — flags the upper bound; reflowing over-wrapped comments needs a custom fixer, no stock fixer |
 | `bail` first in every `FormRequest` field rule list | small custom PHPStan rule over `rules()` return arrays |
 | Ban `->sole()` (prefer `firstOrFail()`) | small custom PHPStan/Larastan rule flagging `sole(` method calls |
-| Multi-line arrow fn → classic closure (checklist, *PHP — formatting and syntax*) | custom Rector/php-cs-fixer rule flagging an `fn (...) =>` whose token span crosses a newline |
+| Multi-line arrow fn → classic closure (checklist, *PHP — formatting and syntax*) | custom Rector/php-cs-fixer rule flagging an `fn (...) =>` whose token span crosses a newline, skipping one whose body is an array literal |
 | One case per line in a multi-case `match` arm | custom Rector/php-cs-fixer rule flagging a `match` arm whose case list holds more than one case on a line |
 | `->__toString()` over a `(string)` cast | custom Rector rule rewriting `(string) $expr` where the operand is `Stringable` |
 | No `@property`/`@property-read` PHPDoc on models | small custom PHPStan rule flagging `@property` tags in class docblocks under `Models/` |
