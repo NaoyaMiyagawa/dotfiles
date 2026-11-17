@@ -48,6 +48,7 @@ When the PR's point is that something got faster, cheaper, or smaller, or that r
 - Use a two-column `| Before | After |` table with one row per screenshot pair. Each cell carries the screenshot plus a one-line caption naming the step and the measurement, e.g. `Before: container init took 42s` / `After: container init took 9s`. Bold the After cells so the gain reads at a glance.
 - One table per change lever (e.g. health-check tuning vs. tmpfs mount) so a reader can attribute each gain to a specific change, not to the PR as a whole.
 - State in one sentence why the change is faster (the mechanism), not only that it is.
+- Screenshots of a new flow (no before state): when the template has no screenshots section, add `## Screenshots` ahead of the closing notes section, give each flow its own `###` heading, and put that flow's shots in a table with a one-line label per shot.
 - Screenshots show the page only. Hide browser chrome such as the bookmark bar before capturing.
 - Upload the images yourself: write the table with local paths (`![before](./before.png)`) and pass each file as `--attach './before.png#alt text'` on `gh pr create` / `gh pr edit`; gh rewrites the references to the uploaded URLs. Never hand the upload to the user.
 

@@ -28,7 +28,7 @@ Prereq: `gh auth status` passes. Repo = the one the current directory is in.
 5. **Post.** Write the body to a scratch file, then `gh pr comment <n> --body-file <file>`. On `reassess`, edit the existing marker comment instead: find its numeric `id` via `gh api --paginate "repos/{owner}/{repo}/issues/<n>/comments" --jq '.[] | select(.body | contains("<!-- dependabot-assessment -->")) | .id'`, then `gh api -X PATCH /repos/{owner}/{repo}/issues/comments/<id> -F body=@<file>`. One assessment per PR, always.
 6. **Report.** One line per PR in chat: number, risk badge, recommendation, comment URL. Done when every selected PR has a comment URL or a skip reason.
 
-Work PRs sequentially by default. In Claude Code, one worker per PR (max 2 concurrent) is allowed; the orchestrator reads every comment body before it is posted.
+Work PRs sequentially by default. In Claude Code, one worker per PR (max 2 concurrent, `model: opus`) is allowed; the orchestrator reads every comment body before it is posted.
 
 ## Sections
 
@@ -56,7 +56,8 @@ Work PRs sequentially by default. In Claude Code, one worker per PR (max 2 concu
 ## Comment rules
 
 - Two visible lines (`**Risk:**`, `**Summary:**`), one `<details>` fold, footer, marker. No `#` headings anywhere.
-- Inside the fold, write each section as a bullet with a bold label and a colon (`- **Risk**:`), with its text on the next line. Do this even when the section is one sentence.
+- Inside the fold, write each section as a bullet with a bold label and a colon (`- **Risk**:`). Put its points on nested bullets below, each led by a short bold title (`  - **Breaking changes**: ...`, `  - **API changes**: ...`). Do this even when the section has one point.
+- Write the comment as if it were the first one. Readers see only the latest version, so never mention an earlier assessment or what changed since; tell the user in chat instead.
 - `{{category}}` label: `direct:production` → `prod (direct)`, `direct:development` → `dev (direct)`, `indirect` → `prod (transitive)` or `dev (transitive)` from the lockfile (npm `"dev": true`, Composer `packages-dev`), GitHub Actions → `ci`.
 - No sentence about CI status, not even inside the fold. The PR page already shows it.
 - Single PR under about 40 lines, group under about 80. The diff holds the detail; this is the map.
