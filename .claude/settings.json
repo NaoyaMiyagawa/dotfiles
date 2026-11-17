@@ -402,7 +402,7 @@
       "Bash(find *)",
       "Bash(gh api repos/:owner/:repo/pulls/$(gh pr view --json number --jq .number)/comments:*)",
       "Bash(gh auth status*)",
-      "Bash(gh pr*)",
+      "Bash(gh pr *)",
       "Bash(git *)",
       "Bash(grep *)",
       "Bash(head *)",
