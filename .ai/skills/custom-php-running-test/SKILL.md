@@ -27,7 +27,7 @@ If the minimal set is ambiguous, `./vendor/bin/sail up -d` for the default profi
 
 ## Wide-scope runs
 
-For a run spanning an entire module or the whole repo, prefer committing, pushing, and letting CI run it rather than running it locally — CI shards test execution and finishes noticeably faster than a full local run.
+For a run spanning an entire module or the whole repo, prefer committing, pushing, and letting CI run it rather than running it locally — CI shards test execution and finishes noticeably faster than a full local run. Take the CI route only when committing and pushing the branch is already part of the task; a request to run tests is not permission to push.
 
 ## Do not substitute a host runner
 

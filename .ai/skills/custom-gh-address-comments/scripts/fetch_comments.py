@@ -10,7 +10,7 @@ Requires:
   - current branch has an associated (open) PR
 
 Usage:
-  python fetch_comments.py > pr_comments.json
+  python3 fetch_comments.py > pr_comments.json
 """
 
 from __future__ import annotations

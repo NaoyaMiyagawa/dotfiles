@@ -34,6 +34,7 @@ Long PR descriptions hurt review more than they help. The diff and commit messag
 - Move per-line rationale to inline PR review comments on your own diff (single-PR self-review), not into the description.
 - Cut "Notes" / "Behavioural notes" / "Further comments" sections unless they carry information not derivable from the diff (e.g. an out-of-scope decision, a follow-up PR, a non-obvious test gap).
 - **Link, don't duplicate.** When a detail already lives in a committed doc, issue, or ticket, link to it instead of pasting its content into the description — a second copy drifts from the source the moment either side changes. Keep the canonical version in one place and point the PR at it.
+- When a refactor moves an existing validation rule or guard, say where it lived before and why it exists.
 - Validation logs go inside the `<details>` block (see below) so they don't dominate the visible body.
 - **Editing an existing description:** keep everything the user added by hand — screenshots, videos, notes — and change only the sections the request covers.
 
@@ -89,7 +90,7 @@ Next:
 ### Jira ticket link
 If GitHub PR template has a dedicated section for Jira ticket link and you find applicable ticket based on the ticket key in branch name, put a ticket link in the dedicated section in the template. (PR title should still use the **`[KEY] Title`** pattern from the **Title** section when the work is Jira-driven, with `Title` taken from Jira Summary.)
 
-For a Sentry fix, put a Sentry summary under the Jira link, and put the same block in the Jira ticket (without the ticket line). Bold every label. Pull the figures from Sentry itself. The issue's environment tag distribution gives the per-environment split; don't copy numbers from an old report.
+For a Sentry fix, put a Sentry summary under the Jira link, and put the same block in the Jira ticket (without the ticket line) — show the block and ask before editing the ticket unless the user already asked for the Jira update. Bold every label. Pull the figures from Sentry itself. The issue's environment tag distribution gives the per-environment split; don't copy numbers from an old report.
 
 ```md
 - **Ticket:** https://<org>.atlassian.net/browse/PROJ-1234

@@ -17,7 +17,7 @@ Earn it first. This is for a PR that introduces something the reviewer holds no 
 2. Read the diff and answer one question for yourself: **what invariant makes this design work?** ("the encoder picks type from the PHP type, never from content"). Everything below is built to deliver that answer; if you can't state it in a sentence, you can't write the guide yet.
 3. Draw the mental model.
 4. Build the reading order.
-5. Splice it into the description.
+5. Splice it into the description when the user asked for the PR to be updated; when they only asked for a mental model or a way into the PR, give the guide in chat.
 
 ## Mental model
 

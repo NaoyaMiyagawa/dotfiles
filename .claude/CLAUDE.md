@@ -18,7 +18,7 @@ Invoke these explicitly before starting the work — don't rely on automatic ski
 
 ## Long-running commands
 
-- Launch anything that can run long (`codex exec`, test suites, builds) with `run_in_background: true` and end the turn; you are re-invoked when it completes. Poll loops and foreground `sleep` are denied. To check progress once, use a single `tail -n 50 <file>`.
+- Launch anything that can run long (`codex exec`, test suites, builds) with `run_in_background: true`, carry on with any work that doesn't need its result, then end the turn; you are re-invoked when it completes. Poll loops and foreground `sleep` are denied. To check progress once, use a single `tail -n 50 <file>`.
 
 ## Delegation
 
@@ -35,7 +35,7 @@ When this session runs a top-tier model (Opus or Fable), act as the orchestrator
 
 Skip Codex if it recently returned rate-limit or auth errors. If briefing it would take three or more clarifying rounds, do the work here instead. Read `~/dotfiles/.ai/docs/CODEX.md` before the first Codex run of a session: it pins model and effort per task and overrides the `codex` skill's "explicit ask only" gate.
 
-**Execution workers** are Codex `gpt-5.6-luna` (very cheap; the default for well-specified implementation) or the sonnet-backed `fast-worker` when the task needs tools or context Codex can't reach. Verify every task before calling it done: run the check inline, and hand it to `verifier` only when the output is noisy (a full test suite, a long build log). Unpinned agents default to sonnet via `CLAUDE_CODE_SUBAGENT_MODEL`, so don't pass a `model` unless the task needs opus. Every subagent re-reads its whole context against this subscription's 5-hour quota, and parallel agents draw from it at once:
+**Execution workers** are Codex `gpt-5.6-luna` (very cheap; the default for well-specified implementation) or the sonnet-backed `fast-worker` when the task needs tools or context Codex can't reach. Verify every task before calling it done: run the check inline, and hand it to `verifier` only when the output is noisy (a full test suite, a long build log). Unpinned agents (except the built-in Explore and Plan) default to sonnet via `CLAUDE_CODE_SUBAGENT_MODEL`, so don't pass a `model` unless the task needs opus. Every subagent re-reads its whole context against this subscription's 5-hour quota, and parallel agents draw from it at once:
 
 - At most **two Claude subagents running at once** per session. Sequence the rest.
 - Delegate only when the task returns a small result from a large read (exploration, verification, noisy logs). Don't delegate to "throw more compute" at a hard problem — reason about it here.
