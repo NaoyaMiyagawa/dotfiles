@@ -12,12 +12,15 @@ description: Language-agnostic coding rules — which comments to keep, guards, 
 ## Guards
 
 - **Prove It Before Guarding**: Typical unreachable guards: an optional constructor arg the caller never omits, a null check on a non-nullable value, a re-read of data nothing else mutates, a `catch` on a path that can't throw. Unreachable defensive code is dead weight that misdirects the next reader about where the real risk is.
+- **Confirmations Default To No**: An interactive prompt that confirms sending a message or writing data defaults to no, so an accidental Enter does nothing.
 - **Cheap Check First**: A check that can end the work early (a feature flag, a field already in memory) runs before the query or fetch it would make unnecessary, not after it.
 
 ## Structure and naming
 
 - **Extract A Repeated Call Pattern**: When the same call with the same options shows up at several sites (a config namespace read, a router call with fixed flags, a permission check), move it into one named helper or small module and put its why-comment there. Look for an existing utility that already does it before writing a new one.
 - **Entry Points Read As Steps**: A command handler, framework callback (middleware, route closure) or other multi-step entry point reads as a short list of named calls, one per step, each with a brief step comment (`// 1. Ask for the parent record`); the detail lives in the called functions, shaped so the next variant slots in.
+- **Main Case First**: Order sibling branches and variants (route or `switch` cases, fixtures, enum cases) with the main or most-used one first; secondary and edge cases follow.
+- **Name Intermediate Values**: Assign a nested expression (a parsed value used as an index, a calculation inside a condition, a ternary passed as an argument) to a descriptively named variable first, so each line does one thing: `const pathname = new URL(url).pathname;` then `FILES[pathname]`.
 - **Merge Helpers Always Called Together**: When two complementary helpers are only ever called as a pair from the same site, make them one function returning both results (`{ available, unavailable }`) instead of two calls the reader has to correlate.
 - **Name Reflects Behavior, Not Assumption**: When a method or variable's real behavior doesn't match what its name implies — a qualifier it doesn't actually check, a filter it silently applies that the name doesn't mention, a descriptor that overstates precision (`getLatestX` with no such ordering) — rename it to match the real behavior instead of leaving the mismatch for the next reader to trip over. A function that returns a boolean only answers its question: a write it seems to need (storage, a counter, state) goes in the caller. Name complementary helpers as an antonym pair (`getAvailableX` / `getUnavailableX`), not two unrelated synonyms.
 - **Widen The Helper, Not The Callers**: When a shared helper's parameter type forces callers to reshape what they already hold (unwrap a model to its ID, reindex a map into a list), widen the helper to accept that form too, so existing call sites stay untouched and the diff stays in one place.

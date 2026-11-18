@@ -210,5 +210,5 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 ## Enums
 
-- Put payload/serialization logic on the enum itself (`toApiPayload()`), not a `match` at the call site, with a dedicated test guarding the contract.
+- Put payload, serialization, and display-label logic on the enum itself (`toApiPayload()`, `labelForCli()`), not a `match` at the call site, with a dedicated test guarding an external contract.
 - Internal arrays, registries, and DTOs hold enum instances; convert with `->value` only at the serialization boundary (resource, outbound payload, bulk insert). Keeping the enum lets downstream logic call its methods instead of re-hydrating with `::from()`.

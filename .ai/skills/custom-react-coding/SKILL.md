@@ -1,6 +1,6 @@
 ---
 name: custom-react-coding
-description: Applies React/TSX component conventions — file layout, component boundaries, and JSX formatting. Use when implementing or refactoring React components, pages, their types, or their specs, or when checking a design or CSS fix in the browser.
+description: Applies React and TypeScript conventions — file layout, component boundaries, JSX and TS formatting, comments, and specs. Use when implementing or refactoring React components, pages, other TypeScript modules (including e2e test support code), their types, or their specs, or when checking a design or CSS fix in the browser.
 ---
 
 # React Coding Conventions
@@ -29,7 +29,8 @@ description: Applies React/TSX component conventions — file layout, component 
    module imports those types.
 6. **Export only what another module imports.** A helper used in one file stays
    module-private. Put a new helper next to its siblings of the same shape, not at
-   the end of the file. A helper or hook that builds translated labels gets the
+   the end of the file. A helper that reads none of the enclosing function's
+   variables sits at module level, not nested inside that function. A helper or hook that builds translated labels gets the
    translator itself (the shared `i18n.t("ns:key")` in a plain function, the
    translation hook in a hook) instead of taking `t` as a parameter, so callers
    pass only data.
@@ -44,9 +45,7 @@ description: Applies React/TSX component conventions — file layout, component 
    of a declaration that already carries the type.
 9. **Name a collection as a plural noun and a lookup by its key.** `availableActions`,
    not `available` (reads as a boolean); `errorsByActionType` for an
-   `{ [actionType]: error }` map. Assign a calculation inside a condition to a
-   descriptively named variable first (`const msSinceLastReload = Date.now() - lastReloadedAt`).
-   Group related top-level values under one named object (`resources.backendModules`,
+   `{ [actionType]: error }` map. Group related top-level values under one named object (`resources.backendModules`,
    `storageKeys.lastReload`) rather than a run of standalone consts. Name a helper
    that decides what the UI does `shouldX` (`shouldLockAction`, `shouldShowAction`);
    keep `isX` for a plain state predicate.
@@ -105,6 +104,8 @@ description: Applies React/TSX component conventions — file layout, component 
     with one blank line. The `return` case is ESLint `padding-line-between-statements`
     (`{ blankLine: "always", prev: "*", next: "return" }`, under `@stylistic` on
     ESLint 9) — enable it where the repo lints TS rather than fixing it by hand.
+    Brace every `if`/loop body, even a one-line `continue` or `return` (ESLint
+    `curly: ["error", "all"]`).
 
 ## Checking a design fix in the browser
 
@@ -133,3 +134,10 @@ description: Applies React/TSX component conventions — file layout, component 
     directly, use `setup()` in the new test and leave the old tests alone.
 18. **Use a shared fixture by its own name.** Reference an imported mock directly;
     don't rebind it to a local alias (`const mockPdfContent = mockSignedDocument;`).
+19. **Declare cases with `it()`, not `test()`,** wherever the runner exports it.
+
+## Comments
+
+20. **Doc comment form.** A function's doc comment is a multi-line `/** */` block
+    even when the text fits on one line; an interface field or object property
+    takes a `//` line above it.
