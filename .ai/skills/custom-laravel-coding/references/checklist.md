@@ -5,7 +5,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## PHP — formatting and syntax
 
 1. Use `use` imports instead of inline FQNs like `\App\Models\User`; no `as` aliases unless a name collision forces one.
-2. Always break constructor args across lines:
+2. Always break constructor args across lines, and the parameters of any method that takes two or more:
     ```php
     public function __construct(
         public readonly string $xxx,
@@ -31,8 +31,8 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
     A call with named args puts one arg per line, even when it would fit on one line (never `new Foo(id: 1, name: 'a')`). The exceptions are a call with a single short named arg (`$session->regenerate(destroy: true)`) and a PHP built-in function, which keeps a named flag inline (`json_decode($json, flags: JSON_THROW_ON_ERROR)`). Keep a positional call that fits on one line on one line (`Artisan::call('scout:import', ['model' => Post::class])`). A trailing array or closure argument may open on the call line and span the lines below (`addField($name, [`). Named args are all or nothing: once a call names one argument, it names every argument (the PHP built-in exception above aside). A one-line call whose values read as themselves stays fully positional (`setPaper('A4', 'landscape')`, `setOrder(1)`), even when calling into a package.
 5. Don't wrap instantiation in brackets: `new Xxx()->...`.
 6. Break a long union/intersection type or generic across multiple lines when it's hard to scan. When a boolean expression breaks across lines, start each continuation line with its `&&`/`||`, not end the previous line with it.
-7. Switch a long arrow function to a classic closure once the expression no longer fits on one line. The exception is an arrow function that returns an array literal (a `map()`/`mapWithKeys()` row): it stays an arrow function, with `=> [` on the arrow line and one entry per line below.
-8. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line.
+7. A closure that only returns one expression that fits on one line is an arrow function (`fn (User $user) => $user->name`), not a classic closure. Switch to a classic closure once the expression no longer fits on one line. The exception is an arrow function that returns an array literal (a `map()`/`mapWithKeys()` row): it stays an arrow function, with `=> [` on the arrow line and one entry per line below.
+8. Don't open two brackets before a line break (`[[`) — give the inner array's opening bracket its own line. An associative array with two or more keys puts one key per line; the exception is a method with several early `return`s of short arrays, where each stays on one line.
 9. Give each case in a multi-case `match` arm its own line rather than extending the existing one.
 10. Don't annotate a return type the reader can see at a glance — a factory state closure, a one-line `fn () => [...]`.
 
@@ -40,7 +40,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 11. A comment about one short statement, one step of a fluent chain, or one entry of an array literal trails that line when the line stays under the ceiling (`'invoices', // for the billing summary`). Never trail a comment on an `if`/`foreach`/`match` line; put it on its own line above. A comment on its own line above one entry reads as covering the entries below it too. Move it above only when trailing would push the line past the ceiling.
 12. Wrap any line, code or comment, past ~120–130 chars; don't hard-wrap a comment earlier at 80.
-13. When a method, property, or class needs a comment, write a `/** */` docblock — reserve single-line `//` comments for inline notes on statements/variables. Prefix a contextual aside (a temporary limitation, a scope note) with `NOTE:`; a why-comment stays bare.
+13. When a method, property, or class needs a comment, write a `/** */` docblock in the multi-line form, even for one sentence — reserve single-line `//` comments for inline notes on statements/variables. Prefix a contextual aside (a scope note, a limitation with no follow-up work) with `NOTE:`; a why-comment stays bare.
 
 ## PHP — expressions and null handling
 
@@ -50,34 +50,34 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 17. Use `empty()` to check a nullable array or string for emptiness, not `=== null`.
 18. Treat a nullable return type as a contract to guard at every call site: `?->` or an explicit null check everywhere, with a sensible default for the absent case. A mix of guarded and bare dereferences of the same nullable accessor is a latent null crash.
 19. Construct immutable datetimes directly (`CarbonImmutable::now()`), not by converting a mutable one (`Carbon::now()->toImmutable()`).
-20. `->reject(fn ($x) => $x === null)` over `->filter(fn ($x) => $x !== null)` — don't negate a predicate inside `filter()`. Run a side effect per item (printing a line, saving, dispatching) in a `foreach`, not `->each()`; collection methods are for transforms that return a value.
+20. `->reject(fn (?User $user) => $user === null)` over `->filter(fn (?User $user) => $user !== null)` — don't negate a predicate inside `filter()`. Run a side effect per item (printing a line, saving, dispatching) in a `foreach`, not `->each()`; collection methods are for transforms that return a value.
 21. Datetime columns cast `immutable_datetime` by default; reach for the mutable `datetime` cast only when a column genuinely needs in-place mutation.
 22. Choose a value by case with `match(true)` whose arms are named predicates — `$this->isImageAttribute($attribute) => …, default => …` — not a ternary on a raw `===` comparison; when the concept has no model/enum home, the predicate is a private method on the class.
-23. Name each operand of a compound condition as a boolean before the `if` — `$isMdoc = …; $isApiCall = …; if ($isMdoc && ! $isApiCall)` — rather than inlining two method calls into one condition.
+23. Name each operand of a compound condition as a boolean before the `if` — `$isMdoc = …; $isApiCall = …; if ($isMdoc && ! $isApiCall)` — rather than inlining two method calls into one condition. When the operands all read the same object, add a named predicate to that object instead (`$invoice->isOverdue()`).
 
 ## PHP — naming
 
 24. Name a variable that holds a map keyed by a field after that key (`xxxById`, `xxxByKey`) — the name tells the reader the structure at every later use. Applies to plain arrays and `keyBy(...)` results alike.
 25. On a class that isn't a value object, a method returning a derived value is `getXxx()` (`getBirthdate()`); bare noun names are for VO properties (core rule *Value holders are `final readonly` with `public readonly` properties*).
-26. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`). Name any variable for what it holds, not for its relation to the surrounding code — `$dateValue`, not `$value`; `$testsForThisShard`, not `$mine`. Spell out the full model or class it refers to: `$documentPagePropsService`, not `$pagePropsService`; `$organizationGroupIds`, not `$groupIds`.
+26. Order parameters primary subject first, context/metadata after (`parse(string $dateValue, string $namespace)`). Name any variable for what it holds, not for its relation to the surrounding code — `$dateValue`, not `$value`; `$testsForThisShard`, not `$mine`. Name it after the model or class it holds; leading qualifiers may go when only one such model is in scope (`$membership` for an `OrganizationGroupMembership`) and stay when they tell two apart (`$organizationGroupIds` beside another kind of group id).
 27. A variable or constant holding a measurement carries its unit (`$cellPaddingInPoints`, `TIMEOUT_IN_SECONDS`) — a bare `$padding` leaves the reader guessing px vs pt.
 
 ## PHP — design and structure
 
 28. Compare value objects through an `equals(self $other): bool` method, not their unwrapped scalars.
-29. Initialize derived state in the constructor, not lazily; don't add a named constructor/factory that only wraps `new` plus a config read — reserve static named constructors for real logic.
-30. `new` is for value-ish classes only — DTOs, value objects, validation rules, events, models. Resolve actions and services with `app(X::class)`, in tests too; not `new`, not an injected `Container`. Don't register a binding in a service provider solely to call one method.
+29. Initialize derived state in the constructor, not lazily; don't add a named constructor/factory that only wraps `new` plus a config read — reserve static named constructors for real logic. A with-er returns `new self(...)` with every argument, so properties can stay `readonly` — not `clone $this` plus an assignment.
+30. `new` is for value-ish classes only — DTOs, value objects, validation rules, events, jobs, models. A service or action receives its collaborators through the constructor (`private readonly SlugGenerator $slugGenerator`); `app(X::class)` is for entry points and tests. Never `new` a service or action, and never inject the `Container`. Don't register a binding in a service provider solely to call one method.
 31. Methods on a service/helper class are instance methods, not `static` — the class is container-resolved (see the `new`-vs-`app()` rule under *PHP — design and structure*), and a static method only blocks injection and test doubles.
 32. Order fields/array keys to mirror their source of truth (spec, API contract, referenced document); order constants and methods by lifecycle — success before failure, `markAsPublished()` before `markAsArchived()` — with `isXxx()` predicates ahead of the other methods, and mirror that order in the test file; separate inline-commented groups with blank lines so each comment's scope is unambiguous. When adding a case to a set that already exists in several files — enum, `match` arms, factory states, lang keys, tests — put it beside its closest sibling in every one of them, so the parallel files stay in the same order.
 33. Add `#[Override]` to a method that overrides a parent's, importing the attribute with `use Override;` rather than writing `#[\Override]` inline.
 34. A validation/normalization helper returns the validated value with a declared return type — native, or a PHPDoc array shape where native syntax can't express it — so the caller reassigns to the same variable (`$header = $this->validateHeader($header)`). Don't write it as a `void` guard the caller can't type off or chain from.
 35. Gate a minority case behind the domain predicate that names it (`if ($order->hasSubscription()) { ... }`). Don't run its helper on the main path and assign the return value unconditionally: the common path should read as the common path.
-36. Helper methods are `private` by default; `protected` only for an extension point a subclass actually uses. Drop a public method with no external caller and inline single-use logic into its one caller.
+36. Helper methods are `private` by default; `protected` only for an extension point a subclass actually uses. Drop a public method with no external caller and inline a single-use one-line helper into its one caller (a multi-line step stays its own private method — general rule *Methods Read As Steps*).
 37. Don't take a parameter whose value is identical at every call site — hardcode the invariant inside the method.
 
 ## Constants and literals
 
-- A literal becomes a named constant when it is reused across classes or its name says something the value doesn't (`FALLBACK_PAPER_SIZE = 'A4'`, `COLUMN_WIDTH_DATETIME = 26`, `HISTORY_ITEM_COUNT`). A one-off entry in a per-class config array (a column width, a header label) stays a literal with a comment line above it (see the comment-above-the-line rule under *PHP — comments*) — a constant for it is churn.
+- A literal becomes a named constant when it is reused across classes or its name says something the value doesn't (`FALLBACK_PAPER_SIZE = 'A4'`, `COLUMN_WIDTH_DATETIME = 26`, `HISTORY_ITEM_COUNT`). A one-off entry in a per-class config array (a column width, a header label) stays a literal with a trailing comment (see the trailing-comment rule under *PHP — comments*) — a constant for it is churn.
 - Status codes are `Response::HTTP_*` constants, never integer literals — in exceptions, responses, and `abort()` alike.
 
 ## Exceptions
@@ -96,7 +96,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - `prepareForValidation()` only transforms input into the shape `rules()` can validate; don't throw from it — anything still malformed is `rules()`'s job to reject.
 - Don't scaffold optional hooks you won't use — no empty `authorize()` returning `true`.
 - Extract non-trivial or reusable validation into a dedicated `Rule` class named for what it checks (`Base64EncodedImage`); reserve inline rules for simple built-in cases.
-- Start every field's rule list with `bail`.
+- Start every field's rule list with `bail`, and put one rule per line.
 - Express a conditional rule inline in the rules array (`Rule::prohibitedIf(...)`, `Rule::requiredIf(...)`, `bail`), not by wrapping the field's rules in `Rule::when()`.
 
 ## Class organization
@@ -106,11 +106,12 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - Keep response/output shaping out of action/service/domain classes — extract a dedicated response class so each has one responsibility.
 - An action class exposes only `__invoke()` publicly. When it needs a helper routine, extract that to a dedicated helper/service class rather than adding a second public method on the action.
 - An action class is one use case. A small set of operations on one concept (issue / redeem a code, generate / verify a one-time value) lives together in one service class so the data flow is traceable in a single file — not one action class per operation.
-- Don't wrap a single caller's handful of scalars in an input DTO — pass the parameters.
+- Don't create an input DTO only to wrap a single caller's handful of scalars — pass the parameters. When a DTO or value object already carries the values a method needs, pass it whole instead of unpacking it into arguments.
+- A page or view receives its props as an array literal at the controller, spreading service output into it (`[...$invoicePagePropsService->forShow($invoice), 'can' => $permissions]`), so the reader sees the keys there.
 - A service takes the values it needs (an enum, an array) as arguments, not the model that holds them — the caller shouldn't write state onto a model just so the callee can read it back, and the service stays free of the model.
-- Route a cross-cutting concern such as flow logging through named methods on a dedicated service (`app(ImportFlowLogger::class)->fileAccepted(...)`) with a shared message prefix, not scattered `Log::` calls — call sites are then found by reference.
+- Route a cross-cutting concern such as flow logging through named methods on a dedicated service (`$this->importFlowLogger->fileAccepted(...)`) with a shared message prefix, not scattered `Log::` calls — call sites are then found by reference.
 - When a controller fetches or resolves a collaborator only to pass it into an action, move that call into the action — controllers pass through request-derived input, not pre-resolved dependencies the action can obtain itself.
-- Extract shared/cross-cutting logic into the repo's designated helper location; don't duplicate the same snippet per call site. Until a second caller exists, keep the logic inline in its one caller, and when extracting, move only the part the callers share.
+- Extract shared/cross-cutting logic into the repo's designated helper location; don't duplicate the same snippet per call site. Until a second caller exists, keep the logic in its one caller's class, and when extracting, move only the part the callers share.
 - A value object owns its own hydration and behaviour — parse a raw array into it via a `fromArray()` named constructor, and put logic that operates on its data on the VO, not inlined in each action/service that consumes it or wrapped in a single-method action class. Same for a model: logic that reads only the record's own fields is a method on the model (`$field->isSourcedFromIssuedAt()`), even with one caller.
 - A value object/DTO enforces its own invariants in the constructor — throw when a required argument is empty or invalid rather than accepting it or giving it a permissive default (e.g. don't default a must-be-non-empty array to `[]`; drop the default and validate). A required argument carrying no default also sorts ahead of the optional ones.
 - Match the declared namespace to the file's directory — check every added file, not just the one under discussion.
@@ -121,7 +122,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 - When the same `assert($x instanceof Y)` narrowing repeats across call sites, put it in a typed accessor that asserts once and returns the narrowed type, and let the call sites read that.
 - Add a one-line summary docblock to a method/class whose purpose isn't obvious from its name (domain/protocol logic, unfamiliar algorithms); skip it when the name says everything. A class docblock describes the class, never its callers — dependencies point inward.
 - Type a factory parameter with the concrete factory class (`Model|ModelFactory`), not the generic `Factory<Model>`.
-- Link the exact spec/RFC section when implementing a standard — on every related endpoint/class, not just the first. Keep references to internal PRs, spikes, and tickets out of code, though; those belong in the PR description, not a code comment.
+- Link the exact spec/RFC section when implementing a standard — on every related endpoint/class, not just the first. Keep references to internal PRs, spikes, and tickets out of code, though; those belong in the PR description, not a code comment. The one exception is the ticket link on a `TODO:`.
 
 ## Auth
 
@@ -131,10 +132,11 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## Authorization (Policies)
 
 - Map controller actions to standard CRUD abilities: `index`/`show` → `viewAny`/`view`, `create`/`store` → `create`, `edit`/`update` → `update`, `destroy` → `delete`. If `show` needs edit-level access, authorize against `update` — don't invent an `edit` ability.
+- A condition that decides whether one record allows an action (downloads disabled on this record, record locked) goes in that model's Policy ability, not in the controller or the page-props builder.
 
 ## API Resources
 
-- Shape a nested list with a dedicated `JsonResource` + `::collection()`, not an inline `array_map`/`map` closure — one resource class per distinct shape the frontend consumes. A single-action controller's one-off payload is shaped inline in `response()->json([...])`; a resource class earns its place once the shape is reused or nested.
+- Shape a nested list with a dedicated `JsonResource` + `::collection()`, not an inline `array_map`/`map` closure — one resource class per distinct shape the frontend consumes, named for the model plus the UI surface it feeds (`InvoiceListItemResource` for the index page, `InvoiceDetailResource` for the show page), not for the controller action. A single-action controller's one-off payload is shaped inline in `response()->json([...])`; a resource class earns its place once the shape is reused or nested.
 - Serialize a related model (`published_by`, `created_by`) through a small shared resource (`uuid`, `name`, …) reused by every such field, not a flattened `$this->publishedBy?->name`.
 - Send a record's identifier as its UUID under a `uuid` / `*_uuid` key; never expose a sequential integer id. A table with no UUID column yet sends `id` with a comment saying so.
 - Wrap every relation in `->whenLoaded()`, even one the controller always eager-loads, so a caller that forgets the load gets a missing key instead of an N+1.
@@ -152,7 +154,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 ## Eloquent
 
-- A query chain with more than one `where()` spans lines. When a query or collection chain spans lines, put the receiver alone on the first line (`Model::query()`, `$users`) and every chained call on its own line below — not `Model::query()->where(...)` on line one with the rest wrapped beneath, and not `])->all()` hanging off a closing bracket.
+- A query chain with more than one `where()` spans lines; a short collection or object chain stays on one line while it fits (`$users->pluck('name')->all()`). When a query or collection chain spans lines, put the receiver alone on the first line (`Model::query()`, `$users`) and every chained call on its own line below — not `Model::query()->where(...)` on line one with the rest wrapped beneath, and not `])->all()` hanging off a closing bracket.
 - End a query at its terminal call (`->get()`) and assign the result; run collection transforms (`map()`, `mapWithKeys()`) on that variable in a separate statement, so the database query and the in-memory reshaping read apart.
 - Wrap `where(...)->orWhere(...)` alternatives in a closure group (`->where(function (Builder $query) { ... })`) so every top-level condition sits at the same level; a bare `orWhere()` beside other `where()`s ORs against all of them.
 - Order a query chain by clause: `with()` → `select()`/`addSelect()` (and scopes that only add a column) → `join()` → `where()`/filter scopes → `orderBy()`/`groupBy()` → the terminal call.
@@ -186,7 +188,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 
 - Place a single-resource action under that resource's route group: `/documents/{document}/resend-email`, not nested under whatever parent surfaced it in the UI.
 - Controller class name and directory match the route resource (`Http/Controllers/Documents/ResendDocumentEmailController`).
-- Name a controller for the specific operation it performs, not a generic catch-all (`ResendInvoiceEmailController`, not `InvoiceController`); keep route, controller, directory, and test file names in sync.
+- CRUD lives in the resource's one controller (`InvoiceController`); name a single-action controller for its one non-CRUD operation (`ResendInvoiceEmailController`); keep route, controller, directory, and test file names in sync.
 - Register a single-action controller with the array callable `[Controller::class, '__invoke']`, not the bare class string.
 - Give every controller action a `Request $request` (or a dedicated `FormRequest`) as its first parameter, even when the body doesn't read it — don't omit it. Break the parameter list across lines.
 - Type a route segment that holds an enum value as that enum in the action signature (implicit enum binding) so the framework 404s an unknown value; don't validate it by hand.
@@ -199,6 +201,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## Queue / Job dispatch
 
 - Prefer helper functions — `dispatch(new JobClass(...))`, `event(new EventClass(...))` — over the static `::dispatch()` form, for IDE/phpstan completion on constructor args.
+- When one job is dispatched per record, resolve configuration that is identical for the whole batch once in the dispatcher and pass it to each job, when that saves each job a query. When it saves nothing, take whichever form is simpler.
 - Use `ShouldQueueAfterCommit` for listeners/jobs whose effects depend on a DB write committing first.
 - Job-level gating — skip-if, overlap locks, rate limits — goes in queue middleware (`Skip`, `WithoutOverlapping`, `RateLimited`) where the framework's middleware can express it; inline it in `handle()` only when the gate must wrap the work itself (acquire/release around a custom lock).
 

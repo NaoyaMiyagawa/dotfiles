@@ -28,8 +28,8 @@ description: Applies React and TypeScript conventions — file layout, component
    file that uses them. Create a sibling `Component.types.ts` only when a second
    module imports those types.
 6. **Export only what another module imports.** A helper used in one file stays
-   module-private. Put a new helper next to its siblings of the same shape, not at
-   the end of the file. A helper that reads none of the enclosing function's
+   module-private. The exported entry point comes first as a short list of calls;
+   the helpers it calls follow below it as function declarations, in call order. A helper that reads none of the enclosing function's
    variables sits at module level, not nested inside that function. A helper or hook that builds translated labels gets the
    translator itself (the shared `i18n.t("ns:key")` in a plain function, the
    translation hook in a hook) instead of taking `t` as a parameter, so callers
@@ -45,10 +45,17 @@ description: Applies React and TypeScript conventions — file layout, component
    of a declaration that already carries the type.
 9. **Name a collection as a plural noun and a lookup by its key.** `availableActions`,
    not `available` (reads as a boolean); `errorsByActionType` for an
-   `{ [actionType]: error }` map. Group related top-level values under one named object (`resources.backendModules`,
+   `{ [actionType]: error }` map. A value that holds a UUID is named `uuid` or
+   `documentUuid`, never `id`. A type is as narrow as the data: no `| null` or `?`
+   on a value that is always present. Group related top-level values under one named object (`resources.backendModules`,
    `storageKeys.lastReload`) rather than a run of standalone consts. Name a helper
    that decides what the UI does `shouldX` (`shouldLockAction`, `shouldShowAction`);
-   keep `isX` for a plain state predicate.
+   keep `isX` for a plain state predicate. A `useState` boolean that decides what
+   the UI shows is `showX`/`shouldX` (`showDocumentsPanel`); a boolean prop that
+   describes the component's own state is `isX` (`isOpen`). A module-level constant
+   is camelCase like any other const (`maxRetries`). When a parameter accepts a
+   fixed set of string values, export them as a const object so callers write
+   `resourceType.invoice`, not the string literal.
    - **Type an API payload after the backend resource that sends it.** The interface
      takes the resource's class name (`OrderDetailResource` ↔ `OrderDetailResource`)
      and lists fields in the resource's key order, so a reader can map one to the
@@ -84,7 +91,8 @@ description: Applies React and TypeScript conventions — file layout, component
 13. **Blank line between sibling elements.** Separate adjacent tags at the same
     nesting level with one blank line, including after a closing `)}` of a
     conditional. Elements that render as one unit (a visual badge and its sr-only
-    text) sit together with no blank line. This is `react/jsx-newline`
+    text) sit together with no blank line. A tag with two or more props puts one
+    prop per line. The blank-line part is `react/jsx-newline`
     (`{"prevent": false}`) in eslint-plugin-react — enable it where the repo lints
     JSX rather than fixing it by hand.
 
@@ -105,7 +113,9 @@ description: Applies React and TypeScript conventions — file layout, component
     (`{ blankLine: "always", prev: "*", next: "return" }`, under `@stylistic` on
     ESLint 9) — enable it where the repo lints TS rather than fixing it by hand.
     Brace every `if`/loop body, even a one-line `continue` or `return` (ESLint
-    `curly: ["error", "all"]`).
+    `curly: ["error", "all"]`). A chain of calls breaks one call per line as soon
+    as any call takes an inline callback; a chain of plain references stays on one
+    line (`Object.entries(users).filter(isActive).map(toName)`).
 
 ## Checking a design fix in the browser
 
@@ -134,6 +144,7 @@ description: Applies React and TypeScript conventions — file layout, component
     directly, use `setup()` in the new test and leave the old tests alone.
 18. **Use a shared fixture by its own name.** Reference an imported mock directly;
     don't rebind it to a local alias (`const mockPdfContent = mockSignedDocument;`).
+    Name a fixture `mock` + the type it stands in for (`mockOrderDetail`).
 19. **Declare cases with `it()`, not `test()`,** wherever the runner exports it.
 
 ## Comments
@@ -141,3 +152,12 @@ description: Applies React and TypeScript conventions — file layout, component
 20. **Doc comment form.** A function's doc comment is a multi-line `/** */` block
     even when the text fits on one line; an interface field or object property
     takes a `//` line above it.
+
+## Functions and rendering
+
+21. **A handler is named `onX`,** the same as the prop it is passed to
+    (`<DocumentList onSelectDocument={onSelectDocument} />`).
+22. **Three or more parameters, or any boolean parameter, become one object,** so
+    the call site reads as named arguments; up to two stay positional.
+23. **Two mutually exclusive elements render from one ternary,** not two
+    complementary `&&` blocks.
