@@ -14,9 +14,9 @@ Triage the open Dependabot PRs in the repos I listed: assess each one, fix what 
 ## Per repo
 
 1. **Worktree.** `git -C <checkout> fetch origin`, then `git -C <checkout> worktree add --detach <scratchpad>/<dir> origin/<default branch>` (default branch from `gh repo view --json defaultBranchRef`). Work only in the worktree; never switch branches or edit files in the checkout. `vendor/` and `node_modules/` exist only in the checkout, so read them there.
-2. **Assess.** From the worktree, run the `custom-gh-dependabot-assess` skill with `all`. This run processes the whole queue, so post `@dependabot recreate` where the skill calls for it.
+2. **Assess.** A run assesses at most 10 PRs across all repos, so a backlog drains over several days. From the worktree, run the listing in step 1 of the `custom-gh-dependabot-assess` skill, take the PRs it would assess (not yet assessed, or stale), lowest number first, and pass those numbers to the skill until the run's 10 are used. The rest wait for the next run. Post `@dependabot recreate` where the skill calls for it without asking.
 3. **Fix.** When a PR's CI is red because of the bump itself (not a flaky or unrelated failure), `gh pr checkout <n>` in the worktree, make the smallest code change that fixes it using the coding skills, commit, and push to the PR branch. Comment on the PR with what you changed and why, with the `custom-gh-comment-footer` footer. Don't wait for CI; the next run re-checks. A PR this routine has already pushed to twice and that is still red is mine: leave it and say so in the report.
-4. **Gate.** For each PR assessed 🟢 Low with recommendation exactly `merge`, run from the worktree:
+4. **Gate.** For each open Dependabot PR whose assessment says 🟢 Low with recommendation exactly `merge`, from this run or an earlier one, run from the worktree:
    ```bash
    ~/dotfiles/.claude/scheduled-tasks/dependabot-triage/scripts/auto-merge-gate-for-dependabot-pr.sh <n>
    ```
