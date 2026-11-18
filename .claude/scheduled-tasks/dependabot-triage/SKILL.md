@@ -14,7 +14,8 @@ Triage the open Dependabot PRs in the repos I listed: assess each one, fix what 
 ## Per repo
 
 1. **Worktree.** `git -C <checkout> fetch origin`, then `git -C <checkout> worktree add --detach <scratchpad>/<dir> origin/<default branch>` (default branch from `gh repo view --json defaultBranchRef`). Work only in the worktree; never switch branches or edit files in the checkout. `vendor/` and `node_modules/` exist only in the checkout, so read them there.
-2. **Assess.** A run assesses at most 10 PRs across all repos, so a backlog drains over several days. From the worktree, run the listing in step 1 of the `custom-gh-dependabot-assess` skill, take the PRs it would assess (not yet assessed, or stale), lowest number first, and pass those numbers to the skill until the run's 10 are used. The rest wait for the next run. Post `@dependabot recreate` where the skill calls for it without asking.
+2. **Assess.** A run assesses at most 10 PRs across all repos, so a backlog drains over several days. From the worktree, run the listing in step 1 of the `custom-gh-dependabot-assess` skill, take the PRs it would assess (not yet assessed, or stale), lowest number first, and pass those numbers to the skill until the run's 10 are used. The rest wait for the next run. Post `@dependabot recreate` where the skill calls for it without asking, but only when `gh api repos/{owner}/{repo} --jq .permissions.push` is `true`; Dependabot ignores the command from anyone without push access, so otherwise post nothing and list the PR in the report as needing push access.
+   When Dependabot answers a recreate with "The dependabot.yml entry that created this PR has been deleted", the PR can never be rebuilt: close it with `gh pr close <n> --comment` saying so, with the footer. Dependabot opens a fresh PR from the current config if the package is still behind.
 3. **Fix.** When a PR's CI is red because of the bump itself (not a flaky or unrelated failure), `gh pr checkout <n>` in the worktree, make the smallest code change that fixes it using the coding skills, commit, and push to the PR branch. Comment on the PR with what you changed and why, with the `custom-gh-comment-footer` footer. Don't wait for CI; the next run re-checks. A PR this routine has already pushed to twice and that is still red is mine: leave it and say so in the report.
 4. **Gate.** For each open Dependabot PR whose assessment says 🟢 Low with recommendation exactly `merge`, from this run or an earlier one, run from the worktree:
    ```bash
@@ -30,6 +31,6 @@ One line per PR: repo, number, risk badge, gate verdict (name the failed check),
 
 ## Do not
 
-- Merge, approve, or close a PR.
+- Merge or approve a PR, or close one other than for a deleted dependabot.yml entry (step 2).
 - Push to anything other than a Dependabot PR branch, or force-push.
 - Push fixes to more than 2 PRs per run.
