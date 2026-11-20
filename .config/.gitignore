@@ -62,3 +62,10 @@ zed/*
 !zsh/
 !zsh/**
 zsh/secrets.local.zsh
+
+# t3code (custom theme only; ~/.t3/userdata/themes symlinks to t3code/themes)
+!t3code/
+t3code/*
+!t3code/themes/
+t3code/themes/*
+!t3code/themes/mycustom.json

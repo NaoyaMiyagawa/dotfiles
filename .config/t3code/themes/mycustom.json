@@ -1,0 +1,20 @@
+{
+  "name": "MyCustom",
+  "appearance": "light",
+  "canvas": "#ffffff",
+  "accent": "#3b4fe0",
+  "colors": {
+    "sidebar": "#f8fafd",
+    "sidebarRowHover": "#f1f4fa",
+    "sidebarRowActive": "#edf1f9",
+    "sidebarRowSelected": "#edf1f9",
+    "sidebarControlSurface": "#f1f4fa",
+    "surface": "#f9fafd",
+    "surfaceRaised": "#f9fafd",
+    "surfaceOverlay": "#ffffff",
+    "messageSurface": "#f1f4fb",
+    "accentSurface": "#f1f4fb",
+    "codeBackground": "#f8fafd"
+  },
+  "css": ":root:not(.dark) [data-right-panel-surface-content], :root:not(.dark) [data-pull-request-summary-scroll], :root:not(.dark) [data-thread-details-card], :root:not(.dark) [data-pull-request-summary-section] > :first-child { background: #f8fafd !important; }\n[data-pull-request-summary-section] > :first-child { padding-bottom: 8px !important; }\n[data-pr-description] { border: 1px solid rgba(0, 0, 0, 0.08) !important; border-radius: 8px !important; padding: 12px 14px !important; }\n.dark [data-pr-description] { border-color: rgba(255, 255, 255, 0.1) !important; }\n:root:not(.dark) [data-pr-description] { background: #ffffff !important; }\n:root:not(.dark) [data-slot=\"popover-popup\"], :root:not(.dark) [data-slot=\"tooltip-popup\"], :root:not(.dark) [data-slot=\"menu-popup\"] { background: #ffffff !important; }\n.dark [data-right-panel-surface-content] { background: rgba(255, 255, 255, 0.04) !important; }"
+}

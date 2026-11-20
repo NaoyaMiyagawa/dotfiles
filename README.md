@@ -9,6 +9,7 @@
 | `.claude/` | `~/.claude` symlinks here. Gitignored except for files that are added on purpose (`settings.json`, `scheduled-tasks/`) |
 | `.claude/scheduled-tasks/<name>/` | Scheduled agent tasks: `SKILL.md` plus helper `scripts/` |
 | `.config/` | App configs (git, cmux, …) |
+| `.config/t3code/themes/` | T3 Code custom theme. `make t3themes` symlinks `~/.t3/userdata/themes` here |
 | `Brewfile` | Homebrew packages |
 | `Makefile` | `make install` / `make list` |
 
