@@ -36,6 +36,7 @@ description: Language-agnostic coding rules — which comments to keep, guards, 
 - **Siblings Share One Shape**: Sibling entries of one literal are formatted alike: once one breaks across lines, all do.
 - **Break A Long Ternary Before `?` And `:`**: A ternary that doesn't fit on one line puts each branch on its own line, led by its `?` or `:`.
 - **Blank Line Before `return`**: A `return` that follows other statements has one blank line above it.
+- **One Newline At End Of File**: Every file you create or edit ends with exactly one line break, including a file that lacked one before your edit; otherwise the diff shows "no newline at end of file" on your lines.
 
 ## Where logic lives
 
