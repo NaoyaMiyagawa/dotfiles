@@ -18,13 +18,13 @@ model. Override per task:
 | Task | Invocation |
 |---|---|
 | Deep reasoning | `codex exec -c model_reasoning_effort=high "..."` — `xhigh` for the hardest problems |
-| Mechanical execution | `codex exec -m gpt-5.6-luna -c model_reasoning_effort=low "..."` — drop `-m` (config default) if luna struggles |
-| Code / cross review | `timeout 600 codex exec review -c model_reasoning_effort=medium -o <file>` (current repo; `high` only for security-sensitive or large refactors) or `codex exec -c model_reasoning_effort=medium "..."` |
-| Quick lookup / small Q&A | `codex exec -m gpt-5.6-luna -c model_reasoning_effort=minimal "..."` |
+| Mechanical execution | `codex exec -m gpt-6-luna -c model_reasoning_effort=low "..."` — drop `-m` (config default) if luna struggles |
+| Code / cross review | `timeout 600 codex exec review -m gpt-6.2-sol -c model_reasoning_effort=medium -o <file>` (current repo; `-m gpt-6.2-astra` for security-sensitive or large refactors, `high` only if medium misses) or `codex exec -m gpt-6.2-sol -c model_reasoning_effort=medium "..."` |
+| Quick lookup / small Q&A | `codex exec -m gpt-6-luna -c model_reasoning_effort=low "..."` |
 
-gpt-5.6-luna is the cheapest model, so prefer it for routine work.
+gpt-6-luna is the cheapest model, so prefer it for routine work.
 
-Accepted `model_reasoning_effort` values: none, minimal, low, medium, high, xhigh. When a task
+Accepted `model_reasoning_effort` values: none, low, medium, high, xhigh, max. When a task
 doesn't clearly fit a row, leave the model unset but still pass a medium effort —
 the config default has changed before, so an unset effort is not a neutral choice.
 
