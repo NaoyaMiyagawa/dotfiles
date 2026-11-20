@@ -208,6 +208,7 @@ The review gate in `../SKILL.md` enforces this list; the core rules live there. 
 ## Config / env
 
 - Base-URL envs: name the config key with a `_base_url` suffix and strip trailing slashes at read time (`rtrim(env('CDN_BASE_URL', ''), '/')`) so callers never defend against `//path` joins.
+- Parse, rebuild or compare a URL through `Illuminate\Support\Uri` (`Uri::of($url)->host()`, `->withHost()`, `->origin()` where the Laravel version has it), not `parse_url()` plus string concatenation of scheme, host and port.
 - Sync `.env.example` (and mirrored `docker-compose*.yml` / FE `.env.example`) in the same PR as any env var change.
 - A value that doesn't vary by environment (a TTL, a limit) is a class constant, not a config key or env var — don't add a config file for one such value.
 
