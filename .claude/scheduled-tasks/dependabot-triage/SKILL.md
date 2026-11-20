@@ -27,7 +27,14 @@ Triage the open Dependabot PRs in the repos I listed: assess each one, fix what 
 
 ## Report
 
-One line per PR: repo, number, risk badge, gate verdict (name the failed check), comment URL, and any fix pushed.
+Group by repo under a bold repo name. Under each, one bullet per PR as a markdown link to the PR, labelled with its title, ordered so the top ones can be merged in turn: gate passed, then 🟢 Low `merge`, Low `merge after checking`, 🟡 Medium, 🔴 High, then unassessed. A nested bullet gives the risk badge, gate verdict (name the failed check), and any fix pushed, comment posted, or reason it was skipped.
+
+```md
+**<repo>**
+
+- [<PR title>](<PR URL>)
+  - 🟢 Low · gate passed at <short sha> · gate comment posted
+```
 
 ## Do not
 
