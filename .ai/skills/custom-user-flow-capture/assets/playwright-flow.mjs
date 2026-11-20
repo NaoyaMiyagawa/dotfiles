@@ -9,7 +9,7 @@
 //   });
 //   await flow.page.goto(".../invoices");
 //   await flow.clickOn(flow.page.getByRole("button", { name: "Download" }));
-//   await flow.finish();   // writes <out>/flow.webm and <out>/flow-navs.json
+//   await flow.finish();   // writes <out>/flow.webm, <out>/flow-navs.json and <out>/flow-notes.json
 //
 // Run it from the repo root: Playwright resolves from the working directory, so the skill needs no node_modules.
 import { readFileSync, renameSync, statSync, writeFileSync } from "node:fs";
@@ -61,6 +61,16 @@ export const startFlow = async ({ out, login, viewport = { width: 1440, height: 
     if (frame !== page.mainFrame()) return;
     navs.push({ t: (Date.now() - startedAt) / 1000, url: frame.url() });
   });
+
+  // Notes for address-bar.mjs to draw on the bar, timed like the URLs.
+  const notes = [];
+  const secondsIn = () => (Date.now() - startedAt) / 1000;
+
+  // Shows a message under the bar for something the page can't show: an account switch, an off-screen event, the outcome.
+  const showMessage = (title, detail, seconds) => notes.push({ t: secondsIn(), title, detail, seconds });
+
+  // Names the account on screen in a chip on the bar, e.g. showAccount("Profile B", "admin"), until the next call.
+  const showAccount = (account, role) => notes.push({ t: secondsIn(), account, role });
 
   // A failed step leaves a screenshot of where it stopped instead of only a stack trace.
   process.on("unhandledRejection", async (error) => {
@@ -134,17 +144,18 @@ export const startFlow = async ({ out, login, viewport = { width: 1440, height: 
     return file;
   };
 
-  // Closes the context, which writes the video, then names it flow.webm next to flow-navs.json.
+  // Closes the context, which writes the video, then names it flow.webm next to flow-navs.json and flow-notes.json.
   const finish = async (name = "flow") => {
     const video = page.video();
     await context.close();
     const path = join(out, `${name}.webm`);
     renameSync(await video.path(), path);
     writeFileSync(join(out, `${name}-navs.json`), JSON.stringify(navs));
+    writeFileSync(join(out, `${name}-notes.json`), JSON.stringify(notes));
     await browser.close();
 
     return path;
   };
 
-  return { browser, context, page, moveTo, clickOn, lookAt, goBack, download, finish };
+  return { browser, context, page, moveTo, clickOn, lookAt, goBack, download, showMessage, showAccount, finish };
 };

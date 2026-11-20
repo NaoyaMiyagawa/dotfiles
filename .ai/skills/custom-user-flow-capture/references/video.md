@@ -16,9 +16,9 @@ Write `flow.sh` to the scratchpad so it can run again unchanged, for example aga
 #   1. Set the viewport and log in, before recording.
 #   2. Start recording on the page where the flow begins, then inject the fake cursor.
 #   3. Walk the flow: glide the cursor to each target, click it, wait for the expected state, pause.
-#   4. Stop recording, which writes the WebM, and write the URL log next to it.
+#   4. Stop recording, which writes the WebM, and write the URL log and the notes next to it.
 #
-# Exit 0 means every expected state appeared and flow.webm and flow-navs.json were written.
+# Exit 0 means every expected state appeared and flow.webm, flow-navs.json and flow-notes.json were written.
 set -euo pipefail
 zmodload zsh/datetime
 
@@ -39,6 +39,19 @@ ensure_cursor() {
 navs=()
 log_url() {
   navs+=("$(jq -nc --argjson t $(( EPOCHREALTIME - record_started )) --arg url "$(ab get url)" '{t: $t, url: $url}')")
+}
+
+# Logs a message for address-bar.mjs to slide out under the bar: something the page can't show.
+# e.g. show_message 'Switched to Profile B' 'An admin revokes the access'
+notes=()
+show_message() {
+  notes+=("$(jq -nc --argjson t $(( EPOCHREALTIME - record_started )) --arg title "$1" --arg detail "${2:-}" '{t: $t, title: $title, detail: $detail}')")
+}
+
+# Logs the account now on screen, for the chip address-bar.mjs keeps on the bar until the next call.
+# e.g. show_account 'Profile B' 'admin'
+show_account() {
+  notes+=("$(jq -nc --argjson t $(( EPOCHREALTIME - record_started )) --arg account "$1" --arg role "${2:-}" '{t: $t, account: $account, role: $role}')")
 }
 
 # Goes back in history, sliding a back-arrow badge in first so the video doesn't show an unexplained jump.
@@ -129,9 +142,10 @@ log_url
 ensure_cursor
 ab wait 500
 
-# Step 4: stop recording and write the URL log.
+# Step 4: stop recording and write the URL log and the notes.
 ab record stop
 printf '%s\n' "${navs[@]}" | jq -s . > "$out/flow-navs.json"
+printf '%s\n' "${notes[@]}" | jq -s . > "$out/flow-notes.json"
 
 echo '--------- Result ---------'
 ls -l "$out"
@@ -155,7 +169,7 @@ Run it with `zsh <scratchpad>/flow.sh <scratchpad>/flow-<name>/after`.
 
 ## Playwright
 
-When the repo has `@playwright/test` (or `playwright`), record with [../assets/playwright-flow.mjs](../assets/playwright-flow.mjs) instead of agent-browser. It logs in outside the recording, injects `cursor.js` into every new document, logs each URL for the address bar, and gives the same moves as `flow.sh`: `moveTo`, `clickOn`, `lookAt`, `goBack`, plus `download(locator)`, which waits for the file and shows a download bubble with its real name and size, since a headless video has no download UI. Write a small script that imports it by absolute path and holds only the app's steps:
+When the repo has `@playwright/test` (or `playwright`), record with [../assets/playwright-flow.mjs](../assets/playwright-flow.mjs) instead of agent-browser. It logs in outside the recording, injects `cursor.js` into every new document, logs each URL for the address bar, and gives the same moves as `flow.sh`: `moveTo`, `clickOn`, `lookAt`, `goBack`, `showMessage(title, detail)`, `showAccount(name, role)`, plus `download(locator)`, which waits for the file and shows a download bubble with its real name and size, since a headless video has no download UI. Write a small script that imports it by absolute path and holds only the app's steps:
 
 ```js
 // <scratchpad>/flow.mjs — run from the repo root: node <scratchpad>/flow.mjs <scratchpad>/flow-<name>/after
@@ -194,6 +208,17 @@ node ~/.claude/skills/custom-user-flow-capture/assets/address-bar.mjs \
 It writes the second path, 52 px taller. Attach that one. GitHub shows the uploaded file name as the video's title, so name it after the user flow it captures, e.g. `custom-view-to-workflow-run.webm`, not after the tooling (`flow-chrome.webm`).
 
 `log_url` runs after the new page shows, so the script moves each URL change 0.5 s earlier, to when a browser would change its bar. Check the frames on either side of each change: the URL should switch after the click and no later than the new page. If it trails the page, pass a larger lead as the third argument (`… <flow-name>.webm 0.8`); if it switches before the click, a smaller one. A Playwright `recordVideo` run that logs `framenavigated` needed 0.8 s, because its video starts before the script's clock.
+
+## Messages and account chip
+
+The page can't show everything the viewer needs. `show_message` and `show_account` (`showMessage` and `showAccount` in the Playwright recorder) log notes to `flow-notes.json`, and `address-bar.mjs` draws them: a black message that slides out from under the middle of the bar and back after 2.8 s, and a chip at the right of the bar naming the account whose page is on screen, such as `Profile B (admin)`. Both are drawn on the finished video, so they survive page loads and login redirects.
+
+- **Account switch: always.** Call `show_account` once at the start, and again each time the recorded page signs in as someone else, so the chip always names whose screen this is. Add a `show_message` saying what the switch is. Without them the viewer sees the same app twice and can't tell the accounts apart.
+- **A second account off screen gets a message only.** The recorders capture one browser context. When another profile or session acts outside it, `show_message` what it did and leave the chip on the account still on screen.
+- **Other off-screen events and the outcome.** `show_message` what happened where the video can't show it: a job ran, an email went out, the request returned 401. Say the final outcome when it is easy to miss.
+- No message for an ordinary click or navigation: the cursor and the bar already show those.
+- Keep the title under about 40 characters and put the rest in the detail. Keep the page still for about 2.5 s after `show_message`, so the viewer can read it; a later message cuts the earlier one short.
+- The message covers the top middle of the page while it shows. Don't show one during a step whose result appears there.
 
 ## Review
 
