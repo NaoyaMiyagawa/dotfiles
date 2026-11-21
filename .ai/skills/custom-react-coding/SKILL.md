@@ -5,6 +5,8 @@ description: Applies React and TypeScript conventions — file layout, component
 
 # React Coding Conventions
 
+The core rules below decide a component's shape, its files, and its signatures, so hold them in mind while writing. Style rules (naming, formatting, comments, spec conventions) live in [references/checklist.md](references/checklist.md) — the review gate enforces them, so don't try to hold them in mind; read one only when its detail matters.
+
 ## Component boundaries
 
 1. **No pass-through wrapper component.** A component whose only job is to fetch
@@ -28,49 +30,23 @@ description: Applies React and TypeScript conventions — file layout, component
    file that uses them. Create a sibling `Component.types.ts` only when a second
    module imports those types.
 6. **Export only what another module imports.** A helper used in one file stays
-   module-private. The exported entry point comes first as a short list of calls;
-   the helpers it calls follow below it as function declarations, in call order. A helper that reads none of the enclosing function's
-   variables sits at module level, not nested inside that function. A helper or hook that builds translated labels gets the
+   module-private.
+
+## Props and parameters
+
+7. **An entity is one prop.** A component
+   that reads several fields of one entity takes the entity as one prop, typed by
+   its resource interface, not each field picked out by the parent.
+8. **Three or more parameters, or any boolean parameter, become one object,** so
+   the call site reads as named arguments; up to two stay positional.
+9. **A label helper gets its own translator.** A helper or hook that builds translated labels gets the
    translator itself (the shared `i18n.t("ns:key")` in a plain function, the
    translation hook in a hook) instead of taking `t` as a parameter, so callers
    pass only data.
 
-## Types and naming
-
-7. **Explicit return types on module functions.** Every function in a `.ts` module
-   states its return type. This is `@typescript-eslint/explicit-function-return-type`
-   — enable it where the repo's linter offers it rather than checking by hand.
-8. **No redundant type assertion.** `as const` already fixes a literal's type; don't
-   add `satisfies`, a `Record<...>` annotation, or an `as readonly T[]` cast on top
-   of a declaration that already carries the type.
-9. **Name a collection as a plural noun and a lookup by its key.** `availableActions`,
-   not `available` (reads as a boolean); `errorsByActionType` for an
-   `{ [actionType]: error }` map. A value that holds a UUID is named `uuid` or
-   `documentUuid`, never `id`. A type is as narrow as the data: no `| null` or `?`
-   on a value that is always present. Group related top-level values under one named object (`resources.backendModules`,
-   `storageKeys.lastReload`) rather than a run of standalone consts. Name a helper
-   that decides what the UI does `shouldX` (`shouldLockAction`, `shouldShowAction`);
-   keep `isX` for a plain state predicate. A `useState` boolean that decides what
-   the UI shows is `showX`/`shouldX` (`showDocumentsPanel`); a boolean prop that
-   describes the component's own state is `isX` (`isOpen`). A module-level constant
-   is camelCase like any other const (`maxRetries`). When a parameter accepts a
-   fixed set of string values, export them as a const object so callers write
-   `resourceType.invoice`, not the string literal.
-   - **Type an API payload after the backend resource that sends it.** The interface
-     takes the resource's class name (`OrderDetailResource` ↔ `OrderDetailResource`)
-     and lists fields in the resource's key order, so a reader can map one to the
-     other line by line.
-
-## Props
-
-10. **Defaulted props last.** In a props type and its destructuring, required
-    props come first and any prop with a default value sits at the end. A component
-    that reads several fields of one entity takes the entity as one prop, typed by
-    its resource interface, not each field picked out by the parent.
-
 ## Data lifecycle
 
-11. **Branch on the fetch hook's lifecycle flags.** Render loading, error, and
+10. **Branch on the fetch hook's lifecycle flags.** Render loading, error, and
     success states from what the data hook already exposes (`isLoading`, `isError`,
     `data`). Rename them to their subject as you destructure
     (`{ data: invoice, isLoading: isLoadingInvoice }`), so the JSX reads
@@ -81,45 +57,14 @@ description: Applies React and TypeScript conventions — file layout, component
 
 ## Unavailable states
 
-12. **Disable at the point of choice, and say why.** When an option or input is
+11. **Disable at the point of choice, and say why.** When an option or input is
     unavailable under the current state, disable it where the user would pick it and
     state the governing rule in a tooltip. Don't hide it, and don't let the user
     select it only to reject it later.
 
-## Formatting
-
-13. **Blank line between sibling elements.** Separate adjacent tags at the same
-    nesting level with one blank line, including after a closing `)}` of a
-    conditional. Elements that render as one unit (a visual badge and its sr-only
-    text) sit together with no blank line. A tag with two or more props puts one
-    prop per line. The blank-line part is `react/jsx-newline`
-    (`{"prevent": false}`) in eslint-plugin-react — enable it where the repo lints
-    JSX rather than fixing it by hand.
-
-```tsx
-<Typography component="h6">{label}</Typography>
-
-<div className="flex items-center gap-2">
-  <Typography component="p2">{url}</Typography>
-
-  <CopyToClipBoardButton textToCopy={url} />
-</div>
-```
-
-14. **Blank lines mark sections.** Set a group of statements that belong together
-    (a hook call and the consts derived from it) apart from its neighbours with one
-    blank line above and below. When statements precede a `return`, separate them
-    with one blank line. The `return` case is ESLint `padding-line-between-statements`
-    (`{ blankLine: "always", prev: "*", next: "return" }`, under `@stylistic` on
-    ESLint 9) — enable it where the repo lints TS rather than fixing it by hand.
-    Brace every `if`/loop body, even a one-line `continue` or `return` (ESLint
-    `curly: ["error", "all"]`). A chain of calls breaks one call per line as soon
-    as any call takes an inline callback; a chain of plain references stays on one
-    line (`Object.entries(users).filter(isActive).map(toName)`).
-
 ## Checking a design fix in the browser
 
-15. **Load the page past every cache, then confirm which build it loaded.** A stale
+12. **Load the page past every cache, then confirm which build it loaded.** A stale
     copy looks exactly like a fix that didn't work. A hard reload is not enough: it
     skips the cache only for the top page, not for an iframe whose `src` script sets
     later, which is how rendered certificates and embeds load.
@@ -132,32 +77,6 @@ description: Applies React and TypeScript conventions — file layout, component
       `curl -sI` each path and compare `last-modified` and `x-cache`. A CDN can keep
       serving an old `index.html` that has no `Cache-Control`.
 
-## Tests
+## Review gate (mandatory)
 
-16. **AAA comments in every spec.** Each test body carries `// Arrange`, `// Act`,
-    `// Assert` markers, same as the Laravel test convention.
-17. **Drive interactions through `userEvent.setup()`.** Create the instance in the
-    Arrange step (`const user = userEvent.setup();`, before `render`) and call
-    `user.click()`, `user.type()`, `user.hover()` on it. Never call
-    `userEvent.click()` directly. Each direct call builds its own fresh session,
-    so pointer and keyboard state does not carry from one step to the next. When you add a test to a file whose older tests call `userEvent.*`
-    directly, use `setup()` in the new test and leave the old tests alone.
-18. **Use a shared fixture by its own name.** Reference an imported mock directly;
-    don't rebind it to a local alias (`const mockPdfContent = mockSignedDocument;`).
-    Name a fixture `mock` + the type it stands in for (`mockOrderDetail`).
-19. **Declare cases with `it()`, not `test()`,** wherever the runner exports it.
-
-## Comments
-
-20. **Doc comment form.** A function's doc comment is a multi-line `/** */` block
-    even when the text fits on one line; an interface field or object property
-    takes a `//` line above it.
-
-## Functions and rendering
-
-21. **A handler is named `onX`,** the same as the prop it is passed to
-    (`<DocumentList onSelectDocument={onSelectDocument} />`).
-22. **Three or more parameters, or any boolean parameter, become one object,** so
-    the call site reads as named arguments; up to two stay positional.
-23. **Two mutually exclusive elements render from one ternary,** not two
-    complementary `&&` blocks.
+Changed React or TypeScript is not done until it has passed the review gate in the `custom-general-coding` skill. Its checklist is the core rules above and [references/checklist.md](references/checklist.md).

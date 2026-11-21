@@ -124,4 +124,4 @@ Before refactoring a code path with no direct coverage, first write a **characte
 
 ## Review gate (mandatory)
 
-Changed test code is not done until it has passed a style review. Before presenting or committing, review the test diff — only the diff — against the Core rules above and [references/checklist.md](references/checklist.md). For a non-trivial diff, offload the pass to Codex per the global Codex rules, pointing it at those two files as its checklist; for a small diff, do the pass yourself in-session. Fix the violations, then present. When the same change touches production PHP, this review runs as part of the `custom-laravel-coding` gate.
+Changed test code is not done until it has passed the review gate in the `custom-general-coding` skill. Its checklist is the Core rules above and [references/checklist.md](references/checklist.md). When the same change touches production PHP, this runs as part of the `custom-laravel-coding` gate.

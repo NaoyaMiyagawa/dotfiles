@@ -5,7 +5,7 @@ description: Applies Laravel backend coding conventions for PHP implementation a
 
 Keep changes consistent with existing project patterns unless asked to refactor. Touch only what the task needs — no drive-by renames, reformatting, or edits to unrelated classes; every changed line costs review attention.
 
-The core rules below are what to hold in mind while writing. The long tail lives in [references/checklist.md](references/checklist.md) — the review gate enforces it, so don't try to hold it in mind; read it only when a rule's detail matters.
+The core rules below are what to hold in mind while writing. Design rules for one kind of code (a model, a resource, a migration, a route, a queue job) live in [references/design.md](references/design.md): read the section for the kind you are about to write, before writing it. Style rules live in [references/checklist.md](references/checklist.md) — the review gate enforces them, so don't try to hold them in mind; read one only when its detail matters.
 
 ## Core rules
 
@@ -51,13 +51,8 @@ The core rules below are what to hold in mind while writing. The long tail lives
 
 12. **Routing and auth.** Build URLs with `route()`, never path literals; prefer route-model binding + the `->can('ability', 'model')` route helper over ids in the request body re-resolved in the controller; resourceful method names (`index`, `show`, `store`, `update`, `destroy`) for CRUD endpoints — `__invoke` only for genuinely non-resourceful actions, and single-action controllers named verb + resource (`DuplicateEmailTemplateController`, not `EmailDuplicationController`).
 13. **Naming.** One term and one spelling per concept — American English, the feature's user-facing name as the term for its identifiers, conventional acronym casing (`OAuth`, `ID`, `URL`). Put a class in a directory named for its kind, grouped by domain (`ValueObjects/`, `Enums/{Domain}/`). Name for the real conceptual boundary, not a convenient umbrella prefix.
-14. **PHPDoc types state the real contract.** `list<T>` for zero-indexed sequential arrays; array-shape syntax (`array{id: int, fields?: list<...>}`) for structured associative arrays at boundaries — not bare `array` or `array<string, mixed>`.
-15. **Enums are the single source of truth; UI strings go through `__()`.** Reference the enum in config, validation rules, casts, and `match` arms — a hardcoded copy of a value anywhere will drift. No hardcoded English literals in enums, resources, or Blade/JSX.
+14. **Enums are the single source of truth; UI strings go through `__()`.** Reference the enum in config, validation rules, casts, and `match` arms — a hardcoded copy of a value anywhere will drift. No hardcoded English literals in enums, resources, or Blade/JSX.
 
 ## Review gate (mandatory)
 
-Changed PHP is not done until it has passed a style review. Before presenting or committing:
-
-1. Review the diff — only the diff — against the Core rules above and [references/checklist.md](references/checklist.md); for test files, also the `custom-laravel-writing-tests` skill's core rules and its `references/checklist.md`.
-2. For a non-trivial diff, offload the pass to Codex per the global Codex rules, pointing it at those files as its checklist. For a small diff, do the pass yourself in-session.
-3. Fix the violations, then present.
+Changed PHP is not done until it has passed the review gate in the `custom-general-coding` skill. Its checklist is the Core rules above, [references/checklist.md](references/checklist.md) and [references/design.md](references/design.md); for test files, also the `custom-laravel-writing-tests` skill's core rules and its `references/checklist.md`.

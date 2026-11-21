@@ -16,6 +16,7 @@ Read **every** path below (full file). Treat them as the source of truth for rev
 
 - `~/dotfiles/.ai/skills/custom-laravel-coding/SKILL.md`
 - `~/dotfiles/.ai/skills/custom-laravel-coding/references/checklist.md`
+- `~/dotfiles/.ai/skills/custom-laravel-coding/references/design.md`
 - `~/dotfiles/.ai/skills/custom-laravel-writing-tests/SKILL.md`
 - `~/dotfiles/.ai/skills/custom-laravel-writing-tests/references/checklist.md`
 
