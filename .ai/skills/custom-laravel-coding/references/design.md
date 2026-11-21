@@ -30,6 +30,7 @@ Before writing a kind of code listed here (a model, a resource, a migration, a r
 ## Class organization
 
 - Follow the project's established directory per kind; don't add a parallel variant (a fresh `Dto/` beside `DataTransferObjects/`). Prefer moving a legacy-located class to the canonical spot over adding a new class beside it.
+- Controllers, form requests and API resources for one model each sit in a subdirectory named for that model, the same name under all three: `Http/Controllers/Invoice/`, `Http/Requests/Invoice/`, `Http/Resources/Invoice/`. The name is the model's, singular. Create the subdirectory even for one file, so nothing has to move when a second arrives.
 - Group a cohesive set of related classes into a dedicated sub-namespace to keep the parent folder slim; but leave a genuinely ambiguous or cross-cutting class at the module root rather than forcing it into a sub-directory. A class several modules use belongs in the root module's directory for its kind, not in whichever feature module happened to need it first.
 - Keep response/output shaping out of action/service/domain classes — extract a dedicated response class so each has one responsibility.
 - An action class exposes only `__invoke()` publicly. When it needs a helper routine, extract that to a dedicated helper/service class rather than adding a second public method on the action.
@@ -93,7 +94,7 @@ Before writing a kind of code listed here (a model, a resource, a migration, a r
 ## Routing
 
 - Place a single-resource action under that resource's route group: `/documents/{document}/resend-email`, not nested under whatever parent surfaced it in the UI.
-- Controller class name and directory match the route resource (`Http/Controllers/Documents/ResendDocumentEmailController`).
+- Controller class name matches the route resource, and its directory is the model's subdirectory (`Http/Controllers/Document/ResendDocumentEmailController`; see the subdirectory rule under *Class organization*).
 - CRUD lives in the resource's one controller (`InvoiceController`); name a single-action controller for its one non-CRUD operation (`ResendInvoiceEmailController`); keep route, controller, directory, and test file names in sync.
 - Give every controller action a `Request $request` (or a dedicated `FormRequest`) as its first parameter, even when the body doesn't read it — don't omit it. Break the parameter list across lines.
 - Type a route segment that holds an enum value as that enum in the action signature (implicit enum binding) so the framework 404s an unknown value; don't validate it by hand.
