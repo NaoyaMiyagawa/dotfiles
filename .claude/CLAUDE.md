@@ -28,14 +28,14 @@ When this session runs a top-tier model (Opus or Fable), act as the orchestrator
 
 **Codex by default.** Codex burns a separate, currently underused quota. Route these to Codex without being asked, and announce it rather than request permission.
 
-- Review passes on a non-trivial diff, branch, or PR. Code review never goes to a Claude agent.
+- Review passes on a non-trivial diff, branch, or PR. Code review goes to a Claude agent only when Codex is out of usage (a usage-limit or rate-limit error, or an empty `-o` review file): then use a Claude Opus 5.5 reviewer at medium effort, and say so.
 - Codebase exploration and research answerable from files on disk.
 - Bulk mechanical edits across many files, once the pattern is decided.
 - Noisy triage: failing tests, lint output, build logs, stack traces.
 
-Skip Codex if it recently returned rate-limit or auth errors. If briefing it would take three or more clarifying rounds, do the work here instead. Read `~/dotfiles/.ai/docs/CODEX.md` before the first Codex run of a session: it pins model and effort per task and overrides the `codex` skill's "explicit ask only" gate.
+Skip Codex if it recently returned rate-limit or auth errors; reviews then fall back to the Opus reviewer above. If briefing it would take three or more clarifying rounds, do the work here instead. Read `~/dotfiles/.ai/docs/CODEX.md` before the first Codex run of a session: it pins model and effort per task and overrides the `codex` skill's "explicit ask only" gate.
 
-**Execution workers** are Codex `gpt-6-luna` (very cheap; the default for well-specified implementation) or the sonnet-backed `fast-worker` when the task needs tools or context Codex can't reach. Verify every task before calling it done: run the check inline, and hand it to `verifier` only when the output is noisy (a full test suite, a long build log). Unpinned agents (except the built-in Explore and Plan) default to sonnet via `CLAUDE_CODE_SUBAGENT_MODEL`, so don't pass a `model` unless the task needs opus. Every subagent re-reads its whole context against this subscription's 5-hour quota, and parallel agents draw from it at once:
+**Execution workers** are Codex luna (the newest, resolved per `CODEX.md`; very cheap; the default for well-specified implementation) or the sonnet-backed `fast-worker` when the task needs tools or context Codex can't reach. Verify every task before calling it done: run the check inline, and hand it to `verifier` only when the output is noisy (a full test suite, a long build log). Unpinned agents (except the built-in Explore and Plan) default to sonnet via `CLAUDE_CODE_SUBAGENT_MODEL`, so don't pass a `model` unless the task needs opus. Every subagent re-reads its whole context against this subscription's 5-hour quota, and parallel agents draw from it at once:
 
 - At most **two Claude subagents running at once** per session. Sequence the rest.
 - Delegate only when the task returns a small result from a large read (exploration, verification, noisy logs). Don't delegate to "throw more compute" at a hard problem — reason about it here.
