@@ -137,7 +137,7 @@ mock(Xxx::class)
     expect($model->verified_at)->toEqual($expected);
     ```
 
-- Scope deep JSON assertion paths with a `has()` callback instead of repeating the full dotted key — once a chain of `->where('a.b.c.d')` shares a long prefix, the prefix drowns the value being asserted. Keep the callback an arrow function even when the chain spans several lines — the exception to the Laravel checklist's arrow-to-closure rule; switch to a classic closure only when the callback needs more than one chained assertion expression.
+- Scope deep JSON assertion paths with a `has()` callback instead of repeating the full dotted key — once a chain of `->where('a.b.c.d')` shares a long prefix, the prefix drowns the value being asserted. Keep the callback an arrow function even when the chain spans several lines — the exception to the Laravel checklist's arrow-to-closure rule; switch to a classic closure only when the callback needs more than one chained assertion expression. In any assertion callback (`has()`, `assertInertia()`), keep `=> $page` on the arrow line and put each chained call on its own line below it, even when there is only one.
 
     ```php
     // Good — prefix named once per level
