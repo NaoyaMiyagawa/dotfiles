@@ -1,6 +1,6 @@
 ---
 name: custom-gh-pr-creating-editing
-description: Create or edit the GitHub pull request for the current branch — title format, concise description, reference bullets, assignee, and a local different-model code review. Use when the user asks to create or edit a PR.
+description: Create or edit the GitHub pull request for the current branch — title format, concise description, reference bullets, and assignee. Use when the user asks to create or edit a PR.
 ---
 
 # Custom GitHub PR Creating/Editing
@@ -126,12 +126,8 @@ Don't request reviewers unless the user names them — the author self-reviews f
 ## Labels
 Tag "Refactoring" (and title it `[REFACTOR]`) only when behaviour is unchanged. A change that alters behaviour, including how the UI looks, is a feature or fix, even if it is mostly restructuring.
 
-## Code review (local, different model)
-This repo does not use PR review bots — do not post any `@`-mention review trigger on the PR. After creating or editing the PR, run the review **locally with the Codex CLI** — a different model from Claude Code, for an unbiased, different-perspective check. Review against the applicable coding-standard skills under `~/dotfiles/.ai/skills/` (Laravel coding, Laravel tests, PHP linter/static-analysis/test, email templates), not generic advice.
-
-Run the `/custom-pr-self-review` command — it loads these standards, runs PHPStan, and carries the exact Codex invocation. Don't restate the command here.
-
-Skip only if Codex is rate-limited/unauthenticated; note that you couldn't get the second opinion. Surface its findings to the user — don't silently accept or discard them.
+## Code review
+This repo does not use PR review bots — do not post any `@`-mention review trigger on the PR. Code is reviewed before it is committed, by the review gate in the `custom-general-coding` skill, so creating or editing a PR runs no second review. Run `/custom-pr-self-review` only when the user asks. If this session did not write the branch's commits, say the gate may not have run on them and offer the command.
 
 ## Dependency bumps
 When the PR diff touches `package.json`, `composer.json`, a lockfile, or a `uses:` line in `.github/workflows/`, run `custom-gh-dependabot-assess` on the new PR right after creating it. The assessment comment is what the reviewer reads instead of the changelog.
