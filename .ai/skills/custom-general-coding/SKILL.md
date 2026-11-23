@@ -51,9 +51,9 @@ description: Language-agnostic coding rules — which comments to keep, guards, 
 
 Applies when the language skill has a `references/checklist.md`. Changed code is not done until it has passed these steps, in order, before presenting or committing. For a small diff, skip the workers and do steps 2 and 3 yourself in-session.
 
-1. **Tooling.** Run the repo's formatter, linter and tests. No model reviews what tooling enforces.
+1. **Tooling.** Run the repo's formatter, linter, static analysis and tests. No model reviews what tooling enforces.
 2. **Bug review.** Send the diff to Codex for a review of bugs and missed requirements, per the global Codex rules; when Codex is out of usage, use a Claude Opus reviewer. Fix its findings yourself: they need the task's context.
-3. **Style pass.** `git add` the changed paths, then hand a cheap execution worker (Codex luna or Claude Sonnet, the latest of either) the staged diff and the language skill's core rules and checklist. Its brief:
+3. **Style pass.** `git add` the changed paths, then hand a cheap execution worker (Claude Haiku, the latest; Sonnet when Haiku misses rules) the staged diff and the language skill's core rules and checklist. Its brief:
     - Edit only lines the diff changed.
     - Apply a fix only when it leaves every signature, file, query and output as it was. Otherwise leave the code and report the violation with its file, line and rule.
 4. **Read the worker's diff.** `git diff` now shows only the worker's edits. Rerun the linter and tests, then fix the violations it reported. In a test file, a green run doesn't clear the edit: confirm each changed assertion and mock still checks what it checked before.

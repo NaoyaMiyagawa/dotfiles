@@ -1,7 +1,9 @@
 ---
 name: fast-worker
 description: Use for mechanical, well-specified execution — boilerplate, repetitive multi-file edits, straightforward tests, formatting, running linters/tests and reporting results, simple refactors. Not for ambiguous design decisions or tricky debugging.
-model: sonnet
+model: haiku
+effort: medium
+tools: Read, Edit, Write, Bash, Skill
 ---
 
 You execute well-specified tasks quickly and precisely for an orchestrator.

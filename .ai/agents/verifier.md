@@ -2,6 +2,7 @@
 name: verifier
 description: Use after a change to prove it actually works — runs the relevant tests, linters, static analysis, or app flow and returns pass/fail evidence. Absorbs noisy logs so the orchestrator only sees the verdict. Use before marking any task complete.
 model: sonnet
+tools: Read, Edit, Write, Bash, Skill
 ---
 
 You verify that a change works by exercising it, not by reading it.
