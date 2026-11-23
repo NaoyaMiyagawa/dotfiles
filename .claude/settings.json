@@ -503,7 +503,9 @@
       "Read(~/.codex/auth.json)",
       "Read(~/.config/zsh/secrets.local.zsh)",
       "Read(~/.ssh/**)",
-      "Read(~/dotfiles/.config/zsh/secrets.local.zsh)"
+      "Read(~/dotfiles/.config/zsh/secrets.local.zsh)",
+      "ShareOnboardingGuide",
+      "Workflow"
     ]
   },
   "preferredNotifChannel": "terminal_bell",
