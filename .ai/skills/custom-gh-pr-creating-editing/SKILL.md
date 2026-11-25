@@ -46,7 +46,7 @@ The 30-second rule covers the part above the fold. When the PR introduces a subs
 When the PR's point is that something got faster, cheaper, or smaller, or that rendered output stayed the same (a dependency upgrade checked against Storybook), the description shows the result, not just the claim.
 
 - Put the evidence under the template's screenshots or results section: it is the outcome of the change.
-- Use a two-column `| Before | After |` table with one row per screenshot pair. Each cell carries the screenshot plus a one-line caption naming the step and the measurement, e.g. `Before: container init took 42s` / `After: container init took 9s`. Bold the After cells so the gain reads at a glance.
+- Use a two-column HTML `<table>` (Before and After headers) with one row per screenshot pair, so the shots sit side by side. Inside each `<td>`, put the image as markdown between blank lines (`![before](./before.png)`) so `--attach` still rewrites the path. Each cell carries the screenshot plus a one-line caption naming the step and the measurement, e.g. `Before: container init took 42s` / `After: container init took 9s`. Bold the After cells so the gain reads at a glance.
 - One table per change lever (e.g. health-check tuning vs. tmpfs mount) so a reader can attribute each gain to a specific change, not to the PR as a whole.
 - State in one sentence why the change is faster (the mechanism), not only that it is.
 - Screenshots of a new flow (no before state): when the template has no screenshots section, add `## Screenshots` ahead of the closing notes section, give each flow its own `###` heading, and put that flow's shots in a table with a one-line label per shot.
