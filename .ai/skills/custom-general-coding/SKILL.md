@@ -46,6 +46,7 @@ description: Language-agnostic coding rules — which comments to keep, guards, 
 - **Read Fixed Values From The Loaded Schema**: A fixed value that a schema or spec file the code already loads carries (a context URL, an allowed-values list) is read from that file, not hardcoded as a second copy.
 - **API Errors Carry A Code**: An API error response includes a stable error code or type string alongside the HTTP status and message, so integrators can branch on the exact cause.
 - **A Feature Flag Gates Availability Only**: A flag decides whether an option exists. Behaviour that differs per record is a setting on that record, never implied by the flag being on.
+- **Null Must Still Clear A Field**: Don't fill an omitted or null input from the previous record's value (`$input ?? $latest->value`) deep in a shared write path; then a caller can never clear the field. Assign the input as given, and let the caller that wants to carry a value over pass it explicitly.
 
 ## Review gate
 

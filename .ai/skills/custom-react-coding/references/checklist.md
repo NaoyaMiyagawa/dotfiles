@@ -97,3 +97,5 @@ The review gate in `../SKILL.md` enforces this list; the design rules live there
     (`<DocumentList onSelectDocument={onSelectDocument} />`).
 14. **Two mutually exclusive elements render from one ternary,** not two
     complementary `&&` blocks.
+15. **A tooltip is the app's styled tooltip component,** never the browser's
+    native `title` attribute.

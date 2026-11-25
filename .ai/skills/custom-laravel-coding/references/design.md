@@ -63,6 +63,7 @@ Before writing a kind of code listed here (a model, a resource, a migration, a r
 - Dispatch domain events from the calling service/action, not inside a model method — side effects belong at the orchestration layer.
 - Expose domain operations as purpose-specific model methods — a single-record updater, or intention-revealing state transitions (`markIssued()`, `markClaimed()`) — rather than making callers reach for a generic or bulk mutator directly. Keep the shared generic/bulk method as an internal helper the named methods delegate to.
 - Datetime columns cast `immutable_datetime` by default; reach for the mutable `datetime` cast only when a column genuinely needs in-place mutation.
+- A custom cast's `get()` and `set()` return null for a null value before transforming it (`array_map()`, `json_decode()`, a value-object constructor); a nullable column and an explicit null assignment both pass null in.
 
 ## Eloquent
 
@@ -88,7 +89,7 @@ Before writing a kind of code listed here (a model, a resource, a migration, a r
 - A one-off data or index command that every environment needs (a reindex, a backfill command) runs from a migration's `up()` so deploy applies it everywhere — not as a manual step per environment.
 - Several migrations added in one PR share one date prefix with a sequential index (`2026_10_01_000001_…`, `2026_10_01_000002_…`) so they sort next to each other.
 - Fix a not-yet-merged migration in place; corrective migrations are only for schema already merged or released.
-- Column order: foreign keys right after the `id`/`uuid` key columns; audit-style FKs (`created_by`, `updated_by`) near `timestamps()`. Mirror that order when populating a new model instance: `->associate()` the owning relations right after `new Xxx()`, audit relations next to the timestamps.
+- Column order: foreign keys right after the `id`/`uuid` key columns; audit-style FKs (`created_by`, `updated_by`) near `timestamps()`. A column added to an existing table goes after the last domain column, before the timestamps (`->after('...')`), not at the end. Mirror that order when populating a new model instance: `->associate()` the owning relations right after `new Xxx()`, audit relations next to the timestamps.
 - One migration per schema change and one `Schema::table()` call per table per direction — don't split a change across files or `table()` calls without a stated reason.
 
 ## Routing
