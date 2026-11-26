@@ -33,6 +33,7 @@ Prefer fast, purpose-built tools; fall back to a legacy default only when the mo
 - Find or rewrite code by shape (every call to a method, every class extending a base) → `ast-grep run -l php -p '$OBJ->middleware($$$)' app`. `$NAME` matches one node, `$$$` any number. Reach for it when `rg` on the name also returns comments, strings, and unrelated methods.
 - Find code by what it does, when you have no name to search for → `ccc search --lang php "<what the code does>"`, only in a repo that has a `.cocoindex_code/` directory. Pass `--lang`: unfiltered results are mostly JSON and text files. Add `--refresh` after large changes. Hits are leads; confirm them with `rg` before relying on one.
 - Search the Obsidian vault's notes and specs → `qmd query "<question>" -c obsidian`. qmd indexes Markdown notes, not code; the `custom-obsidian-wiki-query` skill covers query craft.
+- Rename, move, or find links between Obsidian notes → the `obsidian` CLI (`obsidian rename`, `move`, `backlinks`, `unresolved`), so links stay intact; the `obsidian-cli` skill has the syntax. It needs the desktop app running. A sandbox that blocks `~/.obsidian-cli.sock` gives the same "unable to find Obsidian" error, so in a sandbox ask to run the command outside it first. Work on the files directly only when the app really is closed.
 - Simple find-and-replace in files → `sd` (not `sed`)
 - Query/edit JSON → `jq`; YAML → `yq`
 - Fetch URLs, call HTTP APIs, extract from pages → `ax` (not `curl` + throwaway parsing scripts); run `ax agent-context` for usage
