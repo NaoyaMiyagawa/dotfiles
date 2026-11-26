@@ -18,6 +18,7 @@
     "figma@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": false,
     "mattpocock-skills@claude-plugins-official": true,
+    "obsidian@obsidian-skills": true,
     "php-lsp@claude-plugins-official": false,
     "ponytail@ponytail": true,
     "postman@claude-plugins-official": false,
@@ -33,6 +34,12 @@
       "autoUpdate": true,
       "source": {
         "repo": "tomasz-tomczyk/crit",
+        "source": "github"
+      }
+    },
+    "obsidian-skills": {
+      "source": {
+        "repo": "obsidianmd/obsidian-skills",
         "source": "github"
       }
     },
