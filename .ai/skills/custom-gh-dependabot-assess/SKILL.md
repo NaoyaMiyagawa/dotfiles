@@ -55,7 +55,7 @@ Work PRs sequentially by default. In Claude Code, one worker per PR (max 2 concu
 
 ## Comment rules
 
-- Two visible lines (`**Risk:**`, `**Summary:**`), one `<details>` fold, footer, marker. No `#` headings anywhere.
+- Two visible lines (`**Risk:**`, `**Summary:**`), one `<details>` fold, footer, marker. No `#` headings anywhere. The `dependabot-triage` scheduled task may add a third line, `**Gate:**`, after `**Summary:**`; a reassess drops it, because the gate names a commit and the task adds it again on its next run.
 - Inside the fold, write each section as a bullet with a bold label and a colon (`- **Risk**:`). Put its points on nested bullets below, each led by a short bold title (`  - **Breaking changes**: ...`, `  - **API changes**: ...`). Do this even when the section has one point.
 - Write the comment as if it were the first one. Readers see only the latest version, so never mention an earlier assessment or what changed since; tell the user in chat instead.
 - `{{category}}` label: `direct:production` → `prod (direct)`, `direct:development` → `dev (direct)`, `indirect` → `prod (transitive)` or `dev (transitive)` from the lockfile (npm `"dev": true`, Composer `packages-dev`), GitHub Actions → `ci`.
