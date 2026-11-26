@@ -1,6 +1,6 @@
 ---
 name: custom-obsidian-wiki-write
-description: Write or update knowledge in the personal Obsidian knowledge wiki. Use when the user wants to capture a requirement, spec, business rule, decision, or architecture note; record what was just built or learned; ingest a source document; or file a synthesized answer back as a page ("add this to the wiki", "document this in Obsidian", "update the auth page"). NOT for the LLM Wiki desktop app; pair with `obsidian-markdown` for syntax.
+description: Write or update knowledge in the personal Obsidian knowledge wiki. Use when the user wants to capture a requirement, spec, business rule, decision, or architecture note; record what was just built or learned; ingest a source document; or file a synthesized answer back as a page ("add this to the wiki", "document this in Obsidian", "update the auth page"). NOT for the LLM Wiki desktop app; pair with `obsidian:obsidian-markdown` for syntax.
 ---
 
 # Custom Obsidian Wiki Write
@@ -13,7 +13,7 @@ conventions and workflows.
 
 - Use to add or update durable knowledge: requirements, specs, business rules, decisions, architecture, or a reusable answer.
 - Capture the *what* and *why* (intent, rules, constraints) — NOT code mechanics; those live in git.
-- Names the **LLM Wiki** app → outside this skill's scope. Pure Markdown-syntax questions → `obsidian-markdown`.
+- Names the **LLM Wiki** app → outside this skill's scope. Pure Markdown-syntax questions → `obsidian:obsidian-markdown`.
 
 ## Vault layout
 
@@ -23,12 +23,22 @@ conventions and workflows.
 - The vault is outside your repo — to write, run `/add-dir "$OBSIDIAN_VAULT"` first.
 - The vault is indexed as the **qmd collection `obsidian`**; anything you write must be re-indexed (step 8) before it's searchable.
 
+## Obsidian CLI
+
+When the desktop app is running (`obsidian help` succeeds), use the `obsidian` CLI for link-aware work; the `obsidian:obsidian-cli` skill has the syntax. `path=` is vault-relative.
+
+- Rename or move a page with `obsidian rename` / `obsidian move`, never `mv`, so Obsidian rewrites the links to it.
+- Before renaming, splitting, or merging a page, list what links to it: `obsidian backlinks path=<page>`.
+- Check the graph after writing: `obsidian unresolved` (links to missing pages) and `obsidian orphans` (pages nothing links to).
+- Write page bodies as files, not with `content=`: it converts every `\n` and `\t`, which corrupts text with backslashes, and it fails past about 4 KB.
+- If the app isn't running, do the same with files and Grep, and fix inbound links by hand after a rename.
+
 ## Workflow
 
 1. **Scope the project.** Use the one the user names, else infer from CWD (repo named `foo` → `projects/foo`), else ask.
 2. **Pick the target.** Read `index.md` and Grep `wiki/` to find an existing page to update; otherwise create a new page from the matching template. One concept per page — split rather than sprawl. When one concept grows to own multiple pages, freely create a sub-directory for it under `wiki/` and group them there — keep per-module/domain pages under `wiki/modules/` so they're classified apart from cross-cutting notes.
 3. **Write at the right altitude.** Requirements/specs/why. Use frontmatter (`type`, `tags`, `updated`), `[[wikilinks]]` for internal links, and callouts. Cite where it came from in a `## Sources` section (repo paths, source pages, PR/ticket). For pages that document code, also stamp **provenance frontmatter** (see below) so drift can be detected later.
-4. **Keep the graph healthy.** Create pages for referenced concepts that lack one; update cross-references on related pages; flag conflicts with the existing wiki using `> [!warning]` instead of silently overwriting. Resolve any `> [!question] Open questions` the new knowledge answers.
+4. **Keep the graph healthy.** Create pages for referenced concepts that lack one (`obsidian unresolved` lists them); update cross-references on related pages; flag conflicts with the existing wiki using `> [!warning]` instead of silently overwriting. Resolve any `> [!question] Open questions` the new knowledge answers.
 5. **Update the spine.** Add/refresh the entry in `index.md` (correct category), and bump the page's `updated:` to today's date.
 6. **Log it.** Add one line to the **top** of `log.md` (newest first, so the latest updates are visible without scrolling): `## [YYYY-MM-DD] ingest | <what changed; link the pages>` (use today's date).
 7. **Raw sources.** Drop raw files into `sources/` (immutable — never edit them), then summarize each as a `type: source` page from `templates/source-summary.md`.

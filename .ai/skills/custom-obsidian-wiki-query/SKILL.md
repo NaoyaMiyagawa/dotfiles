@@ -41,6 +41,8 @@ qmd multi-get "#f40328,#db3667" --format md
 
 If a model-backed command fails (models/GPU unavailable), fall back to `qmd search`, then to Grep/Read over the resolved `$OBSIDIAN_VAULT` paths.
 
+When the Obsidian app is running, `obsidian backlinks path=<vault-relative page>` lists the pages that link to a hit, which finds related pages that share no wording with the query. The `obsidian:obsidian-cli` skill has the syntax. Its `search` is lexical only, so qmd stays the primary search.
+
 ## Workflow
 
 1. **Scope the project.** If the user names one, use it. Else infer from CWD (working in a repo named `foo` → `projects/foo`). Else search the whole collection.
