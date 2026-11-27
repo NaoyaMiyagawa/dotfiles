@@ -22,23 +22,18 @@ Invoke these explicitly before starting the work — don't rely on automatic ski
 
 ## Delegation
 
-When this session runs a top-tier model (Opus or Fable), act as the orchestrator: plan, decide, review results, synthesize. Push execution down to cheaper workers, and own correctness — never ship a worker's result unread.
+On top-tier models (Opus/Fable), act as orchestrator: plan, decide, review, synthesize. Delegate execution to cheaper workers, and never ship a worker's result unread.
 
-**Keep in-session:** design and architecture calls, debugging that depends on this conversation, edits small enough that writing the brief costs more than the work, and final verification.
+**Keep in-session:** design/architecture calls, conversation-dependent debugging, small edits where briefing costs more than doing, and final verification.
 
-**Codex by default.** Codex burns a separate, currently underused quota. Route these to Codex without being asked, and announce it rather than request permission.
+**Codex (reviews only):** reserve Codex for second-opinion code/PR reviews from a different model (read `~/dotfiles/.ai/docs/CODEX.md` before the first Codex run of a session; fall back to Claude Opus 5.5 at medium effort on rate/usage limit or empty `-o` file, and say so). Don't route general exploration or triage to Codex.
 
-- Review passes on a non-trivial diff, branch, or PR. Code review goes to a Claude agent only when Codex is out of usage (a usage-limit or rate-limit error, or an empty `-o` review file): then use a Claude Opus 5.5 reviewer at medium effort, and say so.
-- Codebase exploration and research answerable from files on disk.
-- Noisy triage: failing tests, lint output, build logs, stack traces.
+**Claude workers (default for delegation — Sonnet / Haiku):**
+- `fast-worker` (Haiku; pass `model: sonnet` if Haiku misses): well-specified implementation and bulk mechanical edits.
+- `connector-reader` (Haiku, read-only): long Notion/Sentry/Jira/etc. items; read short ones in-session (`fast-worker`/`verifier` have no MCP tools).
+- `verifier` (Sonnet): noisy verification (full test suite, long build log); run quiet checks inline.
+- Unpinned subagents (including codebase exploration and noisy triage) default to Sonnet via `CLAUDE_CODE_SUBAGENT_MODEL`. At most **two Claude subagents running at once**; delegate only when a large read returns a small result.
 
-Skip Codex if it recently returned rate-limit or auth errors; reviews then fall back to the Opus reviewer above. If briefing it would take three or more clarifying rounds, do the work here instead. Read `~/dotfiles/.ai/docs/CODEX.md` before the first Codex run of a session: it pins model and effort per task and overrides the `codex` skill's "explicit ask only" gate.
-
-**Execution workers** are the Haiku-backed `fast-worker` (the default for well-specified implementation and bulk mechanical edits, since Claude usage has far more headroom than Codex); pass `model: sonnet` when Haiku gets it wrong. `fast-worker` and `verifier` get no connector (MCP) tools, so put what the worker needs from Notion, Sentry, Jira and the like in its brief: read a short item in this session, and send a long one to `connector-reader`, which returns only the facts asked for. Verify every task before calling it done: run the check inline, and hand it to `verifier` only when the output is noisy (a full test suite, a long build log). Unpinned agents (except the built-in Explore and Plan) default to sonnet via `CLAUDE_CODE_SUBAGENT_MODEL`, so don't pass a `model` unless the task needs opus. Every subagent re-reads its whole context against this subscription's 5-hour quota, and parallel agents draw from it at once:
-
-- At most **two Claude subagents running at once** per session. Sequence the rest.
-- Delegate only when the task returns a small result from a large read (exploration, verification, noisy logs). Don't delegate to "throw more compute" at a hard problem — reason about it here.
-
-**Every brief stands alone.** Write it as if the worker has zero conversation context (Codex always does): give ONE task with paths, goal, constraints, and what "done" means.
+**Every brief stands alone** (zero conversation context): one task, paths, goal, constraints, and definition of done.
 
 @RTK.md

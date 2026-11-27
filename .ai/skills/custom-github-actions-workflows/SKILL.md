@@ -1,6 +1,6 @@
 ---
 name: custom-github-actions-workflows
-description: Applies GitHub Actions authoring conventions — composite actions, step naming, multi-flag commands, and repo-local workflow rules. Use when adding or editing anything under .github/workflows/ or .github/actions/.
+description: GitHub Actions conventions (composite actions, step naming, multi-flag comments, repo README). Use when editing `.github/workflows/` or `.github/actions/`.
 ---
 
 # GitHub Actions workflows

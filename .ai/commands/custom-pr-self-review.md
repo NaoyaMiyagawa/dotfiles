@@ -4,32 +4,29 @@ description: "Self-review current branch PR diffs against Laravel/PHP coding sta
 
 PR self-review: verify every line you (or this session) changed matches the coding standards captured in the dotfiles skills below. **Read each listed file in full** before judging the diff.
 
-## Mandatory: load standards from these skill files
+## Mandatory: load standards for touched file types
 
-Read **every** path below (full file). Treat them as the source of truth for review criteria—not memory or generic Laravel/PHP advice.
+Read only the files that apply to the diff's changed paths (get the changed file list first via `git diff --name-only <base>...HEAD`). Treat them as the source of truth—not memory or generic advice.
 
 **All code**
+- `~/dotfiles/.ai/skills/custom-general-coding/SKILL.md` (and `references/checklist.md` if doing the style pass in-session)
 
-- `~/dotfiles/.ai/skills/custom-general-coding/SKILL.md`
-
-**Laravel**
-
+**Laravel production PHP (when non-test PHP files changed)**
 - `~/dotfiles/.ai/skills/custom-laravel-coding/SKILL.md`
 - `~/dotfiles/.ai/skills/custom-laravel-coding/references/checklist.md`
-- `~/dotfiles/.ai/skills/custom-laravel-coding/references/design.md`
+- Relevant sections of `~/dotfiles/.ai/skills/custom-laravel-coding/references/design.md` (only for kinds of code touched: models, resources, migrations, routes, jobs, etc.)
+
+**Pest tests / factories (only when test or factory files changed)**
 - `~/dotfiles/.ai/skills/custom-laravel-writing-tests/SKILL.md`
 - `~/dotfiles/.ai/skills/custom-laravel-writing-tests/references/checklist.md`
 
-**PHP**
+**PHP tooling (when PHP files changed)**
+- `~/dotfiles/.ai/skills/custom-php-sail/SKILL.md`
 
-- `~/dotfiles/.ai/skills/custom-php-running-linter/SKILL.md`
-- `~/dotfiles/.ai/skills/custom-php-running-static-analysis/SKILL.md`
-- `~/dotfiles/.ai/skills/custom-php-running-test/SKILL.md`
-
-
-**Other applicable standards (read when the diff touches them)**
+**Other applicable standards (only when touched)**
+- React/TSX → `~/dotfiles/.ai/skills/custom-react-coding/SKILL.md` + `references/checklist.md`
 - Blade email templates → `~/dotfiles/.ai/skills/custom-email-html-template-review/SKILL.md`
-- Any other `custom-*` coding-standard skill relevant to the changed files — list it under Scope so the criteria are explicit.
+- Any other relevant `custom-*` coding skill — list it under Scope.
 
 ## Get the change set to review
 
@@ -42,7 +39,7 @@ Scope the review to **files touched in that diff**. If the user’s intent is �
 
 In the **application repository** (the repo whose PR you are reviewing), when PHP is in scope for that project and `phpstan` is available:
 
-1. Follow `~/dotfiles/.ai/skills/custom-php-running-static-analysis/SKILL.md` for **how** to invoke PHPStan (e.g. Sail vs plain `vendor/bin/phpstan`).
+1. Follow `~/dotfiles/.ai/skills/custom-php-sail/SKILL.md` for **how** to invoke PHPStan (Sail).
 2. Run analysis on an appropriate scope for this change set (at minimum: all PHP files touched in the branch diff vs base; use the skill’s file-targeted command; run full-app analysis only when the user explicitly asks).
 3. **Requirement**: PHPStan must complete with **no errors** (exit zero, no reported issues at the configured baseline/level). If it fails, treat that as **blocking**: overall summary is **fail**, list PHPStan findings first under **Findings**, and do not imply the branch passes review until those are resolved or you explicitly note why PHPStan could not be run (e.g. workspace is dotfiles-only, no `vendor`, or project does not use PHPStan).
 
@@ -66,7 +63,7 @@ A self-review by the same model that wrote the code shares its blind spots. Get 
 
 ```bash
 cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-timeout 600 codex exec -c model_reasoning_effort=medium -o <scratchpad>/codex-review.md "Review the diff from \`git diff <base>...HEAD\` (or \`gh pr diff\`). Read the coding-standard skills under ~/dotfiles/.ai/skills/ for criteria. Flag violations, bugs, risks, and missing tests with file:line and a concrete fix. Do not edit files." < /dev/null
+timeout 600 codex exec -p delegated -c model_reasoning_effort=medium -o <scratchpad>/codex-review.md "Review the diff from \`git diff <base>...HEAD\` (or \`gh pr diff\`). Check bugs, edge cases, risks, and missing tests against these standards files: <exact list of loaded skill paths>. Flag violations with file:line and a concrete fix. Do not edit files." < /dev/null
 ```
 
 Fold Codex's findings into the output: **attribute them** (e.g. "Codex flagged …") and reconcile disagreements with your own pass rather than blindly accepting or discarding them. You own correctness.

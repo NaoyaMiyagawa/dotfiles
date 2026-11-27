@@ -1,6 +1,6 @@
 ---
 name: custom-sonarcloud-context-fetching
-description: Fetch SonarCloud / SonarQube context with the installed `sonar` CLI. Use when the user shares a sonarcloud.io URL or a project / issue / hotspot / rule key, or asks for quality-gate status, issues, security hotspots, measures, or rule details. Read-only.
+description: Read-only SonarCloud/SonarQube lookup via `sonar` CLI (quality gate, issues, hotspots, measures, rules) from a URL or key.
 ---
 
 # Custom SonarCloud Context Fetching

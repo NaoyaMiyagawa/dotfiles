@@ -1,133 +1,62 @@
 ---
 name: custom-gh-pr-creating-editing
-description: Create or edit the GitHub pull request for the current branch — title format, concise description, reference bullets, and assignee. Use when the user asks to create or edit a PR.
+description: Create or edit a GitHub PR for the current branch — title format, concise body, reference bullets, labels, and assignee. Use when asked to create or edit a PR.
 ---
 
 # Custom GitHub PR Creating/Editing
 
 ## Title
-When the branch or PR is Jira-driven (ticket key in the branch name, a ticket the user named or you created during the session, or the work clearly maps to a Jira issue you can identify), set the GitHub PR title to **bracketed issue key, space, then title**: `[KEY] Title` where `KEY` is the Jira issue key (e.g. `AN-1000`) and `Title` is the Jira **Summary** verbatim (no rephrasing).
 
-Example: `[AN-1000] User Management Page`
-
-If you only have the key, fetch Summary from Jira (CLI or UI) before `gh pr create` / `gh pr edit`. Prefer this format over an invented title unless the repository documents a different naming rule that takes precedence.
-
-**The title must be scannable at a glance.** A reviewer browsing the PR list should grasp what the PR does without opening it. Name the outcome, not the mechanics. Avoid stacked qualifiers, internal-only jargon, or trailing "(...)" notes that belong in the body.
-
-- Good: `[REFACTOR] Switch Organization endpoint - Use model-binding`
-- Bad:   `[REFACTOR] Refactor SwitchOrganizationRequest to remove authorize() block and migrate org_id to route param for cleaner auth (SonarCloud)`
-
-When the PR is **not** Jira-driven, the title is `[TAG] <Area or tool> - <Outcome>`: a short bracketed tag that mirrors the label (`[FIX]`, `[REFACTOR]`), the area or tool the change touches, a hyphen, then the outcome — `[FIX] API Doc - Show one document in the trigger request example`, `[REFACTOR] Rector - Auto-insert query() to model method calls`. Never invent a Jira-style key.
-
-- A fix for a Sentry issue: `[Sentry Fix] <outcome>` (e.g. `[Sentry Fix] Skip per-document media order lookup when attaching uploaded PDFs`). Once a Jira ticket exists for it — including one created in this session — the key leads: `[KEY] [Sentry Fix] <outcome>`.
-- Follow-up work on a ticket that already shipped a PR: reuse the same key, no new Jira ticket — `[KEY] Follow up - <what this PR does>`. A PR that addresses review comments left on an earlier PR is `[KEY] Follow up - Review fixes (#<earlier PR>)`, on a branch named `<earlier PR's branch>--follow-up`.
-- PRs in one stack are one piece of work: every title leads with the same `[KEY]` (or the same short bracketed effort tag, e.g. `[Speed-up CI]`, when no ticket exists) so the chain reads as one in the PR list, and every description links the same ticket. When only the last PR carries screenshots or recordings, the screenshots section of each earlier PR says `The last PR in the chain ({PR link}) has screenshots`, not `N/A`.
-- A new PR in an ongoing series (a sibling sub-ticket under the same parent, or a PR alongside open ones for the same feature) copies the siblings' title prefix after the key (e.g. `[KEY] Feature Area - <outcome>`) and their milestone. Check a sibling with `gh pr view <n> --json title,milestone` before creating; give a sub-ticket you create the same summary prefix.
+- **Jira-driven** (key in branch, named by user, or created in session): `[KEY] Summary` verbatim from Jira (`[AN-1000] User Management Page`). Fetch Summary from Jira if you only have the key.
+- **Not Jira-driven**: `[TAG] <Area or tool> - <Outcome>` matching the label (`[FIX] API Doc - Show one document in trigger example`, `[REFACTOR] Switch Organization endpoint - Use model-binding`). Name the outcome, not mechanics; never invent a Jira key.
+- **Sentry fix**: `[Sentry Fix] <outcome>`, or `[KEY] [Sentry Fix] <outcome>` once a Jira ticket exists.
+- **Follow-up on shipped ticket**: reuse `[KEY]` — `[KEY] Follow up - <what this PR does>`. Review-fix follow-up: `[KEY] Follow up - Review fixes (#<earlier PR>)` on `<earlier branch>--follow-up`.
+- **Stacked PRs**: every PR in a stack shares the same `[KEY]` (or bracketed effort tag) and ticket link. If only the last PR has screenshots, earlier PRs say `The last PR in the chain ({PR link}) has screenshots`.
+- **Sibling series**: copy siblings' title prefix after `[KEY]` and milestone (`gh pr view <n> --json title,milestone`).
 
 ## Description
 
-### Keep it concise
-Long PR descriptions hurt review more than they help. The diff and commit messages already say *what* changed; the description's job is **why** and the small handful of non-obvious notes a reviewer needs.
+Follow the repo's PR template (`.github/pull_request_template.md` / `PULL_REQUEST_TEMPLATE*.md`) if one exists; place rules below inside its headings. Target a <30-second read above the fold:
 
-- Lead with the motivation in 1–3 sentences. Skip a "Background" preamble if the title already conveys it.
-- List concrete changes as short bullets, not paragraphs. One bullet per behavioural change is enough — don't enumerate every touched file (the diff's file list already covers that).
-- Move per-line rationale to inline PR review comments on your own diff (single-PR self-review), not into the description.
-- Cut "Notes" / "Behavioural notes" / "Further comments" sections unless they carry information not derivable from the diff (e.g. an out-of-scope decision, a follow-up PR, a non-obvious test gap).
-- **Link, don't duplicate.** When a detail already lives in a committed doc, issue, or ticket, link to it instead of pasting its content into the description — a second copy drifts from the source the moment either side changes. Keep the canonical version in one place and point the PR at it.
-- When a refactor moves an existing validation rule or guard, say where it lived before and why it exists.
-- Validation logs go inside the `<details>` block (see below) so they don't dominate the visible body.
-- **Editing an existing description:** keep everything the user added by hand — screenshots, videos, notes — and change only the sections the request covers.
+- Lead with motivation in 1–3 sentences (skip "Background" if the title covers it).
+- Short bullets per behavioural change — don't list every touched file. Put per-line rationale in inline review comments, not the body.
+- Cut "Notes" sections unless they carry non-derivable info (out-of-scope decision, follow-up PR, test gap). **Link, don't duplicate** existing docs/tickets.
+- For refactors moving a validation rule or guard, state where it lived and why.
+- **Editing an existing PR**: preserve user-added screenshots, videos, and notes; edit only requested sections.
+- **Unfamiliar subsystem/protocol**: add a reading guide at the bottom per `custom-gh-pr-reading-guide` (`~/dotfiles/.ai/skills/custom-gh-pr-reading-guide/SKILL.md`).
+- **Before/after evidence or Sentry fix**: read [references/special-sections.md](references/special-sections.md).
 
-If the resulting body feels short, that's the goal. A reviewer should be able to read it in under 30 seconds.
+### References (top of description)
 
-The 30-second rule covers the part above the fold. When the PR introduces a subsystem, protocol, or vocabulary of types the reviewer has no prior model of, add a reading guide as the last section of the body — see `custom-gh-pr-reading-guide` — and keep everything above it as short as it would have been anyway.
+Per global rule, every GitHub issue/PR reference sits on its own `- ` bullet line (blank line before list, never inline). Stack applicable blocks at the very top in this order:
 
-### Before/after evidence
-When the PR's point is that something got faster, cheaper, or smaller, or that rendered output stayed the same (a dependency upgrade checked against Storybook), the description shows the result, not just the claim.
-
-- Put the evidence under the template's screenshots or results section: it is the outcome of the change.
-- Use a two-column HTML `<table>` (Before and After headers) with one row per screenshot pair, so the shots sit side by side. Inside each `<td>`, put the image as markdown between blank lines (`![before](./before.png)`) so `--attach` still rewrites the path. Each cell carries the screenshot plus a one-line caption naming the step and the measurement, e.g. `Before: container init took 42s` / `After: container init took 9s`. Bold the After cells so the gain reads at a glance.
-- One table per change lever (e.g. health-check tuning vs. tmpfs mount) so a reader can attribute each gain to a specific change, not to the PR as a whole.
-- State in one sentence why the change is faster (the mechanism), not only that it is.
-- Screenshots of a new flow (no before state): when the template has no screenshots section, add `## Screenshots` ahead of the closing notes section, give each flow its own `###` heading, and put that flow's shots in a table with a one-line label per shot.
-- Screenshots show the page only. Hide browser chrome such as the bookmark bar before capturing.
-- Upload the images yourself: write the table with local paths (`![before](./before.png)`) and pass each file as `--attach './before.png#alt text'` on `gh pr create` / `gh pr edit`; gh rewrites the references to the uploaded URLs. Never hand the upload to the user.
-
-### Repository PR template
-Before drafting or editing the PR body, look for the repo's GitHub pull request template (common paths: `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE.md`, or `.github/PULL_REQUEST_TEMPLATE/*.md`). **Follow that template:** keep its section headings and fill every section it defines; add the rules below (references, Jira, validation) *inside* the template structure rather than ignoring the template. If the repo has no template, use a clear structured body consistent with team practice.
-
-### Reference
-
-**Rule (enforced):** Every GitHub Issue or Pull Request reference (`#{number}`, full `https://github.com/...` URL, or `owner/repo#{number}`) **must** be written as its own bullet item starting with `- ` on its own line. This is the only way GitHub's UI expands the reference into the linked page's title.
-
-```md
-- #{issue_number}
-```
-
-- One reference per `- ` bullet line — never two refs on the same line.
-- The `- ` bullet must be the start of a new line (blank line before the list if it follows a paragraph), or GitHub will not expand it.
-- **Never embed a reference inline** inside a sentence or a change bullet (e.g. `Fixes the bug from #123`). Inline refs still render but defeat title expansion and make the line hard to scan — pull the ref onto its own `- ` line instead.
-
-These blocks all sit at the top of the description; when more than one applies, stack them in this order — `close:`, then `Previous:`, then `Next:`, then the motivation.
-
-When the task is to solve a GitHub Issue, and the code changes covers the all required changes to solve the GitHub Issue, use `close:` prefix to auto-close the issue. Place it at the very top.
 ```md
 - close: #{issue_number}
-```
 
-When there is a base branch, and it has a PR, write this below the `close:` line (if any).
-```md
 Previous:
-- #{pr_number}
-```
+- #{base_pr_number}
 
-When there is a branch based on this branch, write this after `Previous:` (if any).
-```md
 Next:
-- #{pr_number}
+- #{child_pr_number}
 ```
 
-### Jira ticket link
-If GitHub PR template has a dedicated section for Jira ticket link and you find applicable ticket based on the ticket key in branch name, put a ticket link in the dedicated section in the template. (PR title should still use the **`[KEY] Title`** pattern from the **Title** section when the work is Jira-driven, with `Title` taken from Jira Summary.)
+Use `close:` only when the PR fully resolves the issue.
 
-For a Sentry fix, put a Sentry summary under the Jira link, and put the same block in the Jira ticket (without the ticket line) — show the block and ask before editing the ticket unless the user already asked for the Jira update. Bold every label. Pull the figures from Sentry itself. The issue's environment tag distribution gives the per-environment split; don't copy numbers from an old report.
+### Validation run (end of description)
 
-```md
-- **Ticket:** https://<org>.atlassian.net/browse/PROJ-1234
+Omit entirely if no validation ran; otherwise fold at the bottom:
 
-**Sentry:** APP-294 (https://<org>.sentry.io/issues/APP-294)
-- **Type:** N+1 Query (performance issue, not an exception)
-- **Endpoint:** GET `/workflows/{workflow}/runs` (workflow runs index)
-- **Repeated query:** `select * from document_templates where id = ? ...`
-- **First seen:** 2026-09-11 · **Last seen:** 2026-09-24
-- **Occurrences:** 3 (UAT 2, Staging 1); none in Production; 0 users impacted
-- **Impact:** one extra query per run on the page, so 10 on a default page
-```
-
-Fit the lines to the issue type rather than forcing every one. An exception names the error message instead of **Repeated query**, and a frontend issue names the page or browser instead of **Endpoint**. Add a **Related Sentry:** line for each linked issue. **Impact** says how the cost or failure scales or who it hits; the occurrence count alone doesn't show that.
-
-### Validation Run
-If you ran validation commands, put them at the end of the description inside a `<details>` block so they don't dominate the body. If you ran none, omit the block entirely — don't leave an empty placeholder.
 ```md
 <details>
 <summary>Validation run:</summary>
-- {validation command A}
-- {validation command B}
-- ...
+- {command A}
 </details>
 ```
 
-## Assignees
-Assign @NaoyaMiyagawa.
+## Metadata & post-create
 
-## Reviewers
-Don't request reviewers unless the user names them — the author self-reviews first.
-
-## Labels
-Tag "Refactoring" (and title it `[REFACTOR]`) only when behaviour is unchanged. A change that alters behaviour, including how the UI looks, is a feature or fix, even if it is mostly restructuring.
-
-## Code review
-This repo does not use PR review bots — do not post any `@`-mention review trigger on the PR. Code is reviewed before it is committed, by the review gate in the `custom-general-coding` skill, so creating or editing a PR runs no second review. Run `/custom-pr-self-review` only when the user asks. If this session did not write the branch's commits, say the gate may not have run on them and offer the command.
-
-## Dependency bumps
-When the PR diff touches `package.json`, `composer.json`, a lockfile, or a `uses:` line in `.github/workflows/`, run `custom-gh-dependabot-assess` on the new PR right after creating it. The assessment comment is what the reviewer reads instead of the changelog.
+- **Assignee**: `@NaoyaMiyagawa`.
+- **Reviewers**: none unless user names them.
+- **Labels**: use `Refactoring` / `[REFACTOR]` only when behaviour (including UI) is unchanged.
+- **No review bots**: never `@`-mention review bots. Code is pre-reviewed by the `custom-general-coding` review gate; run `/custom-pr-self-review` only when asked (if this session didn't write the commits, note the gate may not have run and offer it).
+- **Dependency bumps**: if the diff touches `package.json`, `composer.json`, a lockfile, or a workflow `uses:`, run `custom-gh-dependabot-assess` on the new PR right after creating it.

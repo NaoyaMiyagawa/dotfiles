@@ -1,6 +1,6 @@
 ---
 name: custom-laravel-coding
-description: Applies Laravel backend coding conventions for PHP implementation and refactoring. Use when implementing or refactoring Laravel services, controllers, models, actions, or related backend application logic.
+description: Laravel/PHP backend coding conventions (core rules, design guide, review gate). Use when writing or refactoring Laravel services, controllers, models, actions, or migrations.
 ---
 
 Keep changes consistent with existing project patterns unless asked to refactor. Touch only what the task needs — no drive-by renames, reformatting, or edits to unrelated classes; every changed line costs review attention.

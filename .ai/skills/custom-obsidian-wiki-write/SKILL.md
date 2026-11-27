@@ -1,6 +1,6 @@
 ---
 name: custom-obsidian-wiki-write
-description: Write or update knowledge in the personal Obsidian knowledge wiki. Use when the user wants to capture a requirement, spec, business rule, decision, or architecture note; record what was just built or learned; ingest a source document; or file a synthesized answer back as a page ("add this to the wiki", "document this in Obsidian", "update the auth page"). NOT for the LLM Wiki desktop app; pair with `obsidian:obsidian-markdown` for syntax.
+description: Write or update pages in the personal Obsidian knowledge wiki (specs, decisions, architecture, ingested sources, index/log/qmd re-index). Not for the LLM Wiki desktop app.
 ---
 
 # Custom Obsidian Wiki Write

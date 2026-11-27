@@ -1,6 +1,6 @@
 ---
 name: custom-x-post-fetching
-description: Fetch the content of a post on X (a tweet on x.com/twitter.com) from its URL or id, including the quoted original when the post is a quote-repost. Use whenever the user shares an x.com or twitter.com status link, asks what a tweet or X post says, or wants a post's context for implementation, research, or writing. Replies and thread siblings are out of scope.
+description: Fetch an X/Twitter post (and quoted original) from a status URL or ID via the bundled embed-API script.
 ---
 
 # Custom X Post Fetching

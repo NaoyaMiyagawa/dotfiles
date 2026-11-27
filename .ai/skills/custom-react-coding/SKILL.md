@@ -1,6 +1,6 @@
 ---
 name: custom-react-coding
-description: Applies React and TypeScript conventions — file layout, component boundaries, JSX and TS formatting, comments, and specs. Use when implementing or refactoring React components, pages, other TypeScript modules (including e2e test support code), their types, or their specs, or when checking a design or CSS fix in the browser.
+description: React/TypeScript conventions (component boundaries, file layout, props, data lifecycle, browser cache checks). Use when writing or refactoring React/TS modules or specs.
 ---
 
 # React Coding Conventions

@@ -1,6 +1,6 @@
 # Laravel coding checklist — style rules
 
-The review gate in `../SKILL.md` enforces this list; the core rules live there. Every rule here is style: its fix leaves signatures, files, queries and outputs as they were. A rule whose fix doesn't belongs in [design.md](design.md). When a rule here keeps being violated in practice, promote it into the core (move, don't copy). Mechanical rules destined for lint tooling are mapped in [tooling-candidates.md](tooling-candidates.md). Cross-references use section and rule names, not numbers, so a reorder doesn't break them.
+The review gate in `../SKILL.md` enforces this list; the core rules live there. Every rule here is style: its fix leaves signatures, files, queries and outputs as they were. A rule whose fix doesn't belongs in [design.md](design.md). When a rule here keeps being violated in practice, promote it into the core (move, don't copy). Mechanical rules destined for lint tooling are mapped in `../../../docs/laravel-tooling-candidates.md`. Cross-references use section and rule names, not numbers, so a reorder doesn't break them.
 
 ## PHP — formatting and syntax
 

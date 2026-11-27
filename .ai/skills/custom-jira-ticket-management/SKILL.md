@@ -1,6 +1,6 @@
 ---
 name: custom-jira-ticket-management
-description: Create and organize Jira tickets with the installed `jira-cli`. Use when the user asks to create one or more Jira tickets, break a feature/epic/project down into tickets, rewrite or improve a ticket's summary/description, or link and structure related tickets. Covers decomposition into right-sized tickets, clear scope and acceptance criteria, context sharing, and issue linking.
+description: Create, decompose, rewrite, and link Jira tickets via `jira-cli` with right-sized scope and acceptance criteria.
 ---
 
 # Custom Jira Ticket Management

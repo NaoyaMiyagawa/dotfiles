@@ -1,6 +1,6 @@
 ---
 name: custom-pre-release-check
-description: Pre-deploy check of a release tag — diff it against the tag production runs today and report what ops must do before and after deploying (secrets/env keys, migrations, one-off commands, infra) plus behaviour changes to tell customers. Use when the user is about to deploy a release tag or release to production/UAT/staging and asks what setup, env, or secret-manager changes are needed.
+description: Pre-deploy diff check of a release tag against the currently deployed tag — reports required env/secrets, migrations, one-off commands, infra, and customer-facing changes.
 ---
 
 # Pre-Release Check

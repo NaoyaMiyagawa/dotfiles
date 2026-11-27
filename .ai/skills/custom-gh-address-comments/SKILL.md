@@ -1,8 +1,6 @@
 ---
 name: custom-gh-address-comments
-description: Help address review/issue comments on the open GitHub PR for the current branch using gh CLI; verify gh auth first and prompt the user to authenticate if not logged in.
-metadata:
-  short-description: Custom Address comments in a GitHub PR review
+description: Inspect and address review/issue comments on the current branch's open GitHub PR via `gh` CLI (fix, commit per comment, push, reply).
 ---
 
 # PR Comment Handler

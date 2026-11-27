@@ -1,6 +1,6 @@
 ---
 name: custom-code-review-html
-description: Render a code review as a self-contained, triageable HTML report with a markdown hand-off. Use when reviewing a large diff, branch, or PR and the user wants an HTML page or report instead of terminal output, when the reviewer needs to work through findings one at a time, or when another review skill needs a visual output format.
+description: Render a code review as a self-contained, triageable HTML report with markdown hand-off. Use when asked for an HTML code review page or invoked by custom-pr-review-brief HTML mode.
 ---
 
 # Code Review HTML Report
@@ -128,29 +128,4 @@ Done when the checker exits 0 and the user has both the link and the headline fi
 
 ## Bilingual pages
 
-Only when the user wants a second language. Both languages ship as real `lang="en"` /
-`lang="ja"` markup with one hidden by CSS — never machine-translated at view time.
-For an English-only report, remove the template's `lang="ja"` markup and the language switch.
-
-The whole risk here is **layout drift**: if the column or the type metrics change with
-the language, the passage under the reader's eye moves and switching becomes
-unpleasant enough that they stop doing it. Three rules prevent it, and the template
-already obeys all three:
-
-- **Widths in `rem`, never `ch` or `em`.** A font-relative measure resizes the entire
-  column when the font stack changes.
-- **One type scale for both.** Per-language `font-size` and `line-height` overrides are
-  the drift. If the display face lacks the second script's glyphs, extend the font stack
-  to cover both scripts — fallback resolves per character — rather than switching family
-  by language.
-- **Anchor the scroll across the switch.** Record the block nearest the viewport top and
-  its offset, swap, then correct the scroll by the drift.
-
-Translate prose, headings, severity words, and UI labels. Leave code, identifiers,
-file paths, and line numbers untranslated in both.
-
-A keyboard shortcut must not fire while the user is typing: skip when the event target
-is an input, textarea, or contenteditable, when a modifier is held, and during IME
-composition (`isComposing`, plus `keyCode === 229` for the keystroke that starts it).
-For a romaji IME this is not an edge case — the shortcut letter appears in ordinary
-Japanese text constantly.
+Only when the user requests a second language: read [references/bilingual.md](references/bilingual.md). For English-only reports, strip the template's `lang="ja"` markup and language switch.

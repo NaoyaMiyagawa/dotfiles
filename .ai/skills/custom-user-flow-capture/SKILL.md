@@ -1,6 +1,6 @@
 ---
 name: custom-user-flow-capture
-description: Capture a user flow as numbered step screenshots with ego-browser, or as a screen recording video with headless agent-browser, then review them, to show how the UI looks after a feature or bug fix. Covers backend changes as well as frontend ones. Use when a change alters what a user sees or does in a flow (new page or step, changed validation, new error or empty state, different data shown), when the user asks for flow screenshots, a before/after comparison, visual evidence for a PR, a video, screen recording, or QA recording of a flow, including screenshots that show the DevTools console.
+description: Capture user flows as step screenshots (ego-browser) or screen recordings (agent-browser), including DevTools console evidence, and review every frame. Use for visual PR evidence, before/after UI comparisons, or QA recordings.
 ---
 
 # User Flow Capture

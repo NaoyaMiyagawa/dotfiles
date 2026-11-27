@@ -1,6 +1,6 @@
 ---
 name: custom-obsidian-wiki-query
-description: Answer domain or codebase questions from the personal Obsidian knowledge wiki. Use when the user asks what a project or module does, its requirements, specs, business rules, flows, or architecture ("how does the billing service auth work", "what does the wiki say about verification"), or references the Obsidian vault/wiki. Read-only. NOT for the LLM Wiki desktop app.
+description: Read-only lookup in the personal Obsidian knowledge wiki via `qmd`. Use for project requirements, specs, business rules, flows, or architecture questions. Not for the LLM Wiki desktop app.
 ---
 
 # Custom Obsidian Wiki Query

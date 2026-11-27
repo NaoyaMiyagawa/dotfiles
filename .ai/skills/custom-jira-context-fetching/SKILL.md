@@ -1,6 +1,6 @@
 ---
 name: custom-jira-context-fetching
-description: Fetch Jira issue context from a Jira URL or issue key using the installed `jira-cli`. Use when the user shares a Jira ticket URL or key, asks for ticket summary or description context, wants implementation guidance from Jira ticket details, or wants branch naming context derived from a Jira issue.
+description: Fetch Jira issue details (summary, description, comments) via `jira-cli` from a Jira URL or key.
 ---
 
 # Custom Jira Context Fetching

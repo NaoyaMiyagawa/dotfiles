@@ -30,6 +30,7 @@
 # github
 !/README.md
 !/LICENSE
+!/CLAUDE.md
 !.gitignore
 !.gitkeep
 !/.gitattributes

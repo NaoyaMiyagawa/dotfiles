@@ -4,7 +4,7 @@ Local rules for running Codex. They win over the `codex` skill where the two
 disagree. The skill is third-party (`dzhng/skills`) and `npx skills update -g`
 overwrites it, so local rules live here, not in the skill.
 
-- Delegate without being asked, per the Delegation section of `~/.claude/CLAUDE.md`; the skill's "explicit ask only" gate does not apply.
+- Use for second-opinion / different-perspective code and PR reviews per the Delegation section of `~/.claude/CLAUDE.md` (the skill's "explicit ask only" gate does not apply for reviews). Keep general delegation on Claude Sonnet/Haiku.
 - Pin model and effort per the table below; the skill says to leave both at their defaults.
 - Done = process exited and the `-o` file is non-empty.
 
@@ -17,10 +17,12 @@ model. Override per task:
 
 | Task | Invocation |
 |---|---|
-| Deep reasoning | `codex exec -c model_reasoning_effort=high "..."` — `xhigh` for the hardest problems |
-| Mechanical execution | `codex exec -m "$luna" -c model_reasoning_effort=low "..."` — drop `-m` (config default) if luna struggles |
-| Code / cross review | `timeout 600 codex exec review -m gpt-6.2-sol -c model_reasoning_effort=medium -o <file>` (current repo; `-m gpt-6.2-astra` for security-sensitive or large refactors, `high` only if medium misses) or `codex exec -m gpt-6.2-sol -c model_reasoning_effort=medium "..."` |
-| Quick lookup / small Q&A | `codex exec -m "$luna" -c model_reasoning_effort=low "..."` |
+| Deep reasoning | `codex exec -p delegated -c model_reasoning_effort=high "..."` — `xhigh` for the hardest problems |
+| Mechanical execution | `codex exec -p delegated -m "$luna" -c model_reasoning_effort=low "..."` — drop `-m` (config default) if luna struggles |
+| Code / cross review | `timeout 600 codex exec -p delegated review -m gpt-6.2-sol -c model_reasoning_effort=medium -o <file>` (current repo; `-m gpt-6.2-astra` for security-sensitive or large refactors, `high` only if medium misses) or `codex exec -p delegated -m gpt-6.2-sol -c model_reasoning_effort=medium "..."` |
+| Quick lookup / small Q&A | `codex exec -p delegated -m "$luna" -c model_reasoning_effort=low "..."` |
+
+`-p delegated` loads `~/.codex/delegated.config.toml`, which turns off plugins and MCP servers not needed for disk-based reviews or exploration (drop `-p delegated` only if a Codex task explicitly needs a Codex plugin/MCP).
 
 Luna is the cheapest series, so prefer it for routine work. Codex has no alias for
 "latest luna", so resolve the newest one from the model list Codex caches on every run:

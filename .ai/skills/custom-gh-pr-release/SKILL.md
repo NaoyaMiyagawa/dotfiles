@@ -1,6 +1,6 @@
 ---
 name: custom-gh-pr-release
-description: Create or update the release pull request (main <- develop) — an audience-friendly release summary split into user-facing vs internal changes, plus release caution checks (new env keys, external-app impact). Use when the user asks for a release PR or a PR from develop to main, or asks to write or summarize the description of a PR whose base is main and head is develop.
+description: Create or update the develop→main release PR with user-facing vs internal release notes and diff-verified release cautions.
 ---
 
 # Custom GitHub Release PR

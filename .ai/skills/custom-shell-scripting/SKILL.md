@@ -1,6 +1,6 @@
 ---
 name: custom-shell-scripting
-description: Authoring conventions for shell scripts — header comment, function comments, step markers, result separator, and purpose-based naming. Use when writing or editing a shell script (a repo `scripts/` or `bin/` helper, a CI step script, a smoke or visual check) or when a review asks for more comments on one.
+description: Shell script conventions (header/function comments, step markers, result separator, purpose naming). Use when writing or editing scripts under `scripts/`, `bin/`, or CI.
 ---
 
 # Shell scripts

@@ -1,6 +1,13 @@
 # Pest testing checklist — long tail
 
-The review gate in `../SKILL.md` enforces this list; the core rules live there. When a rule here keeps being violated in practice, promote it into the core (move, don't copy). Mechanical rules destined for lint tooling are mapped in `../../custom-laravel-coding/references/tooling-candidates.md`.
+The review gate in `../SKILL.md` enforces this list; the core rules live there. When a rule here keeps being violated in practice, promote it into the core (move, don't copy). Mechanical rules destined for lint tooling are mapped in `../../../docs/laravel-tooling-candidates.md`.
+
+## AAA comments, request shape, and assertions
+
+- **AAA comments**: Put `// Arrange`, `// Act`, `// Assert` (`// Act & Assert` for compact tests) in every case you write. A bare `//` comment on its own line is reserved for the three markers; every other standalone comment carries `// - ` (trailing comments stay plain `//`). When a mock/assertion has several values and only one matters, comment that one value.
+- **Feature request shape**: Build URLs with `route('...')`, never path literals. Pass request bodies as multi-line array literals in the second arg and chain assertions directly off the call (no hoisted payload variable; datasets are fine). One chained call per line (`withToken()`, request, each `assert*()`), breaking the first assertion onto its own line (`])` then `->assertOk();`). Keep `route()` on one line unless it has >1 param. Prefer dedicated helpers: `withToken()`, `assertInvalid()` (over `assertSessionHasErrors()`), named status assertions (`assertConflict()`, `assertForbidden()`), `assertRedirectBack()`, `assertInertia()`, `createOneQuietly()`, and `Model::class` in `assertDatabase*()` (not table-name strings). When the response is needed, assign `$response = post(...)->assertValid();` then assert off `$response`.
+- **Assertions**: One `expect()` per subject — chain matchers off it and start a new `expect()` when the subject changes (never `->and()`). `toBe` for scalars/enums; pass enum cases directly to `assertJsonPath()` without `->value`; `toEqual` for arrays/objects where key order/identity isn't the contract. Assert validation failures with the full message map (`assertInvalid(['file' => 'The file field is required.'])`) using resolved strings, never `__('key')`.
+- **Datasets**: Use `->with()` to combine cases; keep the `it()` closure's arguments multi-line even for one argument; assign row values to variables matching argument names (`'pending' => [$status = XxxStatus::Pending]`). Single-value rows stay on one line; multi-value rows put one per line.
 
 ## Time
 

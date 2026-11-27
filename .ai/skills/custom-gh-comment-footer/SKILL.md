@@ -1,8 +1,6 @@
 ---
 name: custom-gh-comment-footer
-description: Footer line for GitHub comments an agent posts on its own — assessments, context notes, summaries — so readers know an agent wrote them. Use when posting a PR or issue comment that is not a reply to a person, or when another skill asks for the agent comment footer. Not for replies to review comments or to a person in a thread.
-metadata:
-  short-description: Footer for agent-posted GitHub comments
+description: Standard footer for autonomous agent-posted GitHub comments (assessments, summaries). Skip on replies to people.
 ---
 
 # Agent Comment Footer

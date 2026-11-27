@@ -1,8 +1,6 @@
 ---
 name: custom-gh-pr-reading-guide
-description: Add a reviewer's reading guide to a GitHub PR description — a mermaid mental-model diagram plus an ordered "read this, then this" table that routes a reviewer into unfamiliar code. Use when a PR introduces a subsystem, protocol, format, or vocabulary of types the reviewer has no prior model of, or when asked for a reading guide, a mental model, or a "fastest path to understanding this PR" section.
-metadata:
-  short-description: Add a mental-model + reading-order guide to a PR description
+description: Add a Mermaid mental-model diagram and ordered reading table to a GitHub PR description for unfamiliar subsystems, protocols, or type vocabularies.
 ---
 
 # PR Reading Guide
