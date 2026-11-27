@@ -15,7 +15,7 @@ For every entry in `packages`, including ones with `"named": false`, compare `no
 
 Then the items in `judge`:
 
-- `runtime-floor-and-entry-points`: `requirements.old` and `.new` differ. High when the new version drops a runtime the repo runs, leaves a required peer unmet, or `removed_exports` holds a subpath the repo imports (see `usage.symbols`). Medium when `type` turns to `module` and the repo loads the package with `require`.
+- `runtime-floor-and-entry-points`: `requirements.old` and `.new` differ. `repo_runtime` lists the lines of the repo that pin its runtime; an empty list means the runtime is set outside the repo. High when the new version drops a runtime the repo runs, leaves a required peer unmet, or `removed_exports` holds a subpath the repo imports (see `usage.symbols`). Medium when `type` turns to `module` and the repo loads the package with `require`.
 - `published-resources`: the upstream file list was incomplete. Medium when the repo holds a published config, view, or migration of the package and you cannot rule out a change to it.
 - `ci-jobs-for-ecosystem`: the script could not tell which CI job builds or tests this ecosystem. Read `ci_jobs`: Medium unless a job that installs and builds or tests the bumped ecosystem passed.
 
@@ -28,9 +28,9 @@ Reply with one JSON object keyed by the same PR numbers and nothing else. Each v
 ```json
 {
   "level": "Low | Medium | High",
-  "verdict": "One sentence naming the rule that set the level and the evidence. Name the package when it is not the one the PR names.",
-  "check_target": "Medium only: the file, symbol, or CI job a human should check",
-  "hold_reason": "High only: what has to change first",
+  "verdict": "One or two short sentences in plain words naming every factor that set the level and the key evidence, never a rule id. Name the package when it is not the one the PR names. Put paths and symbols in backticks.",
+  "check_target": "Medium only: the main thing to check, in under ten words; the steps go in to_check",
+  "hold_reason": "High only, under twelve words: what blocks the merge; the exact fix goes in to_check",
   "exposure": "Only when advisories_fixed lists vulnerable_functions: 'vulnerable code used in <path>, merge soon' when used_in is not empty, else 'no use of the vulnerable code found'",
   "packages": {
     "<package name>": {
@@ -41,11 +41,21 @@ Reply with one JSON object keyed by the same PR numbers and nothing else. Each v
     }
   },
   "checks": [
-    {"check": "Usage of changed APIs", "result": "pass | medium | high | na", "evidence": "a few words"}
+    {"check": "Changed APIs | Runtime and exports | CI | Published Laravel files", "result": "pass | medium | high | na", "evidence": "a few words"}
+  ],
+  "to_check": [
+    {"what": "Two to four word title", "finding": "One short sentence: what changed and whether it reaches this app, from the evidence", "how": "One short sentence: the file and line to read, the command to run, or the link to open, ending '; safe if <condition>'"}
   ],
   "searches": ["Up to 8 literal strings whose hits would change the level; [] when none would, and always [] once you have search_results"],
   "unsure": "Empty, or the one thing that could change the level and that the evidence and searches cannot settle"
 }
 ```
 
-Give `packages` an entry for each package whose notes carry a breaking note or that set the level; keep `what_changed` and `risk` to three items each. Add a `checks` row for each item you judged.
+`to_check` is what a person does before merging. Give one entry for every rule in `fired_rules` and every Medium or High you found, and none when the level is Low. Say what the evidence already settles so the person does not redo it. Keep each entry under about 45 words, put paths and identifiers in backticks and links as `[label](url)`, and never state repo behaviour the evidence or `search_results` did not show. Never tell the person to search the repo for a string: ask for it in `searches` and report the hits:
+
+- A published file changed upstream: `published_resources.changes` holds the start of each upstream diff. Name the keys or lines that changed, search the repo for a key when its presence decides the effect, and say whether the repo's copy needs the change, already has it, or is unaffected. `compare_url` is the link to give.
+- Release notes cut: say which versions the kept notes cover, that the lines left out carried no breaking keyword, and give the upstream releases link (`https://github.com/<repo>/releases`) or the upgrade guide the notes name.
+- Runtime floor: quote the `repo_runtime` line that meets or misses the new floor, or say where the runtime is set when the list is empty.
+- Files outside the package manager's: say they need a normal code review and name them.
+
+Give `packages` an entry for each package whose notes carry a breaking note or that set the level; keep `what_changed` and `risk` to three items each. `checks` rows use only these names: `Changed APIs` for the usage comparison, `Runtime and exports` for `runtime-floor-and-entry-points`, `CI` for `ci-jobs-for-ecosystem`, and `Published Laravel files` for `published-resources` or what you found in the upstream diffs. The script prints the rows for security, files, release notes and CI itself and folds a row of the same name into its own, so never invent another name.

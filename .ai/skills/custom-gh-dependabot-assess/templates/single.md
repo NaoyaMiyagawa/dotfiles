@@ -1,13 +1,14 @@
 **Risk:** {{badge}} **{{level}}** — {{recommendation}}
 **Summary:** {{category}} · `{{package}}` {{from}} → {{to}} · {{bump}}
 {{security_line}}
+{{to_check}}
 
 <details><summary><b>Details</b></summary>
 
 - **Verdict**: {{verdict_reason}}
 
-| Check | Result | Evidence |
-|---|---|---|
+  | Area | Result | Evidence |
+  |---|---|---|
 {{checks_table}}
 
 - **What it does**:

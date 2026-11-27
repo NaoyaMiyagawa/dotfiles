@@ -494,9 +494,12 @@ find_usage() {
 # Print the config, view and migration files an upstream range changed that
 # the working tree holds a published copy of.
 find_published_resources() {
-  local repo=$1 old_ref=$2 new_ref=$3 changed
+  local repo=$1 old_ref=$2 new_ref=$3 compared changed
 
-  changed=$(gh_read api "repos/$repo/compare/$old_ref...$new_ref" --jq '[.files[].filename]') || { print '{"status": "unknown"}'; return; }
+  # The start of each file's diff goes with it, so a published copy can be
+  # compared with what upstream changed.
+  compared=$(gh_read api "repos/$repo/compare/$old_ref...$new_ref" --jq '[.files[] | {file: .filename, patch: (.patch // "" | .[0:2500])}]') || { print '{"status": "unknown"}'; return; }
+  changed=$(jq '[.[].file]' <<<"$compared")
 
   local published=() file migration
   for file in "${(@f)$(jq -r '.[] | select(test("^(config/|resources/views/|database/migrations/)"))' <<<"$changed")}"; do
@@ -514,10 +517,24 @@ find_published_resources() {
   done
 
   # GitHub's compare lists at most 300 files, so a longer range is incomplete.
-  jq -n --argjson changed "$changed" --args '{
-    status: (if ($changed | length) >= 300 then "truncated" else "ok" end),
-    shadowed: $ARGS.positional
+  jq -n --argjson compared "$compared" --arg repo "$repo" --arg range "$old_ref...$new_ref" --args '{
+    status: (if ($compared | length) >= 300 then "truncated" else "ok" end),
+    shadowed: $ARGS.positional,
+    compare_url: "https://github.com/\($repo)/compare/\($range)",
+    changes: [$compared[] | select(.file | IN($ARGS.positional[]))]
   }' "${published[@]}"
+}
+
+# Print the lines of the working tree that pin the runtime the app runs on
+# (PHP or Node), as "path:line: text", so a raised runtime floor can be
+# compared with them. A runtime set outside the repo leaves the list empty.
+find_repo_runtime() {
+  local pattern='node-version|FROM +node:|image: +node:|"node": *"|nodejs[0-9]+\.x|NODE_VERSION|^nodejs |^v?[0-9]+(\.[0-9x]+)*$|^lts/'
+  [[ $ecosystem == composer ]] && pattern='php-version|FROM +php:|image: +php:|"php": *"|PHP_VERSION|^php '
+  rg -n --no-heading --hidden -e "$pattern" \
+    -g 'composer.json' -g 'package.json' -g '.nvmrc' -g '.node-version' -g '.tool-versions' -g 'Dockerfile*' -g '*.dockerfile' \
+    -g 'docker-compose*.y*ml' -g '.github/workflows/*.y*ml' -g 'serverless.y*ml' -g 'template.y*ml' -g '*.tf' \
+    -g '!node_modules' -g '!vendor' . 2>/dev/null | sed -E 's/[[:space:]]+/ /g' | head -15 | cut -c1-200 | jq -Rn '[inputs]' || print '[]'
 }
 
 # Print one published npm version's registry record. A published version never
@@ -903,6 +920,7 @@ jq -n "$jq_defs"'
       non_package_files: $non_package_files,
       formatter_only: $formatter_only,
       manifest_edits: $manifest_edits,
+      repo_runtime: $repo_runtime,
       ci: ({
         passed: ($ci | map(select(.result == "passed")) | length),
         pending: [],
@@ -945,7 +963,7 @@ jq -n "$jq_defs"'
         | .fired = (.evidence != "")),
       # Notes cut to fit, or cut short by Dependabot, do not cover the range.
       ({id: "notes-incomplete", level: "Medium",
-        evidence: ([$packages[] | select((.test_only | not) and (.bump | bump_rank) >= 2 and (.notes.cut or .notes.truncated)) | "\(.name): \(.notes.source) notes cut"] | join(", "))}
+        evidence: ([$packages[] | select((.test_only | not) and (.bump | bump_rank) >= 2 and (.notes.cut or .notes.truncated)) | "\(.name) (\(if .notes.truncated then "cut short by Dependabot" else "\(.notes.omitted_lines) lines left out" end))"] | join(", "))}
         | .fired = (.evidence != "")),
       {id: "published-resource-changed", level: "Medium", fired: any($packages[]; (.published_resources.shadowed // []) | length > 0),
        not_applicable: ($ecosystem != "composer"),
@@ -969,4 +987,4 @@ jq -n "$jq_defs"'
 ' --argjson pr "$pr" --arg head "$head_sha" --arg base_branch "$base_branch" --arg ecosystem "$ecosystem" --arg lockfile "$lockfile" \
   --argjson packages "$packages" --argjson diff "$lock_diff" --argjson ci "$ci_jobs" --argjson failed "$failed_jobs" \
   --argjson non_package_files "$non_package_files" --argjson file_list_complete "$file_list_complete" \
-  --argjson manifest_edits "$manifest_edits" --argjson formatter_only "$formatter_only" --argjson api_calls "$(wc -c <"$work_dir/api_calls" | tr -d " ")"
+  --argjson manifest_edits "$manifest_edits" --argjson repo_runtime "$(find_repo_runtime)" --argjson formatter_only "$formatter_only" --argjson api_calls "$(wc -c <"$work_dir/api_calls" | tr -d " ")"

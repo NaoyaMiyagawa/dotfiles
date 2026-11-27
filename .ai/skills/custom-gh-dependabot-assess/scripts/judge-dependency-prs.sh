@@ -40,8 +40,10 @@ print_judge_view() {
       + (if .test_only then {} else {notes: (.notes | {source, text} + (if .cut or .truncated then {incomplete: true, omitted_lines} else {} end))} end)
       + (if .requirements.status != "unchanged" then {requirements} else {} end)
       + (if (.advisories.fixed // [] | length) > 0 then {advisories_fixed: [.advisories.fixed[] | {id, vulnerable_functions, used_in}]} else {} end)
-      + (if .published_resources.status | IN("unknown", "truncated") then {published_resources} else {} end)]
+      + (if (.published_resources.status | IN("unknown", "truncated")) or ((.published_resources.shadowed // []) | length) > 0
+         then {published_resources} else {} end)]
   }
+  + (if any(.packages[]; .requirements.status != "unchanged") then {repo_runtime} else {} end)
   + (if .ci.ecosystem_jobs == "unknown" then {ci_jobs: .ci.jobs} else {} end)' "$1"
 }
 

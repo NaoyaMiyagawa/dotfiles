@@ -1,13 +1,14 @@
 **Risk:** {{badge}} **{{level}}** — {{recommendation}}
 **Summary:** {{direct_count}} direct packages · {{major_count}} major, {{minor_count}} minor, {{patch_count}} patch
 {{security_line}}
+{{to_check}}
 
 <details><summary><b>Details</b></summary>
 
 - **Verdict**: {{verdict_reason}}
 
-| Check | Result | Evidence |
-|---|---|---|
+  | Area | Result | Evidence |
+  |---|---|---|
 {{checks_table}}
 
 | Category | Package | Bump | Used in | Risk |

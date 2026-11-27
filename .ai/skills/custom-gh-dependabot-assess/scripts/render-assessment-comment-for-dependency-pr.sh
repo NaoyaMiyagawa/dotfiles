@@ -55,20 +55,26 @@ build_rule_based_judgement() {
     | ([.packages[] | .name as $name | (.advisories.introduced // [])[] | "\(.id) affects \($name)"] | first // null) as $advisory
     | if .floor != "High" then {
         level: "Low",
-        verdict: "No rule fired: \(.packages | map("`\(.name)`") | join(", ")) runs only in lint, tests or local development tooling, no runtime file imports it, CI ran the \(.ecosystem) jobs green, and every mechanical check passed.",
+        rule_based: true,
+        verdict: "\(.packages | map("`\(.name)`") | join(", ")) runs only in lint, tests or local development tooling. No runtime file imports it, CI passed, and every check is green.",
         packages: {},
-        checks: [{check: "Test-only dev dependency", result: "pass", evidence: "on the test-only list, no runtime import"}]
+        checks: [{check: "Dev-only package", result: "pass", evidence: "Used only in lint, tests or local tooling; no runtime import"}]
       }
       elif $advisory then {
-        level: "High",
+        level: "High", rule_based: true,
         hold_reason: $advisory,
         verdict: "The bump introduces a known advisory: \($advisory).",
         packages: {}, checks: []
       }
       else {
-        level: "High",
-        hold_reason: ($cause.fix // "`\($job.job)` has to pass: \($job.errors[0] // "see the job log" | ltrimstr(" ") | .[0:160])"),
-        verdict: "CI is red and the bump caused it: `\($job.job)` fails on this commit and passes on `\(.base_branch)`. \($cause.cause // "")",
+        level: "High", rule_based: true,
+        hold_reason: "`\($job.job)` has to pass first",
+        verdict: "CI fails because of the bump: `\($job.job)` fails on this commit and passes on `\(.base_branch)`.",
+        to_check: [{
+          what: "CI failed after the bump",
+          finding: ($cause.cause // "`\($job.job)` fails here and passes on `\(.base_branch)`: \($job.errors[0] // "see the job log" | ltrimstr(" ") | .[0:200])"),
+          how: ($cause.fix // "Open the job log, then fix the failure on this branch or hold the bump.")
+        }],
         packages: {}, checks: []
       } end' "$evidence_file"
 }
@@ -106,53 +112,114 @@ values=$(jq -n --argjson judgement "$judgement" --slurpfile evidence "$evidence_
   def one_line: tostring | gsub("\\s*[\\r\\n]+\\s*"; " ");
   def cell: one_line | gsub("\\|"; "\\|");
   def bullets: if length == 0 then "  - **None**: nothing to report" else map("  - " + one_line) | join("\n") end;
-  def category: (if .dev then "dev" else "prod" end) + (if .direct then " (direct)" else " (transitive)" end);
+  def category: (if .dev then "dev" else "prod" end) + (if .test_only then " (test-only)" elif .direct then " (direct)" else " (transitive)" end);
   def advisory_link: "[\(.id)](\(.url)) (\(.severity // .type))";
-  def rule_label: {
-    "advisory-introduced": "No new advisory or malware",
-    "ci-red-bump-caused": "CI passes where the base branch passes",
-    "advisory-lookup-failed": "Advisory lookup completed",
-    "ci-red-unresolved": "No unexplained CI failure",
-    "ci-red-network": "No CI job failed on a network error",
-    "ci-incomplete": "CI finished",
-    "ci-ecosystem-jobs-skipped": "CI ran the jobs for this ecosystem",
-    "diff-outside-package-files": "Diff is package-manager files only",
-    "lockfile-host-change": "Download hosts unchanged",
-    "lockfile-install-code": "No new install-time code",
-    "lockfile-duplicate-copy": "No second copy of a single-copy package",
-    "downgrade": "Not a downgrade",
-    "notes-missing": "Release notes found",
-    "notes-incomplete": "Release notes cover the whole range",
-    "published-resource-changed": "Published Laravel files unchanged"
+  # What a fired rule says in the checks table, ahead of its evidence.
+  def rule_failure: {
+    "advisory-introduced": "New advisory or malware",
+    "ci-red-bump-caused": "CI failed after the bump",
+    "advisory-lookup-failed": "Advisory lookup failed",
+    "ci-red-unresolved": "Unexplained failure",
+    "ci-red-network": "Network error",
+    "ci-incomplete": "CI absent or cancelled",
+    "ci-ecosystem-jobs-skipped": "The jobs for this ecosystem did not run",
+    "diff-outside-package-files": "Non-package files changed",
+    "lockfile-host-change": "Download host changed",
+    "lockfile-install-code": "New install-time code",
+    "lockfile-duplicate-copy": "Duplicate package copy",
+    "downgrade": "Downgrade",
+    "notes-missing": "No release notes",
+    "notes-incomplete": "Incomplete release notes",
+    "published-resource-changed": "Upstream changed"
   }[.];
+  # What a person does about a fired rule when no judge said it better.
+  def rule_action: {
+    "advisory-introduced": "Hold the bump until a version without the advisory is out.",
+    "ci-red-bump-caused": "Open the job log, fix the failure on this branch or hold the bump.",
+    "advisory-lookup-failed": "Run the assessment again; the advisory database did not answer.",
+    "ci-red-unresolved": "Check whether the job fails on the base branch for the same reason, then re-run it.",
+    "ci-red-network": "Re-run the job; safe once it passes.",
+    "ci-incomplete": "Wait for CI or re-run the cancelled jobs, then assess again.",
+    "ci-ecosystem-jobs-skipped": "Run the build and tests for this ecosystem before merging.",
+    "diff-outside-package-files": "Review these files as code; this assessment covers the packages only.",
+    "lockfile-host-change": "Confirm the new host is a registry you trust.",
+    "lockfile-install-code": "Read the install script of the package before merging.",
+    "lockfile-duplicate-copy": "Check the app still loads one copy, or dedupe the lockfile.",
+    "downgrade": "Confirm the downgrade is intended.",
+    "notes-missing": "Read the upstream commits for the range; no release notes were found.",
+    "notes-incomplete": "Skim the upstream releases page for the range; the lines left out carried no breaking keyword. Safe if none touches a feature this app uses.",
+    "published-resource-changed": "Compare your copy of each file with the upstream change."
+  }[.];
+  # The mechanical rules grouped into the areas a reader checks, each with the
+  # sentence shown when every rule in it passed.
+  def areas($e): [
+    {area: "Security", rules: ["advisory-introduced", "advisory-lookup-failed"],
+     passed: "No new advisory or malware"},
+    {area: "CI", rules: ["ci-red-bump-caused", "ci-red-unresolved", "ci-red-network", "ci-incomplete", "ci-ecosystem-jobs-skipped"],
+     passed: "\($e.ci.passed) jobs passed"},
+    {area: "Files and lockfile", rules: ["diff-outside-package-files", "lockfile-host-change", "lockfile-install-code", "lockfile-duplicate-copy"],
+     passed: ((if $e.formatter_only then "Package files and formatter output only" else "Package files only" end)
+       + "; no new download host, install script or duplicate copy")},
+    {area: "Release notes", rules: ["downgrade", "notes-missing", "notes-incomplete"],
+     passed: (if $e.tier != "patch" and any($e.packages[]; .test_only | not) then "Read in full for the whole range; not a downgrade" else "Not needed for this bump; not a downgrade" end)},
+    {area: "Published Laravel files", rules: ["published-resource-changed"],
+     passed: "No upstream change to a file this repo published"}
+  ];
+  # One row per area, then the rows the judge added, with the rows that need
+  # attention first. An area whose rules do not apply to this PR is left out.
+  # A judge row named after an area is folded into that area, so no topic
+  # shows twice.
+  def check_rows($e; $judgement):
+    [$judgement.checks // [] | .[] | select(.result != "na")] as $judged
+    | [areas($e)[].area] as $area_names
+    | [ ($judged[] | select(.check | IN($area_names[]) | not)
+          | {rank: ({"high": 0, "medium": 1}[.result] // 2), row: "| \(.check | cell) | \(.result | mark) | \(.evidence // "" | cell) |"}),
+        (areas($e)[] | . as $area
+          | [$e.rules[] | select((.id | IN($area.rules[])) and (.not_applicable | not))] as $rules
+          | [$judged[] | select(.check == $area.area)] as $added
+          | select(($rules | length) > 0 or ($added | length) > 0)
+          | ($rules | map(select(.fired))) as $fired
+          | ([($fired[] | if .level == "High" then 0 else 1 end), ($added[] | {"high": 0, "medium": 1}[.result] // 2), 2] | min) as $rank
+          | {rank: $rank,
+             row: "| \($area.area) | \(["❌", "⚠️", "✅"][$rank]) | \(
+               [ (if ($fired | length) > 0 then $fired[] | (.id | rule_failure) + (if .evidence != "" then ": \(.evidence | cell)" else "" end)
+                  elif ($rules | length) > 0 then $area.passed else empty end),
+                 ($added[] | .evidence // "" | cell | select(. != "")) ] | join("<br>")) |"})
+      ] | sort_by(.rank) | map("  " + .row) | join("\n");
 
   $evidence[0] as $e
   | ($e.packages | map(select(.named)) | first // $e.packages[0]) as $main
   | ($judgement.packages // {}) as $judged
   | ([$e.packages[] | .name as $name | (.advisories.introduced // [])[] | "⛔ introduces \(advisory_link) in \($name)"]) as $introduced
-  | ([$e.packages[] | (.advisories.fixed // [])[] | advisory_link]) as $fixed
+  | ([$e.packages[] | .name as $name | (.advisories.fixed // [])[] | "\(advisory_link) in `\($name)`"]) as $fixed
   | ([$e.packages[] | .name as $name | .to as $to | (.advisories.still_open // [])[] | "⚠️ \(advisory_link) still open in \($name) \($to)"]) as $open
   | ($introduced
-      + (if ($fixed | length) > 0 then ["🛡 fixes \($fixed | join(", ")) — \($judgement.exposure // "reachability not determinable from advisory" | one_line)"] else [] end)
+      + (if ($fixed | length) > 0 then ["🛡 fixes \($fixed | join(", ")) — \($judgement.exposure // "the advisory does not list the affected functions" | one_line)"] else [] end)
       + $open) as $security
   | {"Low": "safe", "Medium": "check", "High": "risky"}[$judgement.level] as $verdict
   | {
       badge: ($judgement.level | badge),
       level: $judgement.level,
       recommendation: (if $judgement.level == "Low" then "merge"
-        elif $judgement.level == "Medium" then "merge after checking \($judgement.check_target | one_line)"
+        elif $judgement.level == "Medium" then (if (($judgement.to_check // []) | length) > 1 then "merge after checking the \($judgement.to_check | length) items below" else "merge after checking \($judgement.check_target | one_line)" end)
         else "hold, \($judgement.hold_reason | one_line)" end),
       security_line: (if ($security | length) > 0 then "**Security:** " + ($security | join(" · ")) else "" end),
       verdict_reason: ($judgement.verdict | one_line),
-      checks_table: ([
-          ($e.rules[] | "| \(.id | rule_label) | \(if .not_applicable then "➖" elif .fired then (if .level == "High" then "❌" else "⚠️" end) else "✅" end) | \(if .fired then .evidence | cell else "" end) |"),
-          (if $e.formatter_only then "| Other files are formatter output | ✅ | removed and added lines match once whitespace, quotes and order are ignored |" else empty end),
-          (($judgement.checks // [])[] | "| \(.check | cell) | \(.result | mark) | \(.evidence // "" | cell) |")
-        ] | join("\n")),
+      # What to do before merging: the steps the judgement gives. A judgement
+      # built from the rules alone gets a fixed step for each other fired rule.
+      to_check: (
+        ([($judgement.to_check // [])[] | "- **\(.what | one_line):** \(.finding // "" | one_line) **Check:** \(.how // "" | one_line)"]
+         + (if $judgement.rule_based or (($judgement.to_check // []) | length) == 0 then
+             [$e.rules[] | select(.fired and ((.id | IN("ci-red-bump-caused", "advisory-introduced") | not) or (($judgement.to_check // []) | length) == 0))
+               | "- **\(.id | rule_failure):** \(if .evidence != "" then "\(.evidence | one_line). " else "" end)**Check:** \(.id | rule_action)"]
+           else [] end)) as $steps
+        | if $judgement.level == "Low" or ($steps | length) == 0 then ""
+          else "\n**Before merging:**\n" + ($steps | join("\n")) end),
+      checks_table: check_rows($e; $judgement),
       category: ($main | category), package: $main.name, from: ($main.from // "new"), to: $main.to, bump: $main.bump,
       what_it_does: ("  - " + ($judged[$main.name].what_it_does // $main.description // "No description published" | one_line)),
       where_used: ("  - " + (if ($main.usage.file_count // 0) == 0 then "No direct imports found"
-        else "\($main.usage.file_count) files, e.g. \($main.usage.files | .[0:5] | map("`\(. | ltrimstr("./"))`") | join(", "))" end)),
+        else "\($main.usage.file_count) file\(if $main.usage.file_count == 1 then "" else "s" end)\(if $main.usage.file_count <= 5 then ": " else ", e.g. " end)\($main.usage.files | .[0:5] | map("`\(. | ltrimstr("./"))`") | join(", "))" end)),
       what_changed: ($judged[$main.name].what_changed // [] | bullets),
       risk_reasoning: ($judged[$main.name].risk // [] | bullets),
       direct_count: ($e.packages | map(select(.direct)) | length),
@@ -160,8 +227,9 @@ values=$(jq -n --argjson judgement "$judgement" --slurpfile evidence "$evidence_
       minor_count: ($e.packages | map(select(.direct and .bump == "minor")) | length),
       patch_count: ($e.packages | map(select(.direct and .bump == "patch")) | length),
       indirect_count: ([$e.lockfile_changes.moved_total - ($e.packages | length), 0] | max),
-      # A package the judge gave no level of its own is Low when the PR is.
-      package_rows: ($e.packages | map("| \(category) | `\(.name)` \(.from // "new") → \(.to) | \(.bump) | \(.usage.file_count // 0) files | \(($judged[.name].level // (if $judgement.level == "Low" then "Low" else "" end)) | badge // "➖") |") | join("\n")),
+      # A package the judge read and did not single out is Low. A judgement
+      # built from the rules alone read no package, so it shows a dash.
+      package_rows: ($e.packages | map("| \(category) | `\(.name)` \(.from // "new") → \(.to) | \(.bump) | \(.usage.file_count // 0) file\(if .usage.file_count == 1 then "" else "s" end) | \(($judged[.name].level // (if $judgement.level == "Low" or ($judgement.rule_based | not) then "Low" else "" end)) | badge // "➖") |") | join("\n")),
       package_blocks: ($e.packages | map(select($judged[.name].what_changed != null)
         | "**`\(.name)` \(.from // "new") → \(.to)**\n- **What changed**:\n\($judged[.name].what_changed | bullets)\n- **Risk**:\n\($judged[.name].risk // [] | bullets)") | join("\n\n")),
       tool: (if $provider == "codex" then "Codex" else "Claude Code" end), model: $model, datetime: $datetime,
