@@ -18,7 +18,7 @@ Create the PR that merges `develop` into `main`. Its description is release note
 
 Two top-level sections — this split is the whole point:
 
-- **User-facing changes** — anything a user, customer, or internal operator will notice: new features, page/UI changes, behaviour changes, bug fixes users hit. Plain language, lead with the outcome ("Issuers can now bulk-revoke documents"), no code identifiers.
+- **User-facing changes** — anything a user, customer, or internal operator will notice: new features, page/UI changes, behaviour changes, bug fixes users hit. Plain language, lead with the outcome ("Issuers can now bulk-revoke documents"), no code identifiers. Start each bullet with a bold type prefix: `**New feature:**`, `**UI change:**`, `**Behaviour change:**` or `**Bug fix:**`.
 - **Internal changes** — refactors, CI/tooling, performance, test-only work. Terse dev language is fine.
 
 Within each section, group bullets under a `###` category heading named by what they touch: `Xxx feature`, `Xxx page`, `CI`, etc. One bullet per change. Don't cite PR numbers or links anywhere in the description — the PR's commit list already carries them. Don't force a category onto a single stray change — an `Other` group is fine.
@@ -29,10 +29,10 @@ If the repo's PR template doesn't fit release notes, this format takes precedenc
 
 ## Release caution checks
 
-Add a **⚠️ Release cautions** section. Verify each check against `git diff origin/main...origin/develop` — don't guess from PR titles:
+Add a `## Release cautions` section (no emoji in the title). Verify each check against `git diff origin/main...origin/develop` — don't guess from PR titles:
 
 - **New/changed env keys** — diff `.env.example` (and config files reading `env()`). List each new key and remind to set its value in every environment before deploy.
 - **External-app impact** — changes to public API routes, request/response shapes, webhooks, events, or anything consumed by API consumers or sub-systems. Name which consumer is affected and how.
 - **Also flag when present** — DB migrations (call out destructive or long-running ones), queue/scheduled-job changes, feature flags to toggle, one-off commands to run at deploy.
 
-For every check, write the result even when it's `None` — the reader must see the check happened, not wonder whether it was skipped.
+For every check, write the result even when it's `None` — the reader must see the check happened, not wonder whether it was skipped. Start each check line with ✅ when it is safe (None, or only a note that blocks nothing), and with ⚠️ when it needs action before deploy (a new env key, a destructive migration, an affected consumer).
